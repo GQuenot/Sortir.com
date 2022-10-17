@@ -6,6 +6,7 @@ use App\Repository\ParticipantRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
@@ -16,6 +17,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\Email]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -39,7 +41,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $active = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $pseudo = null;
 
     #[ORM\ManyToOne(inversedBy: 'participants')]

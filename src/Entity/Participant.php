@@ -4,106 +4,189 @@ namespace App\Entity;
 
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
-class Participant
+class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $prenom = null;
-
-    #[ORM\Column(length: 30)]
-    private ?string $telephone = null;
-
-    #[ORM\Column(length: 50)]
-    private ?string $mail = null;
+    #[ORM\Column(length: 180, unique: true)]
+    private ?string $email = null;
 
     #[ORM\Column]
-    private ?bool $administrateur = null;
+    private array $roles = [];
+
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
+    private ?string $password = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $lastname = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $firstname = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $phone = null;
 
     #[ORM\Column]
-    private ?bool $actif = null;
+    private ?bool $administrator = null;
+
+    #[ORM\Column]
+    private ?bool $active = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getEmail(): ?string
     {
-        return $this->nom;
+        return $this->email;
     }
 
-    public function setNom(string $nom): self
+    public function setEmail(string $email): self
     {
-        $this->nom = $nom;
+        $this->email = $email;
 
         return $this;
     }
 
-    public function getPrenom(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->prenom;
+        return (string) $this->email;
     }
 
-    public function setPrenom(string $prenom): self
+    /**
+     * @deprecated since Symfony 5.3, use getUserIdentifier instead
+     */
+    public function getUsername(): string
     {
-        $this->prenom = $prenom;
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
 
-    public function getTelephone(): ?string
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
     {
-        return $this->telephone;
+        return $this->password;
     }
 
-    public function setTelephone(string $telephone): self
+    public function setPassword(string $password): self
     {
-        $this->telephone = $telephone;
+        $this->password = $password;
 
         return $this;
     }
 
-    public function getMail(): ?string
+    /**
+     * Returning a salt is only needed, if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
+     * @see UserInterface
+     */
+    public function getSalt(): ?string
     {
-        return $this->mail;
+        return null;
     }
 
-    public function setMail(string $mail): self
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
     {
-        $this->mail = $mail;
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(string $lastname): self
+    {
+        $this->lastname = $lastname;
 
         return $this;
     }
 
-    public function isAdministrateur(): ?bool
+    public function getFirstname(): ?string
     {
-        return $this->administrateur;
+        return $this->firstname;
     }
 
-    public function setAdministrateur(bool $administrateur): self
+    public function setFirstname(string $firstname): self
     {
-        $this->administrateur = $administrateur;
+        $this->firstname = $firstname;
 
         return $this;
     }
 
-    public function isActif(): ?bool
+    public function getPhone(): ?string
     {
-        return $this->actif;
+        return $this->phone;
     }
 
-    public function setActif(bool $actif): self
+    public function setPhone(string $phone): self
     {
-        $this->actif = $actif;
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function isAdministrator(): ?bool
+    {
+        return $this->administrator;
+    }
+
+    public function setAdministrator(bool $administrator): self
+    {
+        $this->administrator = $administrator;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }

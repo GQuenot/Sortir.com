@@ -6,6 +6,12 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <header>
+            {% include 'nav.html.twig' %}
+        </header>
+
+        <main>
+            {% block body %}{% endblock %}
+        </main>
     </body>
 </html>

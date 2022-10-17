@@ -20,7 +20,7 @@ security:
                 lifetime: 604800 # 1 week inseconds
             lazy: true
             provider: users_in_memory
-            custom_authenticator : App\Security\AppAuthentificator
+            custom_authenticator : App\Security\AppAuthenticator
             logout:
                 path: app_logout
                 # where to redirect after logout

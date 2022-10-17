@@ -37,10 +37,10 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $phone = null;
 
     #[ORM\Column]
-    private ?bool $administrator = null;
-
-    #[ORM\Column]
     private ?bool $active = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $pseudo = null;
 
     public function getId(): ?int
     {
@@ -167,18 +167,6 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isAdministrator(): ?bool
-    {
-        return $this->administrator;
-    }
-
-    public function setAdministrator(bool $administrator): self
-    {
-        $this->administrator = $administrator;
-
-        return $this;
-    }
-
     public function isActive(): ?bool
     {
         return $this->active;
@@ -187,6 +175,18 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActive(bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
 
         return $this;
     }

@@ -3,7 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Participant;
+use App\Entity\Site;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -55,6 +59,10 @@ class ParticipantType extends AbstractType
                 ],
                 'invalid_message' => 'The password fields must match.',
                 'mapped' => false,
+            ])
+            ->add('site', EntityType::class, [
+                'class' => Site::class,
+                'choice_label' => 'name'
             ])
         ;
     }

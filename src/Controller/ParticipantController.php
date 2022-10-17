@@ -15,7 +15,7 @@ class ParticipantController extends AbstractController
     #[Route('/', name: 'profile')]
     public function profile(Request $request, ParticipantRepository $participantRepository): Response
     {
-        $participant = $participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+        $participant = $participantRepository->findOneBy(['email' => "gurvan.quenot2021@campus-eni.fr"]);
         $participantForm = $this->createForm(ParticipantType::class, $participant);
 
         $participantForm->handleRequest($request);
@@ -30,7 +30,7 @@ class ParticipantController extends AbstractController
         }
 
         return $this->render('user/profile.html.twig', [
-            'participantForm' => $participantForm
+            'participantForm' => $participantForm->createView()
         ]);
     }
 }

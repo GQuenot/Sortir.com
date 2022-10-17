@@ -6,10 +6,20 @@
 
 {% block body %}
 
-    <div class="field">
-        <label class="label">Name</label>
-        <div class="control">
-            <input class="input" type="text" placeholder="Text input">
+    <div class="columns">
+        <div class="column is-three-fifths is-offset-one-fifth">
+
+            {{ form_start(participantForm) }}
+
+            <div class="field">
+                <label class="label">Email</label>
+                <div class="control">
+                    {{ form_widget('email', {'attr': {'class': 'input'}}) }}
+                </div>
+            </div>
+
+            {{ form_end(participantForm) }}
+
         </div>
     </div>
 

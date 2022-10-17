@@ -40,25 +40,14 @@ class ParticipantType extends AbstractType
                 'type' => PasswordType::class,
                 'first_options' => [
                     'attr' => ['autocomplete' => 'new-password'],
-                    'constraints' => [
-                        new NotBlank([
-                            'message' => 'Please enter a password',
-                        ]),
-                        new Length([
-                            'min' => 8,
-                            'minMessage' => 'Your password should be at least {{ limit }} characters',
-                            // max length allowed by Symfony for security reasons
-                            'max' => 4096,
-                        ]),
-                    ],
                     'label' => 'New password',
                 ],
                 'second_options' => [
                     'attr' => ['autocomplete' => 'new-password'],
                     'label' => 'Repeat Password',
                 ],
-                'invalid_message' => 'The password fields must match.',
-                'mapped' => false,
+                'required' => false,
+                'mapped' => false
             ])
             ->add('site', EntityType::class, [
                 'class' => Site::class,

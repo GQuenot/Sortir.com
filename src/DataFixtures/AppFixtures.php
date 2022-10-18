@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Participant;
+use App\Entity\Site;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker;
@@ -16,6 +17,16 @@ class AppFixtures extends Fixture
 
         $faker = Faker\Factory::create('fr_FR');
 
+        $site_name = ['RENNES', 'QUIMPER', 'NIORT', 'NANTES'];
+
+        $site = Array();
+        for ($i = 0; $i < 4; $i++) {
+            $site[$i] = new Site();
+            $site[$i]->setName($faker->randomElement($site_name));
+
+            $manager->persist($site[$i]);
+        }
+
         $participant = Array();
         for ($i = 0; $i < 4; $i++) {
             $participant[$i] = new Participant();
@@ -27,6 +38,7 @@ class AppFixtures extends Fixture
             $participant[$i]->setActive(1);
             $participant[$i]->setRoles(["ROLE_USER"]);
             $participant[$i]->setPseudo($faker->userName);
+            $participant[$i]->setSite($site[$i]);
 
             $manager->persist($participant[$i]);
         }

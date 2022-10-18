@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Add party
+{% endblock %}
+
+{% block body %}
+    <h1 class="is-size-1 has-text-centered">Nouvelle sortie</h1>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+
+                {{ form_start(partyForm) }}
+
+                <div class="field">
+                    <label class="label">Nom de la sortie</label>
+                    <div class="control">
+                        {{ form_widget(partyForm.name, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Date de la sortie</label>
+                    <div class="control">
+                        {{ form_widget(partyForm.startDate) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Date limite d'inscription</label>
+                    <div class="control">
+                        {{ form_widget(partyForm.subLimitDate) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Nombre de places</label>
+                    <div class="control">
+                        {{ form_widget(partyForm.maxSubscription, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Durée (en minutes)</label>
+                    <div class="control">
+                        {{ form_widget(partyForm.duration, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Description</label>
+                    <div class="control">
+                        {{ form_widget(partyForm.informations, {'attr': {'class': 'textarea'}}) }}
+                    </div>
+                </div>
+
+                <label class="label" for="lieu">Lieu</label>
+                <div class="select" id="lieu">
+                    {{ form_widget(partyForm.place) }}
+                </div>
+
+                <div class="has-text-centered">
+                    <button class="button is-info">Enregistrer</button>
+                </div>
+
+                {{ form_end(partyForm) }}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

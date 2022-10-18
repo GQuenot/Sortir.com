@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{{ parent() }} | Show parties
+{% endblock %}
+
+{% block body %}
+<h1 class="is-size-1 has-text-centered"></h1>
+
+<div class="content">
+  <div class="columns">
+    <div class="column is-three-fifths is-offset-one-fifth">
+
+      <table class="table">
+        <thead class="thead">
+          <th scope="col">Nom de la sortie</th>
+          <th scope="col">Date de la sortie</th>
+          <th scope="col">Clotûre</th>
+          <th scope="col">Inscrits/places</th>
+          <th scope="col">Etat</th>
+          <th scope="col">Inscrit</th>
+          <th scope="col">Organisateur</th>
+          <th scope="col">Actions</th>
+        </thead>
+        {% for sortie in sorties %}
+        <tbody>
+          <td> {{ sortie.name }} </td>
+          <td> {{ sortie.startDate | date('Y-m-d')}} </td>
+          <td> {{  sortie.subLimitDate | date('Y-m-d')}} </td>
+          <td>  nombre de participant ?/ {{ sortie.maxSubscription }} </td>
+          <td> {{ sortie.state.label }}</td>
+          <td>  Inscrit ?</td>
+          <td> {{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
+          <td> S'inscrire  </td>
+        </tbody>
+        {% endfor %}
+      </table>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

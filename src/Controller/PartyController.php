@@ -7,6 +7,7 @@ use App\Form\PartyType;
 use App\Repository\EtatRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SiteRepository;
+use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,6 +45,16 @@ class PartyController extends AbstractController
 
         return $this->render('party/add.html.twig', [
             'partyForm' => $partyForm->createView()
+        ]);
+    }
+
+    #[Route('/list', name: 'list')]
+    public function list(SortieRepository $sortieRepository): Response
+    {
+        $sorties = $sortieRepository->findAll();
+
+        return $this->render('party/list.html.twig', [
+            'sorties' => $sorties,
         ]);
     }
 }

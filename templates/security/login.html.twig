@@ -4,28 +4,46 @@
 
 {% block body %}
 <form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+{#    {% if error %}#}
+{#        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>#}
+{#    {% endif %}#}
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-        </div>
-    {% endif %}
+{#    {% if app.user %}#}
+{#        <div class="mb-3">#}
+{#            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>#}
+{#        </div>#}
+{#    {% endif %}#}
 
     <h1 class="is-size-1 has-text-centered">Connexion</h1>
 
-    <div class="container">
-        <label for="inputMail">Adresse mail :</label>
-        <input type="text" value="{{ last_username }}" name="mail" id="inputMail" class="form-control" autocomplete="username" required autofocus>
-        <label for="inputPassword">Mot de passe :</label>
-        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+        <div class="content">
+            <div class="columns">
+                <div class="column is-three-fifths is-offset-one-fifth">
 
-        <input type="hidden" name="_csrf_token"
-               value="{{ csrf_token('authenticate') }}"
-        >
-    </div>
+                    <div class="field">
+                        <label class="label" for="inputMail">Adresse mail :</label>
+                        <input class="input" type="text" value="{{ last_username }}" name="mail" id="inputMail" autocomplete="username" required autofocus>
+                    </div>
+
+                    <div class="field">
+                        <label class="label" for="inputPassword">Mot de passe :</label>
+                        <input class="input" type="password" name="password" id="inputPassword" autocomplete="current-password" required>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token"
+                           value="{{ csrf_token('authenticate') }}"
+                    >
+
+
+                    <div class="has-text-centered">
+                        <button class="btn btn-lg btn-primary button is-info" type="submit">
+                            Se connecter
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
     {#
         Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
@@ -38,8 +56,6 @@
         </div>
     #}
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Se connecter
-    </button>
+
 </form>
 {% endblock %}

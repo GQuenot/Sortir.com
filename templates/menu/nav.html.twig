@@ -1,7 +1,7 @@
-<nav class="navbar" role="navigation" aria-label="main navigation">
+<nav class="navbar is-link" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item is-size-4" href="#">
-            Sites.com
+            Sortir.com
         </a>
 
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -32,15 +32,27 @@
                     Profil
                 </a>
 
-                <div class="navbar-item">
-                        <a class="navbar-item" href="{{ path('app_logout') }}" title="Logout">Logout ({{ app.user.firstname | capitalize }})</a>
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <a class="button is-light" href="{{ path('app_logout') }}">
+                                    <span>Logout ({{ app.user.username }})</span>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         {% else %}
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="navbar-item" href="{{ path('app_login') }}" title="Login">Login</a>
+                    <div class="field is-grouped">
+                        <p class="control">
+                            <a class="button is-light" href="{{ path('app_login') }}">
+                                <span>Login</span>
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>

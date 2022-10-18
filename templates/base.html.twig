@@ -12,9 +12,33 @@
         </header>
 
         <main>
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                <div class="columns">
+                    <div class="column is-4 is-offset-8" style="position: absolute;">
+                        <div class="notification is-{{ label }}">
+                            <button class="delete"></button>
+                            {{ message }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endfor %}
+
             {% block body %}{% endblock %}
         </main>
 
     {% block extraJs %}{% endblock %}
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                    const $notification = $delete.parentNode;
+
+                    $delete.addEventListener('click', () => {
+                        $notification.parentNode.removeChild($notification);
+                    });
+                });
+            });
+        </script>
     </body>
 </html>

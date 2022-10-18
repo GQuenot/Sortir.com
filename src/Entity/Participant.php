@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ParticipantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -47,6 +49,18 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
+
+    #[ORM\OneToMany(mappedBy: 'organizer', targetEntity: Sortie::class)]
+    private Collection $organizedParties;
+
+    #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
+    private Collection $parties;
+
+    public function __construct()
+    {
+        $this->organizedParties = new ArrayCollection();
+        $this->parties = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -205,6 +219,63 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getOrganizedParties(): Collection
+    {
+        return $this->organizedParties;
+    }
+
+    public function addOrganizedParty(Sortie $organizedParty): self
+    {
+        if (!$this->organizedParties->contains($organizedParty)) {
+            $this->organizedParties->add($organizedParty);
+            $organizedParty->setOrganizer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganizedParty(Sortie $organizedParty): self
+    {
+        if ($this->organizedParties->removeElement($organizedParty)) {
+            // set the owning side to null (unless already changed)
+            if ($organizedParty->getOrganizer() === $this) {
+                $organizedParty->setOrganizer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getParties(): Collection
+    {
+        return $this->parties;
+    }
+
+    public function addParty(Sortie $party): self
+    {
+        if (!$this->parties->contains($party)) {
+            $this->parties->add($party);
+            $party->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParty(Sortie $party): self
+    {
+        if ($this->parties->removeElement($party)) {
+            $party->removeParticipant($this);
+        }
 
         return $this;
     }

@@ -25,6 +25,9 @@
                         <a class="navbar-item" href="{{ path('party_add') }}">
                             Nouvelle
                         </a>
+                        <a class="navbar-item" href="{{ path('party_list') }}">
+                            Liste des sorties
+                        </a>
                     </div>
                 </div>
 
@@ -33,7 +36,7 @@
                 </a>
 
                 <div class="navbar-item">
-                        <a class="navbar-item" href="{{ path('app_logout') }}" title="Logout">Logout ({{ app.user.firstname | capitalize }})</a>
+                        <a class="navbar-item" href="{{ path('app_logout') }}" title="Logout">Se déconnecter</a>
                 </div>
             </div>
         {% else %}

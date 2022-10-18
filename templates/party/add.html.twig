@@ -107,9 +107,10 @@
                 </div>
             </div>
 
-            <div class="has-text-centered">
-                <button class="button is-info">Enregistrer</button>
-            </div>
+        <div class="has-text-centered">
+            {{ form_widget(partyForm.save, {'attr': {'class': 'button is-info'}}) }}
+            {{ form_widget(partyForm.publish, {'attr': {'class': 'button is-info'}}) }}
+        </div>
 
             {{ form_end(partyForm) }}
         </div>

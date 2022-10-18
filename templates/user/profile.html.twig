@@ -6,11 +6,77 @@
 
 {% block body %}
 
-    <div class="field">
-        <label class="label">Name</label>
-        <div class="control">
-            <input class="input" type="text" placeholder="Text input">
+    <h1 class="is-size-1 has-text-centered">Modifier mon profil</h1>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+
+                {{ form_start(participantForm) }}
+
+                <div class="field">
+                    <label class="label">Email</label>
+                    <div class="control">
+                        {{ form_widget(participantForm.email, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Nom</label>
+                    <div class="control">
+                        {{ form_widget(participantForm.lastname, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Prénom</label>
+                    <div class="control">
+                        {{ form_widget(participantForm.firstname, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Pseudo</label>
+                    <div class="control">
+                        {{ form_widget(participantForm.pseudo, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Téléphone</label>
+                    <div class="control">
+                        {{ form_widget(participantForm.phone, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <label class="label" for="site">Site</label>
+                <div class="select" id="site">
+                    {{ form_widget(participantForm.site, {'attr': {'class': 'select'}}) }}
+                </div>
+
+                <div class="field">
+                    <label class="label">Mot de passe</label>
+                    <div class="control">
+                        {{ form_widget(participantForm.plainPassword.first, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Confirmation du mot de passe</label>
+                    <div class="control">
+                        {{ form_widget(participantForm.plainPassword.second, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="has-text-centered">
+                    <button class="button is-info">Mettre à jour</button>
+                </div>
+
+                {{ form_end(participantForm) }}
+
+            </div>
         </div>
     </div>
+
 
 {% endblock %}

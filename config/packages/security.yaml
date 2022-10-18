@@ -19,7 +19,7 @@ security:
                 secret: '%kernel.secret%' #required
                 lifetime: 604800 # 1 week inseconds
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
             custom_authenticator : App\Security\AppAuthenticator
             logout:
                 path: app_logout

@@ -18,7 +18,7 @@ class ParticipantController extends AbstractController
     #[Route('/', name: 'profile')]
     public function profile(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, ParticipantRepository $participantRepository, SiteRepository $siteRepository): Response
     {
-        $participant = $participantRepository->findOneBy(['email' => 'nom.prenom@email.maileuh']);
+        $participant = $participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
 
         $participantForm = $this->createForm(ParticipantType::class, $participant);
 

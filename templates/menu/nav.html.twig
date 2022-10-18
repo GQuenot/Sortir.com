@@ -16,6 +16,9 @@
 
         {% if app.user %}
             <div class="navbar-end">
+                <a class="navbar-item" href="{{ path('party_add') }}">
+                    Sortie
+                </a>
                 <a class="navbar-item" href="{{ path('participant_profile') }}">
                     Profil
                 </a>

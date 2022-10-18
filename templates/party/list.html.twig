@@ -33,9 +33,13 @@
           <td> {{ sortie.name }} </td>
           <td> {{ sortie.startDate | date('Y-m-d')}} </td>
           <td> {{  sortie.subLimitDate | date('Y-m-d')}} </td>
-          <td>  nombre de participant ?/ {{ sortie.maxSubscription }} </td>
+          <td>  {{ sortie.participants.count }} / {{ sortie.maxSubscription }} </td>
           <td> {{ sortie.state.label }}</td>
-          <td>  Inscrit ?</td>
+          {%  if app.user in sortie.participants %}
+            <td> Oui</td>
+          {% else %}
+            <td>Non </td>
+          {% endif %}
           <td> {{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
           <td> S'inscrire  </td>
         </tbody>

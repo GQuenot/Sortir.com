@@ -26,7 +26,7 @@ class PartyController extends AbstractController
 
         if ($partyForm->isSubmitted() && $partyForm->isValid()) {
 
-            $organizer = $participantRepository->findOneBy(['email' => 'kvincent@orange.fr']); //$this->getUser()->getUserIdentifier()
+            $organizer = $participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
             $site = $siteRepository->findOneBy(['id' => $organizer]);
             $state = $etatRepository->findOneBy(['label' => 'Créée']);
 

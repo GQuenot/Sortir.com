@@ -25,6 +25,9 @@
                         <a class="navbar-item" href="{{ path('party_add') }}">
                             Nouvelle
                         </a>
+                        <a class="navbar-item" href="{{ path('party_list') }}">
+                            Liste des sorties
+                        </a>
                     </div>
                 </div>
 
@@ -32,16 +35,8 @@
                     Profil
                 </a>
 
-                <div class="navbar-end">
-                    <div class="navbar-item">
-                        <div class="field is-grouped">
-                            <p class="control">
-                                <a class="button is-light" href="{{ path('app_logout') }}">
-                                    <span>Logout ({{ app.user.username }})</span>
-                                </a>
-                            </p>
-                        </div>
-                    </div>
+                <div class="navbar-item">
+                        <a class="navbar-item" href="{{ path('app_logout') }}" title="Logout">Se déconnecter</a>
                 </div>
             </div>
         {% else %}

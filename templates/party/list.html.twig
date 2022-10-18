@@ -5,12 +5,18 @@
 {% endblock %}
 
 {% block body %}
-<h1 class="is-size-1 has-text-centered"></h1>
 
 <div class="content">
+
+  <div class="column is-1 is-offset-11">
+    <div class="content is-medium">
+      <p>{{ date() | date('d/m/Y') }}</p>
+      <p> {{ app.user.firstname }} {{ app.user.lastname }}</p>
+    </div>
+  </div>
+
   <div class="columns">
     <div class="column is-three-fifths is-offset-one-fifth">
-
       <table class="table">
         <thead class="thead">
           <th scope="col">Nom de la sortie</th>
@@ -27,14 +33,24 @@
           <td> {{ sortie.name }} </td>
           <td> {{ sortie.startDate | date('Y-m-d')}} </td>
           <td> {{  sortie.subLimitDate | date('Y-m-d')}} </td>
-          <td>  nombre de participant ?/ {{ sortie.maxSubscription }} </td>
+          <td>  {{ sortie.participants.count }} / {{ sortie.maxSubscription }} </td>
           <td> {{ sortie.state.label }}</td>
-          <td>  Inscrit ?</td>
+          {%  if app.user in sortie.participants %}
+            <td> Oui</td>
+          {% else %}
+            <td>Non </td>
+          {% endif %}
           <td> {{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
           <td> S'inscrire  </td>
         </tbody>
         {% endfor %}
       </table>
+
+
+      <button class="button is-info">
+        <a href="{{ path('party_add') }}">Créer une sortie</a>
+       </button>
+
 
     </div>
   </div>

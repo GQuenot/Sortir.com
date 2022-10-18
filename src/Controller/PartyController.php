@@ -69,6 +69,7 @@ class PartyController extends AbstractController
     #[Route('/list', name: 'list')]
     public function list(SortieRepository $sortieRepository): Response
     {
+
         $sorties = $sortieRepository->findAll();
 
         return $this->render('party/list.html.twig', [

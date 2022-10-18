@@ -8,10 +8,9 @@
     <h1 class="is-size-1 has-text-centered">Nouvelle sortie</h1>
 
     <div class="content">
+        {{ form_start(partyForm) }}
         <div class="columns">
-            <div class="column is-three-fifths is-offset-one-fifth">
-
-                {{ form_start(partyForm) }}
+            <div class="column">
 
                 <div class="field">
                     <label class="label">Nom de la sortie</label>
@@ -55,18 +54,95 @@
                     </div>
                 </div>
 
-                <label class="label" for="lieu">Lieu</label>
-                <div class="select" id="lieu">
-                    {{ form_widget(partyForm.place) }}
-                </div>
+            </div>
+            <div class="column">
 
                 <div class="has-text-centered">
-                    <button class="button is-info">Enregistrer</button>
+                    <label class="label" for="lieu">Lieu</label>
+                    <div class="select">
+                        {{ form_widget(partyForm.place) }}
+                    </div>
                 </div>
 
-                {{ form_end(partyForm) }}
+                <nav class="level py-5">
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">Rue</p>
+                            <p class="title is-size-4" id="street"></p>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">Code postal</p>
+                            <p class="title is-size-4" id="zip">123</p>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">Ville</p>
+                            <p class="title is-size-4" id="city"></p>
+                        </div>
+                    </div>
+                </nav>
+
+                <nav class="level">
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">Latitude</p>
+                            <p class="title is-size-4" id="latitude"></p>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">Longitude</p>
+                            <p class="title is-size-4" id="longitude"></p>
+                        </div>
+                    </div>
+                </nav>
 
             </div>
         </div>
+
+        <div class="has-text-centered">
+            <button class="button is-info">Enregistrer</button>
+        </div>
+
+        {{ form_end(partyForm) }}
     </div>
+{% endblock %}
+
+{% block extraJs %}
+    <script>
+        const selectPlaces = document.getElementById('party_place');
+        const cityElem = document.getElementById('city');
+        const streetElem = document.getElementById('street');
+        const zipElem = document.getElementById('zip');
+        const latitudeElem = document.getElementById('latitude');
+        const longitudeElem = document.getElementById('longitude');
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            loadInformations();
+
+            selectPlaces.addEventListener('change', () => {
+
+                loadInformations();
+            });
+        });
+
+        const loadInformations = async () => {
+
+            await fetch(`{{ path('api_place_get_all') }}${selectPlaces.options[selectPlaces.selectedIndex].value}`).then(responses => {
+                responses.json().then(place => {
+
+                    cityElem.textContent = place.town.name;
+                    streetElem.textContent = place.street;
+                    zipElem.textContent = place.town.postalCode;
+                    latitudeElem.textContent = place.latitude;
+                    longitudeElem.textContent = place.longitude;
+                });
+            });
+        };
+
+    </script>
 {% endblock %}

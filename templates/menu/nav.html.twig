@@ -16,15 +16,25 @@
 
         {% if app.user %}
             <div class="navbar-end">
-                <a class="navbar-item" href="{{ path('party_add') }}">
-                    Sortie
-                </a>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        Sortie
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="{{ path('party_add') }}">
+                            Nouvelle
+                        </a>
+                    </div>
+                </div>
+
                 <a class="navbar-item" href="{{ path('participant_profile') }}">
                     Profil
                 </a>
+
                 <div class="navbar-item">
                     <div class="buttons">
-                        <a class="button is-light">
+                        <a class="button is-light" href="{{ path('app_logout') }}">
                             Log out
                         </a>
                     </div>

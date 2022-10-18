@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: VilleRepository::class)]
 class Ville
@@ -17,9 +18,11 @@ class Ville
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['place_group'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: '0')]
+    #[Groups(['place_group'])]
     private ?string $postalCode = null;
 
     #[ORM\OneToMany(mappedBy: 'town', targetEntity: Lieu::class)]

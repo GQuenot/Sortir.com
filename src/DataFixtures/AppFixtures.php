@@ -6,10 +6,26 @@ use App\Entity\Participant;
 use App\Entity\Site;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
+use Faker\Generator;
 use Faker;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+
 
 class AppFixtures extends Fixture
 {
+
+    private UserPasswordHasherInterface $userPasswordHasher;
+
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
+    {
+        $this->userPasswordHasher = $userPasswordHasher;
+        $this->generator = Factory::create('fr_FR');
+    }
+
+
+
     public function load(ObjectManager $manager): void
     {
         // $product = new Product();
@@ -33,7 +49,7 @@ class AppFixtures extends Fixture
             $participant[$i]->setEmail($faker->email);
             $participant[$i]->setFirstname($faker->firstName);
             $participant[$i]->setLastname($faker->lastname);
-            $participant[$i]->setPassword('123456');
+            $participant[$i]->setPassword($this->userPasswordHasher->hashPassword($participant[$i], 'toto'));
             $participant[$i]->setPhone($faker->phoneNumber);
             $participant[$i]->setActive(1);
             $participant[$i]->setRoles(["ROLE_USER"]);

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | detail sortie {{ sortie.name }}
+{% endblock %}
+
+{% block body %}
+
+<h1 class="is-size-1 has-text-centered my-5">Détail de la sortie</h1>
+
+<div class="container">
+    <div class="content">
+        <div class="columns is-center">
+            <div class="column is-half">
+                <p><strong>Nom de la sortie :</strong> {{ sortie.name }}</p>
+                <p><strong> Date et heure de la sortie :  </strong> {{ sortie.startDate | date('d-m-Y') }} à {{ sortie.startDate | date('H:i:s') }} </p>
+                <p><strong> Date limite d'inscription :  </strong> {{ sortie.subLimitDate | date('d-m-Y') }}</p>
+                <p><strong>Nombre de places :  </strong> {{  sortie.maxSubscription }}</p>
+                <p><strong>Durée : </strong> {{ sortie.duration}} minutes </p>
+                <p><strong>Description et infos :  </strong> {{ sortie.informations }} </p>
+            </div>
+            <div class="column is-half">
+                <p><strong>lieu :  </strong> {{ sortie.place.name }}</p>
+                <p><strong>Rue :  </strong> {{ sortie.place.street }}</p>
+                <p><strong>Ville :  </strong> {{ sortie.place.town.name }}</p>
+                <p><strong>Code postal :  </strong> {{ sortie.place.town.postalCode }}</p>
+                <p><strong>Latitude :  </strong> {{  sortie.place.latitude }}</p>
+                <p><strong>Longitude :  </strong> {{ sortie.place.longitude}}  </p>
+            </div>
+        </div>
+
+        <div class="columns is-center">
+            <div class="column is-half">
+                <h2>Participant.e.s</h2>
+                <table class="table">
+                    <thead class="thead">
+                    <th scope="col">Pseudo</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
+                    </thead>
+                    {% for user in sortie.participants %}
+                        <tbody>
+                        <td> {{ app.user.pseudo }} </td>
+                        <td> {{ app.user.lastname }} </td>
+                        <td> {{ app.user.firstname }} </td>
+                        </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

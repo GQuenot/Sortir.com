@@ -6,7 +6,7 @@
 
 {% block body %}
 
-    <h1 class="is-size-1 has-text-centered">Modifier mon profil</h1>
+    <h1 class="is-size-1 has-text-centered py-5">Modifier mon profil</h1>
 
     <div class="content">
         <div class="columns">
@@ -52,6 +52,14 @@
                 <label class="label" for="site">Site</label>
                 <div class="select is-fullwidth" id="site">
                     {{ form_widget(participantForm.site, {'attr': {'class': 'select'}}) }}
+                </div>
+
+                <div class="py-5">
+                    <article class="message is-info">
+                        <div class="message-body">
+                        Si vous souhaitez modifier votre mot de passe, saisissez votre nouveau mot de passe. Sinon, laissez les champs vides.
+                        </div>
+                    </article>
                 </div>
 
                 <div class="field">

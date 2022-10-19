@@ -1,20 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}
+    {{ parent() }} | Connexion
+{% endblock %}
 
 {% block body %}
 <form method="post">
-{#    {% if error %}#}
-{#        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>#}
-{#    {% endif %}#}
 
-{#    {% if app.user %}#}
-{#        <div class="mb-3">#}
-{#            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>#}
-{#        </div>#}
-{#    {% endif %}#}
-
-    <h1 class="is-size-1 has-text-centered">Connexion</h1>
+    <h1 class="is-size-1 has-text-centered py-5">Connexion</h1>
 
         <div class="content">
             <div class="columns">
@@ -30,9 +23,7 @@
                         <input class="input" type="password" name="password" id="inputPassword" autocomplete="current-password" required>
                     </div>
 
-                    <input type="hidden" name="_csrf_token"
-                           value="{{ csrf_token('authenticate') }}"
-                    >
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
                     <div class="checkbox mb-3">
                         <label>

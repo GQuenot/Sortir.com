@@ -6,51 +6,52 @@
 
 {% block body %}
 
-<div class="content">
+  <h1 class="is-size-1 has-text-centered my-5">Liste des sorties</h1>
 
-  <div class="column is-1 is-offset-11">
-    <div class="content is-medium">
-      <p>{{ date() | date('d/m/Y') }}</p>
-      <p> {{ app.user.firstname }} {{ app.user.lastname }}</p>
+  <div class="content">
+
+    <div class="columns mb-5">
+      <div class="column is-size-4 has-text-centered">
+        <p>Date du jour : {{ 'now' | date('j F Y') | format_date(locale='fr') }}</p>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="column is-three-fifths is-offset-one-fifth">
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th><abbr title="Nom de la sortie">Nom</abbr></th>
+                <th><abbr title="Date de la sortie">Date</abbr></th>
+                <th>Clotûre</th>
+                <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
+                <th>Etat</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for sortie in sorties %}
+              <tr>
+                <td>{{ sortie.name }}</td>
+                <td>{{ sortie.startDate | date('j F Y') | format_date(locale='fr') }}</td>
+                <td>{{  sortie.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
+                <td>{{ sortie.participants.count }} / {{ sortie.maxSubscription }}</td>
+                <td>{{ sortie.state.label }}</td>
+                <td>{{ app.user in sortie.participants ? 'Oui' : 'Non' }}</td>
+                <td>{{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
+                <td>S'inscrire</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+
+          <div class="has-text-centered">
+            <a href="{{ path('party_add') }}" class="button is-info">Créer une sortie</a>
+          </div>
+      </div>
     </div>
   </div>
-
-  <div class="columns">
-    <div class="column is-three-fifths is-offset-one-fifth">
-      <table class="table is-hoverable">
-        <thead class="thead">
-          <th scope="col">Nom de la sortie</th>
-          <th scope="col">Date de la sortie</th>
-          <th scope="col">Clotûre</th>
-          <th scope="col">Inscrits/places</th>
-          <th scope="col">Etat</th>
-          <th scope="col">Inscrit</th>
-          <th scope="col">Organisateur</th>
-          <th scope="col">Actions</th>
-        </thead>
-        {% for sortie in sorties %}
-        <tbody>
-          <td> {{ sortie.name }} </td>
-          <td> {{ sortie.startDate | date('Y-m-d')}} </td>
-          <td> {{  sortie.subLimitDate | date('Y-m-d')}} </td>
-          <td> {{ sortie.participants.count }} / {{ sortie.maxSubscription }} </td>
-          <td> {{ sortie.state.label }}</td>
-          {%  if app.user in sortie.participants %}
-            <td> Oui</td>
-          {% else %}
-            <td>Non </td>
-          {% endif %}
-          <td> {{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
-          <td> S'inscrire <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a> </td>
-        </tbody>
-        {% endfor %}
-      </table>
-
-      <button class="button is-info">
-        <a class="is-info" href="{{ path('party_add') }}">Créer une sortie</a>
-       </button>
-
-    </div>
-  </div>
-</div>
 {% endblock %}

@@ -32,6 +32,10 @@ class SortieRepository extends ServiceEntityRepository
 
     public function remove(Sortie $entity, bool $flush = false): void
     {
+        foreach ($entity->getParticipants() as $participant) {
+            $entity->removeParticipant($participant);
+        }
+
         $this->getEntityManager()->remove($entity);
 
         if ($flush) {

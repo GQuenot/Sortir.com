@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Sortie;
 use App\Form\PartyType;
-use App\Repository\EtatRepository;
-use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Services\PartyService;
-use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +19,7 @@ class PartyController extends AbstractController
 {
 
     public function __construct(private PartyService $partyService,
-                                private SortieRepository $sortieRepository,
-                                private ParticipantRepository $participantRepository,
-                                private EntityManagerInterface $entityManager)
+                                private SortieRepository $sortieRepository)
     {
     }
 
@@ -30,7 +27,15 @@ class PartyController extends AbstractController
     public function add(Request $request): Response
     {
         $party = new Sortie();
-        return $this->saveParty($party, $request);
+        $partyForm = $this->saveParty($party, $request);
+
+        if ($partyForm->isSubmitted() && $partyForm->isValid()) {
+            return $this->redirectToRoute('party_list');
+        }
+
+        return $this->render('party/add.html.twig', [
+            'partyForm' => $partyForm->createView()
+        ]);
     }
 
     #[Route('/edit/{id}', name: 'edit')]
@@ -40,35 +45,65 @@ class PartyController extends AbstractController
 
         if($party->getState()->getLabel() != $this->getParameter('app.states')['created']) {
             $this->addFlash('warning', 'Une demande déja publiée ne peut être modifiée');
-            return $this->redirectToRoute('party_add');
-
-            //throw new Exception('Une demande déjà publiée ne peut être modifiée');
+            return $this->redirectToRoute('party_list');
         }
 
-        return $this->saveParty($party, $request);
+        $partyForm = $this->saveParty($party, $request);
+
+        if ($partyForm->isSubmitted() && $partyForm->isValid()) {
+            return $this->redirectToRoute('party_list');
+        }
+
+        return $this->render('party/edit.html.twig', [
+            'partyForm' => $partyForm->createView(),
+            'party' => $party
+        ]);
     }
 
     /**
      * @param Sortie $party
      * @param Request $request
-     * @return RedirectResponse|Response
+     * @return RedirectResponse
      */
-    public function saveParty(Sortie $party, Request $request): Response|RedirectResponse
+    public function saveParty(Sortie $party, Request $request) : FormInterface|RedirectResponse
     {
         $partyForm = $this->createForm(PartyType::class, $party);
 
         $partyForm->handleRequest($request);
 
         if ($partyForm->isSubmitted() && $partyForm->isValid()) {
-            $this->partyService->saveParty($party, $partyForm->get('save')->isClicked());
-            $this->addFlash('success', 'La sortie a bien été enregistrée.');
-
-            return $this->redirectToRoute('party_add');
+            $response = $this->partyService->saveParty($party, $partyForm->get('publish')->isClicked());
+            $this->addFlash($response['code'], $response['message']);
         }
 
-        return $this->render('party/add.html.twig', [
-            'partyForm' => $partyForm->createView()
-        ]);
+        return $partyForm;
+    }
+
+    #[Route('/publish/{partyId}', name: 'publish')]
+    public function publish(int $partyId, Request $request): Response
+    {
+        $party = $this->sortieRepository->find($partyId);
+
+        if($party->getState()->getLabel() != $this->getParameter('app.states')['created']) {
+            $this->addFlash('warning', 'La sortie à déja été publiée');
+        }
+
+        $response = $this->partyService->publish($party);
+        $this->addFlash($response['code'], $response['message']);
+
+        return $this->redirectToRoute('party_list');
+    }
+
+    #[Route('/delete/{activityId}', name: 'delete')]
+    public function delete(int $activityId): RedirectResponse
+    {
+        $activity = $this->sortieRepository->find($activityId);
+
+        $this->sortieRepository->remove($activity, true);
+
+        $this->addFlash('success', 'la sortie a bien été supprimée');
+
+        return $this->redirectToRoute('party_list');
     }
 
     #[Route('/list', name: 'list')]
@@ -96,20 +131,8 @@ class PartyController extends AbstractController
             return $this->redirectToRoute('party_list');
         }
 
-        // Add the participant to the party
-        $participant = $this->participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
-
-        $party->addParticipant($participant);
-
-        $this->entityManager->persist($party);
-        $this->entityManager->flush();
-
-        $this->addFlash('success', 'Inscription reussie');
-
-        // If the max subscription is hit, the party is closed
-        if($party->getParticipants()->count() >= $party->getMaxSubscription()) {
-            $this->partyService->CloseSubscription($party);
-        }
+        $response = $this->partyService->addParticipant($party);
+        $this->addFlash($response['code'], $response['message']);
 
         return $this->redirectToRoute('party_list');
     }

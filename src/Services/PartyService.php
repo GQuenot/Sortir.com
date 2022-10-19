@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Entity\Sortie;
+use App\Entity\Activity;
 use App\Repository\EtatRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SiteRepository;
@@ -25,7 +25,7 @@ class PartyService
         $this->security = $security;
     }
 
-    public function saveParty(Sortie $party, Bool $save) {
+    public function saveParty(Activity $party, Bool $save) {
         $organizer = $this->participantRepository->findOneBy(['email' => $this->security->getUser()->getUserIdentifier()]);
         $site = $this->siteRepository->find($organizer);
 

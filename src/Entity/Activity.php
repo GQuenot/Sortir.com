@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\SortieRepository;
+use App\Repository\ActivityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SortieRepository::class)]
-class Sortie
+#[ORM\Entity(repositoryClass: ActivityRepository::class)]
+class Activity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,7 +20,7 @@ class Sortie
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $startDate = null;
+    private ?\DateTimeInterface $activityDate = null;
 
     #[ORM\Column]
     private ?int $duration = null;
@@ -29,7 +29,7 @@ class Sortie
     private ?\DateTimeInterface $subLimitDate = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $maxSubscription = null;
+    private ?int $placeLimit = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $informations = null;
@@ -74,14 +74,14 @@ class Sortie
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getActivityDate(): ?\DateTimeInterface
     {
-        return $this->startDate;
+        return $this->activityDate;
     }
 
-    public function setStartDate(\DateTimeInterface $startDate): self
+    public function setActivityDate(\DateTimeInterface $activityDate): self
     {
-        $this->startDate = $startDate;
+        $this->activityDate = $activityDate;
 
         return $this;
     }
@@ -110,14 +110,14 @@ class Sortie
         return $this;
     }
 
-    public function getMaxSubscription(): ?int
+    public function getPlaceLimit(): ?int
     {
-        return $this->maxSubscription;
+        return $this->placeLimit;
     }
 
-    public function setMaxSubscription(?int $maxSubscription): self
+    public function setPlaceLimit(?int $placeLimit): self
     {
-        $this->maxSubscription = $maxSubscription;
+        $this->placeLimit = $placeLimit;
 
         return $this;
     }

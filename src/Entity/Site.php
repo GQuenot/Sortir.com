@@ -21,7 +21,7 @@ class Site
     #[ORM\OneToMany(mappedBy: 'sites', targetEntity: Participant::class)]
     private Collection $participants;
 
-    #[ORM\OneToMany(mappedBy: 'site', targetEntity: Sortie::class)]
+    #[ORM\OneToMany(mappedBy: 'site', targetEntity: Activity::class)]
     private Collection $parties;
 
     public function __construct()
@@ -78,14 +78,14 @@ class Site
     }
 
     /**
-     * @return Collection<int, Sortie>
+     * @return Collection<int, Activity>
      */
     public function getParties(): Collection
     {
         return $this->parties;
     }
 
-    public function addParty(Sortie $party): self
+    public function addParty(Activity $party): self
     {
         if (!$this->parties->contains($party)) {
             $this->parties->add($party);
@@ -95,7 +95,7 @@ class Site
         return $this;
     }
 
-    public function removeParty(Sortie $party): self
+    public function removeParty(Activity $party): self
     {
         if ($this->parties->removeElement($party)) {
             // set the owning side to null (unless already changed)

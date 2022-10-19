@@ -33,7 +33,7 @@ class Lieu
     #[Groups(['place_group'])]
     private ?float $longitude = null;
 
-    #[ORM\OneToMany(mappedBy: 'place', targetEntity: Sortie::class)]
+    #[ORM\OneToMany(mappedBy: 'place', targetEntity: Activity::class)]
     private Collection $parties;
 
     #[ORM\ManyToOne(inversedBy: 'places')]
@@ -100,14 +100,14 @@ class Lieu
     }
 
     /**
-     * @return Collection<int, Sortie>
+     * @return Collection<int, Activity>
      */
     public function getParties(): Collection
     {
         return $this->parties;
     }
 
-    public function addParty(Sortie $party): self
+    public function addParty(Activity $party): self
     {
         if (!$this->parties->contains($party)) {
             $this->parties->add($party);
@@ -117,7 +117,7 @@ class Lieu
         return $this;
     }
 
-    public function removeParty(Sortie $party): self
+    public function removeParty(Activity $party): self
     {
         if ($this->parties->removeElement($party)) {
             // set the owning side to null (unless already changed)

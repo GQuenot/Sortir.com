@@ -27,7 +27,6 @@ class PartyService
 
     public function saveParty(Sortie $party, Bool $save) {
         $organizer = $this->participantRepository->findOneBy(['email' => $this->security->getUser()->getUserIdentifier()]);
-        $site = $this->siteRepository->find($organizer);
 
         $stateLabel = 'Ouverte';
         if($save) {
@@ -38,7 +37,7 @@ class PartyService
 
         $party->setOrganizer($organizer)
             ->setState($state)
-            ->setSite($site);
+            ->setSite($organizer->getSite());
 
         $this->entityManager->persist($party);
         $this->entityManager->flush();

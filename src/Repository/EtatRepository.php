@@ -39,6 +39,15 @@ class EtatRepository extends ServiceEntityRepository
         }
     }
 
+    public function cancel(Etat $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
 //    /**
 //     * @return Etat[] Returns an array of Etat objects
 //     */

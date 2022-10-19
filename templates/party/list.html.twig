@@ -41,7 +41,13 @@
             <td>Non </td>
           {% endif %}
           <td> {{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
-          <td> S'inscrire <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a> </td>
+          {% if app.user == sortie.organizer %}
+            <td><a class="is-info" href="{{ path('party_cancel', {'id': sortie.id}) }}">Annuler</a>
+              <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a>
+            </td>
+          {% else %}
+            <td> S'inscrire <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a> </td>
+          {% endif %}
         </tbody>
         {% endfor %}
       </table>

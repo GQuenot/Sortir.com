@@ -4,8 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Sortie;
 use App\Form\PartyType;
+use App\Repository\EtatRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Services\PartyService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,10 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/party', name: 'party_')]
 class PartyController extends AbstractController
 {
-    private PartyService $partyService;
+    public function __construct(private PartyService $partyService,
+                                private SortieRepository $sortieRepository,
+                                private ParticipantRepository $participantRepository,
+                                private EntityManagerInterface $entityManager,
+                                private EtatRepository $etatRepository
+    )
+    {
 
-    public function __construct(PartyService $partyService) {
-        $this->partyService = $partyService;
     }
 
     #[Route('/add', name: 'add')]
@@ -41,6 +48,23 @@ class PartyController extends AbstractController
         }
 
         return $this->saveParty($party, $request);
+    }
+
+    #[Route('/cancel/{id}', name: 'cancel', requirements: ['id' =>'\d+'])]
+    public function cancelParty(SortieRepository $sortieRepository, int $id): Response
+    {
+        $party = $sortieRepository->find($id);
+        $state = $this->etatRepository->findOneBy(['label' => 'Annulée']);
+
+//        if(){
+//
+//        }
+        $party->setState($state);
+        $this->entityManager->persist($party);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Sortie annulée avec succeès');
+        return $this->redirectToRoute('party_list');
     }
 
     /**
@@ -92,6 +116,7 @@ class PartyController extends AbstractController
             'sortie' => $sortie
         ]);
     }
+
 
 
 }

@@ -19,7 +19,7 @@ class Etat
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'state', targetEntity: Sortie::class)]
-    private ArrayCollection $sorties;
+    private Collection $sorties;
 
     public function __construct()
     {

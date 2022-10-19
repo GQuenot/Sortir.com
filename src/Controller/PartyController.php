@@ -76,4 +76,22 @@ class PartyController extends AbstractController
             'sorties' => $sorties,
         ]);
     }
+
+    #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
+    #[ParamConverter('sortie', class: 'App\Entity\Sortie')]
+    public function show(Sortie $sortie, SortieRepository $sortieRepository): Response
+    {
+
+//        //sans paramConverter
+//        $sortie = $sortieRepository->find($id);//
+//        if(!$serie){
+//            throw $this->createNotFoundException("Oops ! Serie not found !");
+//        }
+
+        return $this->render('party/detail.html.twig', [
+            'sortie' => $sortie
+        ]);
+    }
+
+
 }

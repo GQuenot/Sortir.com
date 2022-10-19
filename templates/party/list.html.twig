@@ -17,7 +17,7 @@
 
   <div class="columns">
     <div class="column is-three-fifths is-offset-one-fifth">
-      <table class="table">
+      <table class="table is-hoverable">
         <thead class="thead">
           <th scope="col">Nom de la sortie</th>
           <th scope="col">Date de la sortie</th>
@@ -33,7 +33,7 @@
           <td> {{ sortie.name }} </td>
           <td> {{ sortie.startDate | date('Y-m-d')}} </td>
           <td> {{  sortie.subLimitDate | date('Y-m-d')}} </td>
-          <td>  {{ sortie.participants.count }} / {{ sortie.maxSubscription }} </td>
+          <td> {{ sortie.participants.count }} / {{ sortie.maxSubscription }} </td>
           <td> {{ sortie.state.label }}</td>
           {%  if app.user in sortie.participants %}
             <td> Oui</td>
@@ -41,16 +41,14 @@
             <td>Non </td>
           {% endif %}
           <td> {{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
-          <td> S'inscrire  </td>
+          <td> S'inscrire <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a> </td>
         </tbody>
         {% endfor %}
       </table>
 
-
       <button class="button is-info">
-        <a href="{{ path('party_add') }}">Créer une sortie</a>
+        <a class="is-info" href="{{ path('party_add') }}">Créer une sortie</a>
        </button>
-
 
     </div>
   </div>

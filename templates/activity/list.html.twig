@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-{{ parent() }} | Show parties
+{{ parent() }} | Show activities
 {% endblock %}
 
 {% block body %}
 
-  <h1 class="is-size-1 has-text-centered my-5">Liste des sorties</h1>
+  <h1 class="is-size-1 has-text-centered my-5">Liste des activités</h1>
 
   <div class="content">
 
@@ -22,8 +22,8 @@
           <table class="table is-striped is-fullwidth">
             <thead>
               <tr>
-                <th><abbr title="Nom de la sortie">Nom</abbr></th>
-                <th><abbr title="Date de la sortie">Date</abbr></th>
+                <th><abbr title="Nom de la activity">Nom</abbr></th>
+                <th><abbr title="Date de la activity">Date</abbr></th>
                 <th>Clotûre</th>
                 <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
                 <th>Etat</th>
@@ -43,14 +43,21 @@
                 <td>{{ app.user in activity.participants ? 'Oui' : 'Non' }}</td>
                 <td><a class="is-info" href="{{ path('participant_detail', {'id': activity.organizer.id}) }}">{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</a></td>
                 <td>
+                  {% if app.user == activity.organizer %}
+                    <a href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
+                  {% else %}
                     <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
-                    {% if activity.state.label == states['open'] %}
-                        {% if app.user in activity.participants %}
-                            <a>Se désister</a>
-                        {% else %}
-                            <a href="{{ path('party_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
-                        {% endif %}
+                  {% endif%}
+
+                  {% if activity.state.label in [states['open'], states['closed']] %}
+                    {% if app.user == activity.organizer %}
+                      <a>Annuler</a>
+                    {% elseif app.user in activity.participants %}
+                      <a>Se désister</a>
+                    {% else %}
+                      <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
                     {% endif %}
+                  {% endif %}
                 </td>
               </tr>
             {% endfor %}
@@ -59,7 +66,7 @@
 
           {% if is_granted('ROLE_ORGA') %}
           <div class="has-text-centered">
-            <a href="{{ path('activity_add') }}" class="button is-info">Créer une sortie</a>
+            <a href="{{ path('activity_add') }}" class="button is-info">Créer une activity</a>
           </div>
           {% endif %}
       </div>

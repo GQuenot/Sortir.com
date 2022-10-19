@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="content">
+            {{ form_start(activityForm) }}
+            <div class="columns">
+                <div class="column">
+
+                    <div class="field">
+                        <label class="label">Nom de la activity</label>
+                        <div class="control">
+                            {{ form_widget(activityForm.name, {'attr': {'class': 'input'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Date de la activity</label>
+                        <div class="control">
+                            {{ form_widget(activityForm.activityDate, {'attr': {'class': 'input'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Date limite d'inscription</label>
+                        <div class="control">
+                            {{ form_widget(activityForm.subLimitDate, {'attr': {'class': 'input'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Nombre de places</label>
+                        <div class="control">
+                            {{ form_widget(activityForm.placeLimit, {'attr': {'class': 'input'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Durée (en minutes)</label>
+                        <div class="control">
+                            {{ form_widget(activityForm.duration, {'attr': {'class': 'input'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Description</label>
+                        <div class="control">
+                            {{ form_widget(activityForm.informations, {'attr': {'class': 'textarea'}}) }}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="column">
+
+                    <div class="has-text-centered mb-5">
+                        <label class="label" for="lieu">Lieu</label>
+                        <div class="select is-fullwidth">
+                            {{ form_widget(activityForm.place) }}
+                        </div>
+                    </div>
+
+                    <nav class="level py-5 p-5">
+                        <div class="level-item has-text-centered">
+                            <div>
+                                <p class="heading">Rue</p>
+                                <p class="title is-size-4" id="street"></p>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <nav class="level py-5 p-5">
+                        <div class="level-item has-text-centered">
+                            <div>
+                                <p class="heading">Code postal</p>
+                                <p class="title is-size-4" id="zip">123</p>
+                            </div>
+                        </div>
+                        <div class="level-item has-text-centered">
+                            <div>
+                                <p class="heading">Ville</p>
+                                <p class="title is-size-4" id="city"></p>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <nav class="level py-5 p-5">
+                        <div class="level-item has-text-centered">
+                            <div>
+                                <p class="heading">Latitude</p>
+                                <p class="title is-size-4" id="latitude"></p>
+                            </div>
+                        </div>
+                        <div class="level-item has-text-centered">
+                            <div>
+                                <p class="heading">Longitude</p>
+                                <p class="title is-size-4" id="longitude"></p>
+                            </div>
+                        </div>
+                    </nav>
+
+                </div>
+            </div>
+
+            <div class="has-text-centered">
+                {{ form_widget(activityForm.save, {'attr': {'class': 'button is-info'}}) }}
+                {{ form_widget(activityForm.publish, {'attr': {'class': 'button is-info'}}) }}
+                {% if activity is defined %}
+                    <a class="button is-info" href="{{ path('activity_delete', {'activityId' : activity.id })}}">Delete</a>
+                {% endif %}
+            </div>
+
+            {{ form_end(activityForm) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extraJs %}
+    <script>
+        const selectPlaces = document.getElementById('activity_place');
+        const cityElem = document.getElementById('city');
+        const streetElem = document.getElementById('street');
+        const zipElem = document.getElementById('zip');
+        const latitudeElem = document.getElementById('latitude');
+        const longitudeElem = document.getElementById('longitude');
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            loadInformations();
+
+            selectPlaces.addEventListener('change', () => {
+
+                loadInformations();
+            });
+        });
+
+        const loadInformations = async () => {
+
+            await fetch(`{{ path('api_place_get_all') }}${selectPlaces.options[selectPlaces.selectedIndex].value}`).then(responses => {
+                responses.json().then(place => {
+
+                    cityElem.textContent = place.city.name ? place.city.name : '...';
+                    streetElem.textContent = place.street ? place.street : '...';
+                    zipElem.textContent = place.city.postalCode ? place.city.postalCode : '...';
+                    latitudeElem.textContent = place.latitude ? place.latitude : '...';
+                    longitudeElem.textContent = place.longitude ? place.longitude : '...';
+                });
+            });
+        };
+
+    </script>
+{% endblock %}

@@ -34,7 +34,7 @@ class Activity
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $informations = null;
 
-    #[ORM\ManyToOne(inversedBy: 'activities')]
+    #[ORM\ManyToOne()]
     #[ORM\JoinColumn(nullable: false)]
     private ?State $state = null;
 

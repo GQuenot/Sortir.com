@@ -51,15 +51,15 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Site $site = null;
 
     #[ORM\OneToMany(mappedBy: 'organizer', targetEntity: Activity::class)]
-    private Collection $organizedParties;
+    private Collection $organizedActivities;
 
     #[ORM\ManyToMany(targetEntity: Activity::class, mappedBy: 'participants')]
-    private Collection $parties;
+    private Collection $activities;
 
     public function __construct()
     {
-        $this->organizedParties = new ArrayCollection();
-        $this->parties = new ArrayCollection();
+        $this->organizedActivities = new ArrayCollection();
+        $this->activities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -226,27 +226,27 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Activity>
      */
-    public function getOrganizedParties(): Collection
+    public function getOrganizedActivities(): Collection
     {
-        return $this->organizedParties;
+        return $this->organizedActivities;
     }
 
-    public function addOrganizedParty(Activity $organizedParty): self
+    public function addOrganizedactivity(Activity $organizedactivity): self
     {
-        if (!$this->organizedParties->contains($organizedParty)) {
-            $this->organizedParties->add($organizedParty);
-            $organizedParty->setOrganizer($this);
+        if (!$this->organizedActivities->contains($organizedactivity)) {
+            $this->organizedActivities->add($organizedactivity);
+            $organizedactivity->setOrganizer($this);
         }
 
         return $this;
     }
 
-    public function removeOrganizedParty(Activity $organizedParty): self
+    public function removeOrganizedactivity(Activity $organizedactivity): self
     {
-        if ($this->organizedParties->removeElement($organizedParty)) {
+        if ($this->organizedActivities->removeElement($organizedactivity)) {
             // set the owning side to null (unless already changed)
-            if ($organizedParty->getOrganizer() === $this) {
-                $organizedParty->setOrganizer(null);
+            if ($organizedactivity->getOrganizer() === $this) {
+                $organizedactivity->setOrganizer(null);
             }
         }
 
@@ -256,25 +256,25 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Activity>
      */
-    public function getParties(): Collection
+    public function getactivities(): Collection
     {
-        return $this->parties;
+        return $this->activities;
     }
 
-    public function addParty(Activity $party): self
+    public function addactivity(Activity $activity): self
     {
-        if (!$this->parties->contains($party)) {
-            $this->parties->add($party);
-            $party->addParticipant($this);
+        if (!$this->activities->contains($activity)) {
+            $this->activities->add($activity);
+            $activity->addParticipant($this);
         }
 
         return $this;
     }
 
-    public function removeParty(Activity $party): self
+    public function removeactivity(Activity $activity): self
     {
-        if ($this->parties->removeElement($party)) {
-            $party->removeParticipant($this);
+        if ($this->activities->removeElement($activity)) {
+            $activity->removeParticipant($this);
         }
 
         return $this;

@@ -18,7 +18,7 @@ class Site
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'sites', targetEntity: Participant::class)]
+    #[ORM\OneToMany(mappedBy: 'site', targetEntity: Participant::class)]
     private Collection $participants;
 
     #[ORM\OneToMany(mappedBy: 'site', targetEntity: Activity::class)]
@@ -80,27 +80,27 @@ class Site
     /**
      * @return Collection<int, Activity>
      */
-    public function getParties(): Collection
+    public function getActivities(): Collection
     {
         return $this->activities;
     }
 
-    public function addParty(Activity $party): self
+    public function addActivity(Activity $activity): self
     {
-        if (!$this->activities->contains($party)) {
-            $this->activities->add($party);
-            $party->setSite($this);
+        if (!$this->activities->contains($activity)) {
+            $this->activities->add($activity);
+            $activity->setSite($this);
         }
 
         return $this;
     }
 
-    public function removeParty(Activity $party): self
+    public function removeActivity(Activity $activity): self
     {
-        if ($this->activities->removeElement($party)) {
+        if ($this->activities->removeElement($activity)) {
             // set the owning side to null (unless already changed)
-            if ($party->getSite() === $this) {
-                $party->setSite(null);
+            if ($activity->getSite() === $this) {
+                $activity->setSite(null);
             }
         }
 

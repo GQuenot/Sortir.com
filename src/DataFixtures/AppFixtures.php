@@ -2,8 +2,11 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\City;
 use App\Entity\Participant;
+use App\Entity\Place;
 use App\Entity\Site;
+use App\Entity\State;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -26,25 +29,58 @@ class AppFixtures extends Fixture
     {
         $this->manager = $manager;
 
-        $this->addUsers();
-        // $product = new Product();
-        // $manager->persist($product);
-
-        //$manager->flush();
+        $this->addStates();
+        $this->addCitiesAndPlaces();
+        $this->addUsersWithSites();
     }
 
-    public function addUsers()
+    public function addStates()
     {
-        $siteName = ['RENNES', 'QUIMPER', 'NIORT', 'NANTES'];
+        $states = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'Passée', 'Annulée'];
 
-        for($i = 0; $i < 4; $i++){
-            $site[$i] = new Site();
-            $site[$i]->setName($this->generator->randomElement($siteName));
-            $this->manager->persist($site[$i]);
+        for ($i = 0; $i < count($states); $i++) {
+
+            $state = new State();
+            $state->setLabel($states[$i]);
+            $this->manager->persist($state);
         }
 
+        $this->manager->flush();
+    }
 
-        for($i = 0; $i < 3; $i++){
+    public function addCitiesAndPlaces()
+    {
+        $cities = ['RENNES' => 35000, 'QUIMPER' => 29000, 'NIORT' => 79000, 'NANTES' => 44000];
+
+        foreach ($cities as $cityKey => $cityValue) {
+
+            $city = new City();
+            $city->setName($cityKey)
+                ->setPostalCode($cityValue);
+
+            $this->manager->persist($city);
+
+            $place = new Place();
+            $place->setName($this->generator->company)
+                ->setCity($city)
+                ->setStreet($this->generator->streetName)
+                ->setLatitude($this->generator->latitude)
+                ->setLongitude($this->generator->longitude);
+            $this->manager->persist($place);
+        }
+
+        $this->manager->flush();
+    }
+
+    public function addUsersWithSites()
+    {
+        $sites = ['RENNES', 'QUIMPER', 'NIORT', 'NANTES'];
+
+        foreach($sites as $siteArray) {
+
+            $site = new Site();
+            $site->setName($siteArray);
+            $this->manager->persist($site);
 
             $user = new Participant();
             $user->setRoles(['ROLE_USER'])
@@ -55,10 +91,11 @@ class AppFixtures extends Fixture
                 ->setActive(1)
                 ->setPhone($this->generator->phoneNumber)
                 ->setPseudo($this->generator->userName)
-                ->setSite($site[$i]);
+                ->setSite($site);
 
             $this->manager->persist($user);
         }
+
         $this->manager->flush();
     }
 

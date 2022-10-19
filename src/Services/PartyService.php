@@ -11,27 +11,21 @@ use Symfony\Component\Security\Core\Security;
 
 class PartyService
 {
-    private EntityManagerInterface $entityManager;
-    private SiteRepository $siteRepository;
-    private ParticipantRepository $participantRepository;
-    private EtatRepository $etatRepository;
-    private $security;
-
-    public function __construct(EntityManagerInterface $entityManager, SiteRepository $siteRepository, ParticipantRepository $participantRepository, EtatRepository $etatRepository, Security $security) {
-        $this->entityManager = $entityManager;
-        $this->siteRepository = $siteRepository;
-        $this->participantRepository = $participantRepository;
-        $this->etatRepository = $etatRepository;
-        $this->security = $security;
+    public function __construct(private EntityManagerInterface $entityManager,
+                                private SiteRepository $siteRepository,
+                                private ParticipantRepository $participantRepository,
+                                private EtatRepository $etatRepository,
+                                private Security $security,
+                                private Array $states) {
     }
 
     public function saveParty(Sortie $party, Bool $save) {
         $organizer = $this->participantRepository->findOneBy(['email' => $this->security->getUser()->getUserIdentifier()]);
         $site = $this->siteRepository->find($organizer);
 
-        $stateLabel = 'Ouverte';
+        $stateLabel = $this->states['open'];
         if($save) {
-            $stateLabel = 'Créée';
+            $stateLabel = $this->states['created'];
         }
 
         $state = $this->etatRepository->findOneBy(['label' => $stateLabel]);
@@ -39,6 +33,14 @@ class PartyService
         $party->setOrganizer($organizer)
             ->setState($state)
             ->setSite($site);
+
+        $this->entityManager->persist($party);
+        $this->entityManager->flush();
+    }
+
+    public function CloseSubscription(Sortie $party): void {
+        $state = $this->etatRepository->findOneBy(['label' => $this->states['closed']]);
+        $party->setState($state);
 
         $this->entityManager->persist($party);
         $this->entityManager->flush();

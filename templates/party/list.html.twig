@@ -29,9 +29,21 @@
           <td> {{  sortie.subLimitDate | date('Y-m-d')}} </td>
           <td>  nombre de participant ?/ {{ sortie.maxSubscription }} </td>
           <td> {{ sortie.state.label }}</td>
-          <td>  Inscrit ?</td>
+          <td>
+            {% if app.user in sortie.participants %}
+              x
+            {% endif %}
+          </td>
           <td> {{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
-          <td> S'inscrire  </td>
+          <td>
+            {% if sortie.state.label == states['open'] %}
+              {% if app.user in sortie.participants %}
+                <a>Se désister</a>
+              {% else %}
+                <a href="{{ path('party_subscription', {'partyId': sortie.id}) }}">S'inscrire</a>
+              {% endif %}
+            {% endif %}
+          </td>
         </tbody>
         {% endfor %}
       </table>

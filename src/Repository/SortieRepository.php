@@ -14,6 +14,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Sortie[]    findAll()
  * @method Sortie[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+
+
 class SortieRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -38,6 +40,17 @@ class SortieRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function findPartiesNotArchived()
+    {
+        $today = new \Datetime('now');
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->andWhere(date_diff(s.startate, $today) < 32);
+
+        $query = $queryBuilder->getQuery();
+        return $query->getResult();
+    }
+
 
 //    /**
 //     * @return Sortie[] Returns an array of Sortie objects

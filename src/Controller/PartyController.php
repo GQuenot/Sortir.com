@@ -74,7 +74,7 @@ class PartyController extends AbstractController
     #[Route('/list', name: 'list')]
     public function list(): Response
     {
-        $sorties = $this->sortieRepository->findAll();
+        $sorties = $this->sortieRepository->findPartiesNotArchived();
 
         return $this->render('party/list.html.twig', [
             'sorties' => $sorties,
@@ -114,17 +114,28 @@ class PartyController extends AbstractController
         return $this->redirectToRoute('party_list');
     }
 
+    #[Route('/unsubscription/{partyId}', name: 'unsubscription')]
+    public function unsubscription(int $partyId): Response
+    {
+        $party = $this->sortieRepository->find($partyId);
+
+        // Delete the participant to the party
+        $participant = $this->participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+        $party->removeParticipant($participant);
+
+        $this->entityManager->persist($party);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Désistement reussi');
+
+        return $this->redirectToRoute('party_list');
+    }
+
     #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
     #[ParamConverter('sortie', class: 'App\Entity\Sortie')]
     public function show(Sortie $sortie): Response
     {
-
-//        //sans paramConverter
-//        $sortie = $this->sortieRepository->find($id);//
-//        if(!$serie){
-//            throw $this->createNotFoundException("Oops ! Serie not found !");
-//        }
-
         return $this->render('party/detail.html.twig', [
             'sortie' => $sortie
         ]);

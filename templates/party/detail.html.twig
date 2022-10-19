@@ -42,15 +42,18 @@
                         <tbody>
                         <tr>
                             <td>
-                                <a href="{{ path('participant_detail', {'id': app.user.id}) }}">{{ app.user.pseudo }} </a>
+                                <a href="{{ path('participant_detail', {'id': user.id}) }}">{{ user.pseudo }} </a>
                             </td>
-                            <td> {{ app.user.lastname }} </td>
-                            <td> {{ app.user.firstname }} </td>
+                            <td> {{ user.lastname }} </td>
+                            <td> {{ user.firstname }} </td>
                         </tr>
                         </tbody>
                     {% endfor %}
                 </table>
             </div>
+        </div>
+        <div class="has-text-centered">
+            <a href="javascript:history.go(-1)" class="button is-info">Retour</a>
         </div>
     </div>
 </div>

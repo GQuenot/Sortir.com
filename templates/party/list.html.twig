@@ -46,7 +46,7 @@
                   <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a>
                   {% if sortie.state.label == states['open'] %}
                     {% if app.user in sortie.participants %}
-                      <a>Se désister</a>
+                      <a href="{{ path('party_unsubscription', {'partyId': sortie.id}) }}">Se désister</a>
                     {% else %}
                       <a href="{{ path('party_subscription', {'partyId': sortie.id}) }}">S'inscrire</a>
                     {% endif %}

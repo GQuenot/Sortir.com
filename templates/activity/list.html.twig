@@ -41,8 +41,17 @@
                 <td>{{ activity.participants.count }} / {{ activity.placeLimit }}</td>
                 <td>{{ activity.state.label }}</td>
                 <td>{{ app.user in activity.participants ? 'Oui' : 'Non' }}</td>
-                <td>{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</td>
-                <td> S'inscrire <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a> </td>
+                <td><a class="is-info" href="{{ path('participant_detail', {'id': activity.organizer.id}) }}">{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</a></td>
+                <td>
+                    <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
+                    {% if activity.state.label == states['open'] %}
+                        {% if app.user in activity.participants %}
+                            <a>Se désister</a>
+                        {% else %}
+                            <a href="{{ path('party_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
+                        {% endif %}
+                    {% endif %}
+                </td>
               </tr>
             {% endfor %}
             </tbody>

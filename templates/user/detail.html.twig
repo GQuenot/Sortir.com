@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | detail participant {{ participant.pseudo }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="is-size-1 has-text-centered py-5">{{ participant.pseudo }}</h1>
+
+<div class="content">
+    <div class="columns is-centered">
+        <div class="column is-half">
+            <p><strong>Prénom :</strong> {{ participant.firstname }}</p>
+            <p><strong>Nom :  </strong> {{ participant.lastname }} </p>
+            <p><strong>Téléphone :  </strong> {{ participant.phone }}</p>
+            <p><strong>Email :  </strong> {{ participant.email }}</p>
+            <p><strong>Site de rattachement : </strong> {{ participant.site.name }}  </p>
+
+            <div class="has-text-centered">
+                <a href="javascript:history.go(-1)" class="button is-info">Retour</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

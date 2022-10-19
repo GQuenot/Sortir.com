@@ -10,7 +10,7 @@
 
 <div class="container">
     <div class="content">
-        <div class="columns is-center">
+        <div class="columns is-centered">
             <div class="column is-half">
                 <p><strong>Nom de la sortie :</strong> {{ activity.name }}</p>
                 <p><strong> Date et heure de la sortie :  </strong> {{ activity.activityDate | date('d-m-Y') }} à {{ activity.activityDate | date('H:i:s') }} </p>
@@ -40,9 +40,13 @@
                     </thead>
                     {% for user in activity.participants %}
                         <tbody>
-                        <td> {{ app.user.pseudo }} </td>
-                        <td> {{ app.user.lastname }} </td>
-                        <td> {{ app.user.firstname }} </td>
+                        <tr>
+                            <td>
+                                <a href="{{ path('participant_detail', {'id': app.user.id}) }}">{{ app.user.pseudo }} </a>
+                            </td>
+                            <td> {{ app.user.lastname }} </td>
+                            <td> {{ app.user.firstname }} </td>
+                        </tr>
                         </tbody>
                     {% endfor %}
                 </table>

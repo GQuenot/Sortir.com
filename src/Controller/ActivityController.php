@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Activity;
-use App\Form\ActivityType;
-use App\Repository\ActivityRepository;
-use App\Services\ActivityService;
+use App\Entity\Sortie;
+use App\Form\PartyType;
+use App\Repository\EtatRepository;
+use App\Repository\ParticipantRepository;
+use App\Repository\SortieRepository;
+use App\Services\PartyService;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,74 +16,118 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/activity', name: 'activity_')]
-class ActivityController extends AbstractController
+#[Route('/party', name: 'party_')]
+class PartyController extends AbstractController
 {
-    public function __construct(private readonly ActivityService $activityService)
-    {}
+
+    public function __construct(private PartyService $partyService,
+                                private SortieRepository $sortieRepository,
+                                private ParticipantRepository $participantRepository,
+                                private EntityManagerInterface $entityManager)
+    {
+    }
 
     #[Route('/add', name: 'add')]
     public function add(Request $request): Response
     {
-        $activity = new Activity();
-        return $this->saveParty($request, $activity);
+        $party = new Sortie();
+        return $this->saveParty($party, $request);
     }
 
     #[Route('/edit/{id}', name: 'edit')]
-    public function edit(Request $request, ActivityRepository $activityRepository, int $id): Response
+    public function edit(int $id, Request $request): Response
     {
-        $activity = $activityRepository->find($id);
+        $party = $this->sortieRepository->find($id);
 
-        if ($activity->getState()->getLabel() != 'Créée') {
-
+        if($party->getState()->getLabel() != $this->getParameter('app.states')['created']) {
             $this->addFlash('warning', 'Une demande déja publiée ne peut être modifiée');
-            return $this->redirectToRoute('activity_add');
+            return $this->redirectToRoute('party_add');
+
+            //throw new Exception('Une demande déjà publiée ne peut être modifiée');
         }
 
-        return $this->saveParty($request, $activity);
+        return $this->saveParty($party, $request);
     }
 
     /**
-     * @param Activity $activity
+     * @param Sortie $party
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function saveParty(Request $request, Activity $activity): Response|RedirectResponse
+    public function saveParty(Sortie $party, Request $request): Response|RedirectResponse
     {
-        $activityForm = $this->createForm(ActivityType::class, $activity);
+        $partyForm = $this->createForm(PartyType::class, $party);
 
-        $activityForm->handleRequest($request);
+        $partyForm->handleRequest($request);
 
-        if ($activityForm->isSubmitted() && $activityForm->isValid()) {
-
-            $this->activityService->saveParty($activity, $activityForm->get('save')->isClicked());
-
+        if ($partyForm->isSubmitted() && $partyForm->isValid()) {
+            $this->partyService->saveParty($party, $partyForm->get('save')->isClicked());
             $this->addFlash('success', 'La sortie a bien été enregistrée.');
 
-            return $this->redirectToRoute('activity_list');
+            return $this->redirectToRoute('party_add');
         }
 
-        return $this->render('activity/add.html.twig', [
-            'activityForm' => $activityForm->createView()
+        return $this->render('party/add.html.twig', [
+            'partyForm' => $partyForm->createView()
         ]);
     }
 
     #[Route('/list', name: 'list')]
-    public function list(ActivityRepository $sortieRepository): Response
+    public function list(): Response
     {
-        $activities = $sortieRepository->findAll();
+        $sorties = $this->sortieRepository->findAll();
 
-        return $this->render('activity/list.html.twig', [
-            'activities' => $activities,
+        return $this->render('party/list.html.twig', [
+            'sorties' => $sorties,
         ]);
     }
 
-    #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
-    #[ParamConverter('sortie', class: 'Activity')]
-    public function show(Activity $activity): Response
+    #[Route('/subscription/{partyId}', name: 'subscription')]
+    public function subscription(int $partyId): Response
     {
-        return $this->render('activity/detail.html.twig', [
-            'activity' => $activity
+        $party = $this->sortieRepository->find($partyId);
+
+        // If the subscription limit date is hit, participant can't sub to party and the party is set to closed
+        if(date('d-m-y h:i:s') > $party->getSubLimitDate()) {
+            $this->partyService->CloseSubscription($party);
+        }
+
+        if($party->getState()->getLabel() !== $this->getParameter('app.states')['open']) {
+            $this->addFlash('warning', 'Les inscriptions à cette sortie ne sont plus ouverte');
+            return $this->redirectToRoute('party_list');
+        }
+
+        // Add the participant to the party
+        $participant = $this->participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+        $party->addParticipant($participant);
+
+        $this->entityManager->persist($party);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Inscription reussie');
+
+        // If the max subscription is hit, the party is closed
+        if($party->getParticipants()->count() >= $party->getMaxSubscription()) {
+            $this->partyService->CloseSubscription($party);
+        }
+
+        return $this->redirectToRoute('party_list');
+    }
+
+    #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
+    #[ParamConverter('sortie', class: 'App\Entity\Sortie')]
+    public function show(Sortie $sortie): Response
+    {
+
+//        //sans paramConverter
+//        $sortie = $this->sortieRepository->find($id);//
+//        if(!$serie){
+//            throw $this->createNotFoundException("Oops ! Serie not found !");
+//        }
+
+        return $this->render('party/detail.html.twig', [
+            'sortie' => $sortie
         ]);
     }
 

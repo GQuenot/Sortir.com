@@ -35,13 +35,15 @@
                     Profil
                 </a>
 
-                <div class="navbar-item">
-                    <div class="field is-grouped">
-                        <p class="control">
-                            <a class="button is-light" href="{{ path('app_logout') }}">
-                                <span>Se déconnecter ({{ app.user.email }})</span>
-                            </a>
-                        </p>
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <a class="button is-light" href="{{ path('app_logout') }}">
+                                    <span>Logout ({{ app.user.pseudo }})</span>
+                                </a>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

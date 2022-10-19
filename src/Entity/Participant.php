@@ -228,7 +228,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getOrganizedActivities(): Collection
     {
-        return $this->OrganizedActivities;
+        return $this->organizedActivities;
     }
 
     public function addOrganizedactivity(Activity $organizedactivity): self

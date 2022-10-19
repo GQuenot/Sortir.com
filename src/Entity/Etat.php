@@ -18,6 +18,9 @@ class Etat
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
+    #[ORM\OneToMany(mappedBy: 'state', targetEntity: Sortie::class)]
+    private ArrayCollection $sorties;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();

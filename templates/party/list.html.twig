@@ -43,11 +43,11 @@
                 <td>{{ app.user in sortie.participants ? 'Oui' : 'Non' }}</td>
                 <td>{{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
                 <td>
+                  <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a>
                   {% if sortie.state.label == states['open'] %}
                     {% if app.user in sortie.participants %}
                       <a>Se désister</a>
                     {% else %}
-                      <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a>
                       <a href="{{ path('party_subscription', {'partyId': sortie.id}) }}">S'inscrire</a>
                     {% endif %}
                   {% endif %}

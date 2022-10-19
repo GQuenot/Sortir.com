@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{{ parent() }} | Show parties
+{% endblock %}
+
+{% block body %}
+
+  <h1 class="is-size-1 has-text-centered my-5">Liste des sorties</h1>
+
+  <div class="content">
+
+    <div class="columns mb-5">
+      <div class="column is-size-4 has-text-centered">
+        <p>Date du jour : {{ 'now' | date('j F Y') | format_date(locale='fr') }}</p>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="column is-three-fifths is-offset-one-fifth">
+
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th><abbr title="Nom de la sortie">Nom</abbr></th>
+                <th><abbr title="Date de la sortie">Date</abbr></th>
+                <th>Clotûre</th>
+                <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
+                <th>Etat</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for activity in activities %}
+              <tr>
+                <td>{{ activity.name }}</td>
+                <td>{{ activity.activityDate | date('j F Y') | format_date(locale='fr') }}</td>
+                <td>{{  activity.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
+                <td>{{ activity.participants.count }} / {{ activity.placeLimit }}</td>
+                <td>{{ activity.state.label }}</td>
+                <td>{{ app.user in activity.participants ? 'Oui' : 'Non' }}</td>
+                <td><a class="is-info" href="{{ path('participant_detail', {'id': activity.organizer.id}) }}">{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</a></td>
+                <td>
+                    <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
+                    {% if activity.state.label == states['open'] %}
+                        {% if app.user in activity.participants %}
+                            <a>Se désister</a>
+                        {% else %}
+                            <a href="{{ path('party_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
+                        {% endif %}
+                    {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+
+          {% if is_granted('ROLE_ORGA') %}
+          <div class="has-text-centered">
+            <a href="{{ path('activity_add') }}" class="button is-info">Créer une sortie</a>
+          </div>
+          {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

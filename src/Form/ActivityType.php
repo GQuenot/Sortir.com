@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Lieu;
-use App\Entity\Sortie;
+use App\Entity\Activity;
+use App\Entity\Place;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -13,15 +13,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Callback;
-use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
-use Symfony\Component\Validator\Constraints\LessThan;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class PartyType extends AbstractType
+class ActivityType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -29,7 +24,7 @@ class PartyType extends AbstractType
             ->add('name', TextType::class, [
                 'required' => true
             ])
-            ->add('startDate', DateTimeType::class, [
+            ->add('activityDate', DateTimeType::class, [
                 'required' => true,
                 'widget' => 'single_text',
                 'html5' => true,
@@ -57,7 +52,7 @@ class PartyType extends AbstractType
                     ])
                 ]
             ])
-            ->add('maxSubscription', NumberType::class, [
+            ->add('placeLimit', NumberType::class, [
                 'required' => true,
                 'constraints' => [
                     new GreaterThanOrEqual([
@@ -67,7 +62,7 @@ class PartyType extends AbstractType
             ])
             ->add('informations', TextareaType::class)
             ->add('place', EntityType::class, [
-                'class' => Lieu::class,
+                'class' => Place::class,
                 'choice_label' => 'name'
             ])
             ->add('save', SubmitType::class, ['label' => 'Enregister'])
@@ -78,7 +73,7 @@ class PartyType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Sortie::class,
+            'data_class' => Activity::class,
         ]);
     }
 }

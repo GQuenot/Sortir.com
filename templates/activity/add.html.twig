@@ -9,49 +9,49 @@
 
     <div class="container">
         <div class="content">
-            {{ form_start(partyForm) }}
+            {{ form_start(activityForm) }}
             <div class="columns">
                 <div class="column">
 
                     <div class="field">
                         <label class="label">Nom de la sortie</label>
                         <div class="control">
-                            {{ form_widget(partyForm.name, {'attr': {'class': 'input'}}) }}
+                            {{ form_widget(activityForm.name, {'attr': {'class': 'input'}}) }}
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">Date de la sortie</label>
                         <div class="control">
-                            {{ form_widget(partyForm.startDate, {'attr': {'class': 'input'}}) }}
+                            {{ form_widget(activityForm.activityDate, {'attr': {'class': 'input'}}) }}
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">Date limite d'inscription</label>
                         <div class="control">
-                            {{ form_widget(partyForm.subLimitDate, {'attr': {'class': 'input'}}) }}
+                            {{ form_widget(activityForm.subLimitDate, {'attr': {'class': 'input'}}) }}
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">Nombre de places</label>
                         <div class="control">
-                            {{ form_widget(partyForm.maxSubscription, {'attr': {'class': 'input'}}) }}
+                            {{ form_widget(activityForm.placeLimit, {'attr': {'class': 'input'}}) }}
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">Durée (en minutes)</label>
                         <div class="control">
-                            {{ form_widget(partyForm.duration, {'attr': {'class': 'input'}}) }}
+                            {{ form_widget(activityForm.duration, {'attr': {'class': 'input'}}) }}
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">Description</label>
                         <div class="control">
-                            {{ form_widget(partyForm.informations, {'attr': {'class': 'textarea'}}) }}
+                            {{ form_widget(activityForm.informations, {'attr': {'class': 'textarea'}}) }}
                         </div>
                     </div>
 
@@ -61,7 +61,7 @@
                     <div class="has-text-centered mb-5">
                         <label class="label" for="lieu">Lieu</label>
                         <div class="select is-fullwidth">
-                            {{ form_widget(partyForm.place) }}
+                            {{ form_widget(activityForm.place) }}
                         </div>
                     </div>
 
@@ -108,18 +108,18 @@
             </div>
 
         <div class="has-text-centered">
-            {{ form_widget(partyForm.save, {'attr': {'class': 'button is-info'}}) }}
-            {{ form_widget(partyForm.publish, {'attr': {'class': 'button is-info'}}) }}
+            {{ form_widget(activityForm.save, {'attr': {'class': 'button is-info'}}) }}
+            {{ form_widget(activityForm.publish, {'attr': {'class': 'button is-info'}}) }}
         </div>
 
-            {{ form_end(partyForm) }}
+            {{ form_end(activityForm) }}
         </div>
     </div>
 {% endblock %}
 
 {% block extraJs %}
     <script>
-        const selectPlaces = document.getElementById('party_place');
+        const selectPlaces = document.getElementById('activity_place');
         const cityElem = document.getElementById('city');
         const streetElem = document.getElementById('street');
         const zipElem = document.getElementById('zip');
@@ -141,9 +141,9 @@
             await fetch(`{{ path('api_place_get_all') }}${selectPlaces.options[selectPlaces.selectedIndex].value}`).then(responses => {
                 responses.json().then(place => {
 
-                    cityElem.textContent = place.town.name ? place.town.name : '...';
+                    cityElem.textContent = place.city.name ? place.city.name : '...';
                     streetElem.textContent = place.street ? place.street : '...';
-                    zipElem.textContent = place.town.postalCode ? place.town.postalCode : '...';
+                    zipElem.textContent = place.city.postalCode ? place.city.postalCode : '...';
                     latitudeElem.textContent = place.latitude ? place.latitude : '...';
                     longitudeElem.textContent = place.longitude ? place.longitude : '...';
                 });

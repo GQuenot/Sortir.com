@@ -85,7 +85,7 @@ class Site
         return $this->activities;
     }
 
-    public function addactivity(Activity $activity): self
+    public function addActivity(Activity $activity): self
     {
         if (!$this->activities->contains($activity)) {
             $this->activities->add($activity);
@@ -95,7 +95,7 @@ class Site
         return $this;
     }
 
-    public function removeactivity(Activity $activity): self
+    public function removeActivity(Activity $activity): self
     {
         if ($this->activities->removeElement($activity)) {
             // set the owning side to null (unless already changed)

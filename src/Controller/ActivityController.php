@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/activity', name: 'activity_')]
 class ActivityController extends AbstractController
 {
 
@@ -23,7 +22,7 @@ class ActivityController extends AbstractController
     {
     }
 
-    #[Route('/add', name: 'add')]
+    #[Route('/activity/add', name: 'activity_add')]
     public function add(Request $request): Response
     {
         $activity = new activity();
@@ -38,7 +37,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{id}', name: 'edit')]
+    #[Route('/activity/edit/{id}', name: 'activity_edit')]
     public function edit(int $id, Request $request): Response
     {
         $activity = $this->activityRepository->find($id);
@@ -79,7 +78,7 @@ class ActivityController extends AbstractController
         return $activityForm;
     }
 
-    #[Route('/publish/{activityId}', name: 'publish')]
+    #[Route('activity/publish/{activityId}', name: 'activity_publish')]
     public function publish(int $activityId): Response
     {
         $activity = $this->activityRepository->find($activityId);
@@ -94,7 +93,7 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('activity_list');
     }
 
-    #[Route('/delete/{activityId}', name: 'delete')]
+    #[Route('activity//delete/{activityId}', name: 'activity_delete')]
     public function delete(int $activityId): RedirectResponse
     {
         $activity = $this->activityRepository->find($activityId);
@@ -106,7 +105,7 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('activity_list');
     }
 
-    #[Route('/list', name: 'list')]
+    #[Route('/', name: 'activity_list')]
     public function list(): Response
     {
         $activities = $this->activityRepository->findAll();
@@ -116,7 +115,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('/subscription/{activityId}', name: 'subscription')]
+    #[Route('activity/subscription/{activityId}', name: 'activity_subscription')]
     public function subscription(int $activityId): Response
     {
         $activity = $this->activityRepository->find($activityId);
@@ -137,9 +136,9 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('activity_list');
     }
 
-    #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
-    #[ParamConverter('activity', class: 'App\Entity\activity')]
-    public function show(activity $activity): Response
+    #[Route('/activity/detail/{id}', name: 'activity_detail', requirements: ['id' => '\d+'])]
+    #[ParamConverter('activity', class: 'App\Entity\Activity')]
+    public function show(Activity $activity): Response
     {
 
 //        //sans paramConverter

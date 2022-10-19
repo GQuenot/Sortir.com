@@ -42,7 +42,7 @@
                 <td>{{ sortie.state.label }}</td>
                 <td>{{ app.user in sortie.participants ? 'Oui' : 'Non' }}</td>
                 <td>{{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
-                <td>S'inscrire</td>
+                <td> S'inscrire <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a> </td>
               </tr>
             {% endfor %}
             </tbody>

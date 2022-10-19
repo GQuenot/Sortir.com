@@ -1,19 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | detail sortie {{ sortie.name }}
+    {{ parent() }} | detail activity {{ activity.name }}
 {% endblock %}
 
 {% block body %}
 
-<h1 class="is-size-1 has-text-centered my-5">Détail de la sortie</h1>
+<h1 class="is-size-1 has-text-centered my-5">Détail de la activity</h1>
 
 <div class="container">
     <div class="content">
         <div class="columns is-centered">
             <div class="column is-half">
-                <p><strong>Nom de la sortie :</strong> {{ activity.name }}</p>
-                <p><strong> Date et heure de la sortie :  </strong> {{ activity.activityDate | date('d-m-Y') }} à {{ activity.activityDate | date('H:i:s') }} </p>
+                <p><strong>Nom de la activity :</strong> {{ activity.name }}</p>
+                <p><strong> Date et heure de la activity :  </strong> {{ activity.activityDate | date('d-m-Y') }} à {{ activity.activityDate | date('H:i:s') }} </p>
                 <p><strong> Date limite d'inscription :  </strong> {{ activity.subLimitDate | date('d-m-Y') }}</p>
                 <p><strong>Nombre de places :  </strong> {{  activity.placeLimit }}</p>
                 <p><strong>Durée : </strong> {{ activity.duration}} minutes </p>

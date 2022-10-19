@@ -35,15 +35,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/activity/(add|edit), roles: ROLE_ORGA }
-        - { path: ^/api, roles: ROLE_ORGA }
+        - { path: ^/activity/(add|edit), roles: ROLE_USER }
+        - { path: ^/api, roles: ROLE_USER }
         - { path: ^/activity/detail, roles: ROLE_USER }
         - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
     role_hierarchy:
-        ROLE_ORGA : ROLE_USER
-        ROLE_ADMIN: ROLE_ORGA
+        ROLE_ADMIN: ROLE_USER
 
 when@test:
     security:

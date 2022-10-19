@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/activity', name: 'activity_')]
 class ActivityController extends AbstractController
 {
 
@@ -25,14 +24,14 @@ class ActivityController extends AbstractController
                                 private EntityManagerInterface $entityManager)
     {}
 
-    #[Route('/add', name: 'add')]
+    #[Route('/activity/add', name: 'activity_add')]
     public function add(Request $request): Response
     {
         $activity = new Activity();
         return $this->saveParty($request, $activity);
     }
 
-    #[Route('/edit/{id}', name: 'edit')]
+    #[Route('/activity/edit/{id}', name: 'activity_edit')]
     public function edit(Request $request, int $id): Response
     {
         $activity = $this->activityRepository->find($id);
@@ -69,7 +68,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('/list', name: 'list')]
+    #[Route('/', name: 'activity_list')]
     public function list(): Response
     {
         $activities = $this->activityRepository->findAll();
@@ -79,7 +78,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('/subscription/{partyId}', name: 'subscription')]
+    #[Route('/activity/subscription/{partyId}', name: 'activity_subscription')]
     public function subscription(int $activityId): Response
     {
         $activity = $this->activityRepository->find($activityId);
@@ -113,12 +112,12 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('activity_list');
     }
 
-    #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
+    #[Route('/activity/detail/{id}', name: 'activity_detail', requirements: ['id' => '\d+'])]
     #[ParamConverter('activity', class: 'App\Entity\Activity')]
     public function show(Activity $activity): Response
     {
         return $this->render('activity/detail.html.twig', [
-            'sortie' => $activity
+            'activity' => $activity
         ]);
     }
 

@@ -22,12 +22,12 @@ class Site
     private Collection $participants;
 
     #[ORM\OneToMany(mappedBy: 'site', targetEntity: Activity::class)]
-    private Collection $parties;
+    private Collection $activities;
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
-        $this->parties = new ArrayCollection();
+        $this->activities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,13 +82,13 @@ class Site
      */
     public function getParties(): Collection
     {
-        return $this->parties;
+        return $this->activities;
     }
 
     public function addParty(Activity $party): self
     {
-        if (!$this->parties->contains($party)) {
-            $this->parties->add($party);
+        if (!$this->activities->contains($party)) {
+            $this->activities->add($party);
             $party->setSite($this);
         }
 
@@ -97,7 +97,7 @@ class Site
 
     public function removeParty(Activity $party): self
     {
-        if ($this->parties->removeElement($party)) {
+        if ($this->activities->removeElement($party)) {
             // set the owning side to null (unless already changed)
             if ($party->getSite() === $this) {
                 $party->setSite(null);

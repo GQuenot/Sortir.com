@@ -34,22 +34,22 @@ class Activity
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $informations = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(nullable: false)]
     private ?State $state = null;
 
-    #[ORM\ManyToOne(inversedBy: 'organizedParties')]
+    #[ORM\ManyToOne(inversedBy: 'organizedActivities')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Participant $organizer = null;
 
-    #[ORM\ManyToOne(inversedBy: 'parties')]
+    #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
 
-    #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'parties')]
+    #[ORM\ManyToMany(targetEntity: Participant::class, inversedBy: 'activities')]
     private Collection $participants;
 
-    #[ORM\ManyToOne(inversedBy: 'parties')]
+    #[ORM\ManyToOne(inversedBy: 'activities')]
     private ?Place $place = null;
 
     public function __construct()

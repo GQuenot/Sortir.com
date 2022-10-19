@@ -36,7 +36,7 @@ class Activity
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Etat $state = null;
+    private ?State $state = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizedParties')]
     #[ORM\JoinColumn(nullable: false)]
@@ -50,7 +50,7 @@ class Activity
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'parties')]
-    private ?Lieu $place = null;
+    private ?Place $place = null;
 
     public function __construct()
     {
@@ -134,12 +134,12 @@ class Activity
         return $this;
     }
 
-    public function getState(): ?Etat
+    public function getState(): ?State
     {
         return $this->state;
     }
 
-    public function setState(?Etat $state): self
+    public function setState(?State $state): self
     {
         $this->state = $state;
 
@@ -194,12 +194,12 @@ class Activity
         return $this;
     }
 
-    public function getPlace(): ?Lieu
+    public function getPlace(): ?Place
     {
         return $this->place;
     }
 
-    public function setPlace(?Lieu $place): self
+    public function setPlace(?Place $place): self
     {
         $this->place = $place;
 

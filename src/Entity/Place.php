@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\LieuRepository;
+use App\Repository\PlaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: LieuRepository::class)]
-class Lieu
+#[ORM\Entity(repositoryClass: PlaceRepository::class)]
+class Place
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,16 +34,16 @@ class Lieu
     private ?float $longitude = null;
 
     #[ORM\OneToMany(mappedBy: 'place', targetEntity: Activity::class)]
-    private Collection $parties;
+    private Collection $activities;
 
     #[ORM\ManyToOne(inversedBy: 'places')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['place_group'])]
-    private ?Ville $town = null;
+    private ?City $city = null;
 
     public function __construct()
     {
-        $this->parties = new ArrayCollection();
+        $this->activities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -102,41 +102,41 @@ class Lieu
     /**
      * @return Collection<int, Activity>
      */
-    public function getParties(): Collection
+    public function getActivities(): Collection
     {
-        return $this->parties;
+        return $this->activities;
     }
 
-    public function addParty(Activity $party): self
+    public function addActivity(Activity $activity): self
     {
-        if (!$this->parties->contains($party)) {
-            $this->parties->add($party);
-            $party->setPlace($this);
+        if (!$this->activities->contains($activity)) {
+            $this->activities->add($activity);
+            $activity->setPlace($this);
         }
 
         return $this;
     }
 
-    public function removeParty(Activity $party): self
+    public function removeActivity(Activity $activity): self
     {
-        if ($this->parties->removeElement($party)) {
+        if ($this->activities->removeElement($activity)) {
             // set the owning side to null (unless already changed)
-            if ($party->getPlace() === $this) {
-                $party->setPlace(null);
+            if ($activity->getPlace() === $this) {
+                $activity->setPlace(null);
             }
         }
 
         return $this;
     }
 
-    public function getTown(): ?Ville
+    public function getCity(): ?City
     {
-        return $this->town;
+        return $this->city;
     }
 
-    public function setTown(?Ville $town): self
+    public function setCity(?City $city): self
     {
-        $this->town = $town;
+        $this->city = $city;
 
         return $this;
     }

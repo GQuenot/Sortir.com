@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Etat;
+use App\Entity\State;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Etat>
+ * @extends ServiceEntityRepository<State>
  *
- * @method Etat|null find($id, $lockMode = null, $lockVersion = null)
- * @method Etat|null findOneBy(array $criteria, array $orderBy = null)
- * @method Etat[]    findAll()
- * @method Etat[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method State|null find($id, $lockMode = null, $lockVersion = null)
+ * @method State|null findOneBy(array $criteria, array $orderBy = null)
+ * @method State[]    findAll()
+ * @method State[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class EtatRepository extends ServiceEntityRepository
+class StateRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Etat::class);
+        parent::__construct($registry, State::class);
     }
 
-    public function save(Etat $entity, bool $flush = false): void
+    public function save(State $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class EtatRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Etat $entity, bool $flush = false): void
+    public function remove(State $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class EtatRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Etat[] Returns an array of Etat objects
+//     * @return State[] Returns an array of State objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class EtatRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Etat
+//    public function findOneBySomeField($value): ?State
 //    {
 //        return $this->createQueryBuilder('e')
 //            ->andWhere('e.exampleField = :val')

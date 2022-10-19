@@ -26,7 +26,10 @@ class ParticipantController extends AbstractController
 
         if ($participantForm->isSubmitted() && $participantForm->isValid()) {
 
-            $participant->setPassword($passwordHasher->hashPassword($participant, $participant->getPassword()));
+            if ($request->request->get('participant')['plainPassword']['first'] !== '') {
+
+                $participantRepository->upgradePassword($participant, $passwordHasher->hashPassword($participant, $request->request->get('participant')['plainPassword']['first']));
+            }
 
             $entityManager->persist($participant);
             $entityManager->flush();

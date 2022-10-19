@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
-use App\Form\PartyType;
+use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
-use App\Services\PartyService;
+use App\Services\ActivityService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,18 +16,18 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/activity', name: 'activity_')]
 class ActivityController extends AbstractController
 {
-    public function __construct(private readonly PartyService $partyService)
+    public function __construct(private readonly ActivityService $activityService)
     {}
 
     #[Route('/add', name: 'add')]
     public function add(Request $request): Response
     {
         $activity = new Activity();
-        return $this->saveParty($activity, $request);
+        return $this->saveParty($request, $activity);
     }
 
     #[Route('/edit/{id}', name: 'edit')]
-    public function edit(int $id, Request $request, ActivityRepository $activityRepository): Response
+    public function edit(Request $request, ActivityRepository $activityRepository, int $id): Response
     {
         $activity = $activityRepository->find($id);
 
@@ -37,7 +37,7 @@ class ActivityController extends AbstractController
             return $this->redirectToRoute('activity_add');
         }
 
-        return $this->saveParty($activity, $request);
+        return $this->saveParty($request, $activity);
     }
 
     /**
@@ -45,20 +45,22 @@ class ActivityController extends AbstractController
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function saveParty(Activity $activity, Request $request): Response|RedirectResponse
+    public function saveParty(Request $request, Activity $activity): Response|RedirectResponse
     {
-        $activityForm = $this->createForm(PartyType::class, $activity);
+        $activityForm = $this->createForm(ActivityType::class, $activity);
 
         $activityForm->handleRequest($request);
 
         if ($activityForm->isSubmitted() && $activityForm->isValid()) {
-            $this->partyService->saveParty($activity, $activityForm->get('save')->isClicked());
+
+            $this->activityService->saveParty($activity, $activityForm->get('save')->isClicked());
+
             $this->addFlash('success', 'La sortie a bien été enregistrée.');
 
-            return $this->redirectToRoute('activity_add');
+            return $this->redirectToRoute('activity_list');
         }
 
-        return $this->render('party/add.html.twig', [
+        return $this->render('activity/add.html.twig', [
             'activityForm' => $activityForm->createView()
         ]);
     }
@@ -66,19 +68,19 @@ class ActivityController extends AbstractController
     #[Route('/list', name: 'list')]
     public function list(ActivityRepository $sortieRepository): Response
     {
-        $sorties = $sortieRepository->findAll();
+        $activities = $sortieRepository->findAll();
 
-        return $this->render('party/list.html.twig', [
-            'sorties' => $sorties,
+        return $this->render('activity/list.html.twig', [
+            'activities' => $activities,
         ]);
     }
 
     #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
     #[ParamConverter('sortie', class: 'Activity')]
-    public function show(Activity $sortie): Response
+    public function show(Activity $activity): Response
     {
-        return $this->render('party/detail.html.twig', [
-            'sortie' => $sortie
+        return $this->render('activity/detail.html.twig', [
+            'activity' => $activity
         ]);
     }
 

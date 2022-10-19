@@ -19,7 +19,7 @@
     <div class="columns">
       <div class="column is-three-fifths is-offset-one-fifth">
 
-          <table class="table">
+          <table class="table is-striped is-fullwidth">
             <thead>
               <tr>
                 <th><abbr title="Nom de la sortie">Nom</abbr></th>
@@ -33,24 +33,26 @@
               </tr>
             </thead>
             <tbody>
-            {% for sortie in sorties %}
+            {% for activity in activities %}
               <tr>
-                <td>{{ sortie.name }}</td>
-                <td>{{ sortie.startDate | date('j F Y') | format_date(locale='fr') }}</td>
-                <td>{{  sortie.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
-                <td>{{ sortie.participants.count }} / {{ sortie.maxSubscription }}</td>
-                <td>{{ sortie.state.label }}</td>
-                <td>{{ app.user in sortie.participants ? 'Oui' : 'Non' }}</td>
-                <td>{{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</td>
-                <td> S'inscrire <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a> </td>
+                <td>{{ activity.name }}</td>
+                <td>{{ activity.activityDate | date('j F Y') | format_date(locale='fr') }}</td>
+                <td>{{  activity.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
+                <td>{{ activity.participants.count }} / {{ activity.placeLimit }}</td>
+                <td>{{ activity.state.label }}</td>
+                <td>{{ app.user in activity.participants ? 'Oui' : 'Non' }}</td>
+                <td>{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</td>
+                <td> S'inscrire <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a> </td>
               </tr>
             {% endfor %}
             </tbody>
           </table>
 
+          {% if is_granted('ROLE_ORGA') %}
           <div class="has-text-centered">
-            <a href="{{ path('party_add') }}" class="button is-info">Créer une sortie</a>
+            <a href="{{ path('activity_add') }}" class="button is-info">Créer une sortie</a>
           </div>
+          {% endif %}
       </div>
     </div>
   </div>

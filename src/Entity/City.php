@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\VilleRepository;
+use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: VilleRepository::class)]
-class Ville
+#[ORM\Entity(repositoryClass: CityRepository::class)]
+class City
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,7 +25,7 @@ class Ville
     #[Groups(['place_group'])]
     private ?string $postalCode = null;
 
-    #[ORM\OneToMany(mappedBy: 'town', targetEntity: Lieu::class)]
+    #[ORM\OneToMany(mappedBy: 'city', targetEntity: Place::class)]
     private Collection $places;
 
     public function __construct()
@@ -63,29 +63,29 @@ class Ville
     }
 
     /**
-     * @return Collection<int, Lieu>
+     * @return Collection<int, Place>
      */
     public function getPlaces(): Collection
     {
         return $this->places;
     }
 
-    public function addPlace(Lieu $place): self
+    public function addPlace(Place $place): self
     {
         if (!$this->places->contains($place)) {
             $this->places->add($place);
-            $place->setTown($this);
+            $place->setCity($this);
         }
 
         return $this;
     }
 
-    public function removePlace(Lieu $place): self
+    public function removePlace(Place $place): self
     {
         if ($this->places->removeElement($place)) {
             // set the owning side to null (unless already changed)
-            if ($place->getTown() === $this) {
-                $place->setTown(null);
+            if ($place->getCity() === $this) {
+                $place->setCity(null);
             }
         }
 

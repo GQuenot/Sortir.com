@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Sortie;
-use App\Form\PartyType;
-use App\Repository\EtatRepository;
+use App\Entity\Activity;
+use App\Form\ActivityType;
+use App\Repository\ActivityRepository;
 use App\Repository\ParticipantRepository;
-use App\Repository\SortieRepository;
-use App\Services\PartyService;
+use App\Services\ActivityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,118 +15,110 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/party', name: 'party_')]
-class PartyController extends AbstractController
+#[Route('/activity', name: 'activity_')]
+class ActivityController extends AbstractController
 {
 
-    public function __construct(private PartyService $partyService,
-                                private SortieRepository $sortieRepository,
+    public function __construct(private ActivityService $activityService,
+                                private ActivityRepository $activityRepository,
                                 private ParticipantRepository $participantRepository,
                                 private EntityManagerInterface $entityManager)
-    {
-    }
+    {}
 
     #[Route('/add', name: 'add')]
     public function add(Request $request): Response
     {
-        $party = new Sortie();
-        return $this->saveParty($party, $request);
+        $activity = new Activity();
+        return $this->saveParty($request, $activity);
     }
 
     #[Route('/edit/{id}', name: 'edit')]
-    public function edit(int $id, Request $request): Response
+    public function edit(Request $request, int $id): Response
     {
-        $party = $this->sortieRepository->find($id);
+        $activity = $this->activityRepository->find($id);
 
-        if($party->getState()->getLabel() != $this->getParameter('app.states')['created']) {
+        if ($activity->getState()->getLabel() != $this->getParameter('app.states')['created']) {
+
             $this->addFlash('warning', 'Une demande déja publiée ne peut être modifiée');
-            return $this->redirectToRoute('party_add');
-
-            //throw new Exception('Une demande déjà publiée ne peut être modifiée');
+            return $this->redirectToRoute('activity_add');
         }
 
-        return $this->saveParty($party, $request);
+        return $this->saveParty($request, $activity);
     }
 
     /**
-     * @param Sortie $party
+     * @param Activity $activity
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function saveParty(Sortie $party, Request $request): Response|RedirectResponse
+    public function saveParty(Request $request, Activity $activity): Response|RedirectResponse
     {
-        $partyForm = $this->createForm(PartyType::class, $party);
+        $activityForm = $this->createForm(ActivityType::class, $activity);
 
-        $partyForm->handleRequest($request);
+        $activityForm->handleRequest($request);
 
-        if ($partyForm->isSubmitted() && $partyForm->isValid()) {
-            $this->partyService->saveParty($party, $partyForm->get('save')->isClicked());
+        if ($activityForm->isSubmitted() && $activityForm->isValid()) {
+            $this->activityService->saveParty($activity, $activityForm->get('save')->isClicked());
             $this->addFlash('success', 'La sortie a bien été enregistrée.');
 
-            return $this->redirectToRoute('party_add');
+            return $this->redirectToRoute('activity_add');
         }
 
-        return $this->render('party/add.html.twig', [
-            'partyForm' => $partyForm->createView()
+        return $this->render('activity/add.html.twig', [
+            'activityForm' => $activityForm->createView()
         ]);
     }
 
     #[Route('/list', name: 'list')]
     public function list(): Response
     {
-        $sorties = $this->sortieRepository->findAll();
+        $activities = $this->activityRepository->findAll();
 
-        return $this->render('party/list.html.twig', [
-            'sorties' => $sorties,
+        return $this->render('activity/list.html.twig', [
+            'activities' => $activities,
         ]);
     }
 
     #[Route('/subscription/{partyId}', name: 'subscription')]
-    public function subscription(int $partyId): Response
+    public function subscription(int $activityId): Response
     {
-        $party = $this->sortieRepository->find($partyId);
+        $activity = $this->activityRepository->find($activityId);
 
         // If the subscription limit date is hit, participant can't sub to party and the party is set to closed
-        if(date('d-m-y h:i:s') > $party->getSubLimitDate()) {
-            $this->partyService->CloseSubscription($party);
+        if(date('d-m-y h:i:s') > $activity->getSubLimitDate()) {
+            $this->activityService->CloseSubscription($activity);
         }
 
-        if($party->getState()->getLabel() !== $this->getParameter('app.states')['open']) {
+        if ($activity->getState()->getLabel() !== $this->getParameter('app.states')['open']) {
+
             $this->addFlash('warning', 'Les inscriptions à cette sortie ne sont plus ouverte');
-            return $this->redirectToRoute('party_list');
+            return $this->redirectToRoute('activity_list');
         }
 
         // Add the participant to the party
         $participant = $this->participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
 
-        $party->addParticipant($participant);
+        $activity->addParticipant($participant);
 
-        $this->entityManager->persist($party);
+        $this->entityManager->persist($activity);
         $this->entityManager->flush();
 
         $this->addFlash('success', 'Inscription reussie');
 
         // If the max subscription is hit, the party is closed
-        if($party->getParticipants()->count() >= $party->getMaxSubscription()) {
-            $this->partyService->CloseSubscription($party);
+        if($activity->getParticipants()->count() >= $activity->getPlaceLimit()) {
+            $this->activityService->CloseSubscription($activity);
         }
 
-        return $this->redirectToRoute('party_list');
+        return $this->redirectToRoute('activity_list');
     }
 
     #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
-    #[ParamConverter('sortie', class: 'App\Entity\Sortie')]
-    public function show(Sortie $sortie): Response
+    #[ParamConverter('activity', class: 'App\Entity\Activity')]
+    public function show(Activity $activity): Response
     {
-
-//        //sans paramConverter
-//        $sortie = $this->sortieRepository->find($id);//
-//        if(!$serie){
-//            throw $this->createNotFoundException("Oops ! Serie not found !");
-//        }
-
-        return $this->render('party/detail.html.twig', [
-            'sortie' => $sortie
+        return $this->render('activity/detail.html.twig', [
+            'sortie' => $activity
         ]);
     }
 

@@ -11,14 +11,16 @@ use Symfony\Component\Security\Core\Security;
 
 class ActivityService
 {
-    public function __construct(private EntityManagerInterface $entityManager,
-                                private SiteRepository         $siteRepository,
-                                private ParticipantRepository  $participantRepository,
-                                private StateRepository        $stateRepository,
-                                private Security               $security)
+    public function __construct(private readonly EntityManagerInterface $entityManager,
+                                private readonly SiteRepository         $siteRepository,
+                                private readonly ParticipantRepository  $participantRepository,
+                                private readonly StateRepository        $stateRepository,
+                                private readonly Security               $security,
+                                private readonly Array                  $states)
     {}
 
-    public function saveParty(Activity $activity, Bool $save) {
+    public function saveParty(Activity $activity, Bool $save)
+    {
         $organizer = $this->participantRepository->findOneBy(['email' => $this->security->getUser()->getUserIdentifier()]);
         $site = $this->siteRepository->find($organizer);
 
@@ -32,6 +34,15 @@ class ActivityService
         $activity->setOrganizer($organizer)
             ->setState($state)
             ->setSite($site);
+
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+    }
+
+    public function CloseSubscription(Activity $activity): void
+    {
+        $state = $this->stateRepository->findOneBy(['label' => $this->states['closed']]);
+        $activity->setState($state);
 
         $this->entityManager->persist($activity);
         $this->entityManager->flush();

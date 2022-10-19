@@ -91,7 +91,7 @@ class PartyController extends AbstractController
             $this->partyService->CloseSubscription($party);
         }
 
-        if($party->getState()->getLabel() !== $this->getParameter('app.states')['closed']) {
+        if($party->getState()->getLabel() !== $this->getParameter('app.states')['open']) {
             $this->addFlash('warning', 'Les inscriptions à cette sortie ne sont plus ouverte');
             return $this->redirectToRoute('party_list');
         }

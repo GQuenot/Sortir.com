@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | detail sortie {{ sortie.name }}
+{% endblock %}
+
+{% block body %}
+
+<h1 class="is-size-1 has-text-centered my-5">Détail de la sortie</h1>
+
+<div class="container">
+    <div class="content">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <p><strong>Nom de la sortie :</strong> {{ activity.name }}</p>
+                <p><strong> Date et heure de la sortie :  </strong> {{ activity.activityDate | date('d-m-Y') }} à {{ activity.activityDate | date('H:i:s') }} </p>
+                <p><strong> Date limite d'inscription :  </strong> {{ activity.subLimitDate | date('d-m-Y') }}</p>
+                <p><strong>Nombre de places :  </strong> {{  activity.placeLimit }}</p>
+                <p><strong>Durée : </strong> {{ activity.duration}} minutes </p>
+                <p><strong>Description et infos :  </strong> {{ activity.informations }} </p>
+            </div>
+            <div class="column is-half">
+                <p><strong>lieu :  </strong> {{ activity.place.name }}</p>
+                <p><strong>Rue :  </strong> {{ activity.place.street }}</p>
+                <p><strong>Ville :  </strong> {{ activity.place.town.name }}</p>
+                <p><strong>Code postal :  </strong> {{ activity.place.town.postalCode }}</p>
+                <p><strong>Latitude :  </strong> {{  activity.place.latitude }}</p>
+                <p><strong>Longitude :  </strong> {{ activity.place.longitude}}  </p>
+            </div>
+        </div>
+
+        <div class="columns is-center">
+            <div class="column is-half">
+                <h2>Participant.e.s</h2>
+                <table class="table">
+                    <thead class="thead">
+                    <th scope="col">Pseudo</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
+                    </thead>
+                    {% for user in activity.participants %}
+                        <tbody>
+                        <tr>
+                            <td>
+                                <a href="{{ path('participant_detail', {'id': app.user.id}) }}">{{ app.user.pseudo }} </a>
+                            </td>
+                            <td> {{ app.user.lastname }} </td>
+                            <td> {{ app.user.firstname }} </td>
+                        </tr>
+                        </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

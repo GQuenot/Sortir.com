@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Participant;
 use App\Form\ParticipantType;
 use App\Repository\ParticipantRepository;
 use App\Repository\SiteRepository;
@@ -26,7 +27,10 @@ class ParticipantController extends AbstractController
 
         if ($participantForm->isSubmitted() && $participantForm->isValid()) {
 
-            $participant->setPassword($passwordHasher->hashPassword($participant, $participant->getPassword()));
+            if ($request->request->get('participant')['plainPassword']['first'] !== '') {
+
+                $participantRepository->upgradePassword($participant, $passwordHasher->hashPassword($participant, $request->request->get('participant')['plainPassword']['first']));
+            }
 
             $entityManager->persist($participant);
             $entityManager->flush();
@@ -40,4 +44,16 @@ class ParticipantController extends AbstractController
             'participantForm' => $participantForm->createView()
         ]);
     }
+
+    #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
+    #[ParamConverter('participant', class: 'App\Entity\Participant')]
+    public function show(Participant $participant): Response
+    {
+
+        return $this->render('user/detail.html.twig', [
+            'participant' => $participant
+        ]);
+    }
+
+
 }

@@ -50,10 +50,10 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
 
-    #[ORM\OneToMany(mappedBy: 'organizer', targetEntity: Sortie::class)]
+    #[ORM\OneToMany(mappedBy: 'organizer', targetEntity: Activity::class)]
     private Collection $organizedParties;
 
-    #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
+    #[ORM\ManyToMany(targetEntity: Activity::class, mappedBy: 'participants')]
     private Collection $parties;
 
     public function __construct()
@@ -224,14 +224,14 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Sortie>
+     * @return Collection<int, Activity>
      */
     public function getOrganizedParties(): Collection
     {
         return $this->organizedParties;
     }
 
-    public function addOrganizedParty(Sortie $organizedParty): self
+    public function addOrganizedParty(Activity $organizedParty): self
     {
         if (!$this->organizedParties->contains($organizedParty)) {
             $this->organizedParties->add($organizedParty);
@@ -241,7 +241,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeOrganizedParty(Sortie $organizedParty): self
+    public function removeOrganizedParty(Activity $organizedParty): self
     {
         if ($this->organizedParties->removeElement($organizedParty)) {
             // set the owning side to null (unless already changed)
@@ -254,14 +254,14 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Sortie>
+     * @return Collection<int, Activity>
      */
     public function getParties(): Collection
     {
         return $this->parties;
     }
 
-    public function addParty(Sortie $party): self
+    public function addParty(Activity $party): self
     {
         if (!$this->parties->contains($party)) {
             $this->parties->add($party);
@@ -271,7 +271,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeParty(Sortie $party): self
+    public function removeParty(Activity $party): self
     {
         if ($this->parties->removeElement($party)) {
             $party->removeParticipant($this);

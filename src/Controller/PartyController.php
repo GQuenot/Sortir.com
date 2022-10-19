@@ -4,8 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Sortie;
 use App\Form\PartyType;
+use App\Repository\EtatRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Services\PartyService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,10 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/party', name: 'party_')]
 class PartyController extends AbstractController
 {
-    private PartyService $partyService;
 
-    public function __construct(PartyService $partyService) {
-        $this->partyService = $partyService;
+    public function __construct(private PartyService $partyService,
+                                private SortieRepository $sortieRepository,
+                                private ParticipantRepository $participantRepository,
+                                private EntityManagerInterface $entityManager)
+    {
     }
 
     #[Route('/add', name: 'add')]
@@ -29,11 +34,11 @@ class PartyController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: 'edit')]
-    public function edit(int $id, Request $request, SortieRepository $sortieRepository): Response
+    public function edit(int $id, Request $request): Response
     {
-        $party = $sortieRepository->find($id);
+        $party = $this->sortieRepository->find($id);
 
-        if($party->getState()->getLabel() != 'Créée') {
+        if($party->getState()->getLabel() != $this->getParameter('app.states')['created']) {
             $this->addFlash('warning', 'Une demande déja publiée ne peut être modifiée');
             return $this->redirectToRoute('party_add');
 
@@ -67,23 +72,55 @@ class PartyController extends AbstractController
     }
 
     #[Route('/list', name: 'list')]
-    public function list(SortieRepository $sortieRepository): Response
+    public function list(): Response
     {
-
-        $sorties = $sortieRepository->findAll();
+        $sorties = $this->sortieRepository->findAll();
 
         return $this->render('party/list.html.twig', [
             'sorties' => $sorties,
         ]);
     }
 
+    #[Route('/subscription/{partyId}', name: 'subscription')]
+    public function subscription(int $partyId): Response
+    {
+        $party = $this->sortieRepository->find($partyId);
+
+        // If the subscription limit date is hit, participant can't sub to party and the party is set to closed
+        if(date('d-m-y h:i:s') > $party->getSubLimitDate()) {
+            $this->partyService->CloseSubscription($party);
+        }
+
+        if($party->getState()->getLabel() !== $this->getParameter('app.states')['open']) {
+            $this->addFlash('warning', 'Les inscriptions à cette sortie ne sont plus ouverte');
+            return $this->redirectToRoute('party_list');
+        }
+
+        // Add the participant to the party
+        $participant = $this->participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+        $party->addParticipant($participant);
+
+        $this->entityManager->persist($party);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Inscription reussie');
+
+        // If the max subscription is hit, the party is closed
+        if($party->getParticipants()->count() >= $party->getMaxSubscription()) {
+            $this->partyService->CloseSubscription($party);
+        }
+
+        return $this->redirectToRoute('party_list');
+    }
+
     #[Route('/detail/{id}', name: 'detail', requirements: ['id' => '\d+'])]
     #[ParamConverter('sortie', class: 'App\Entity\Sortie')]
-    public function show(Sortie $sortie, SortieRepository $sortieRepository): Response
+    public function show(Sortie $sortie): Response
     {
 
 //        //sans paramConverter
-//        $sortie = $sortieRepository->find($id);//
+//        $sortie = $this->sortieRepository->find($id);//
 //        if(!$serie){
 //            throw $this->createNotFoundException("Oops ! Serie not found !");
 //        }

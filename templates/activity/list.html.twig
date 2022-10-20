@@ -51,7 +51,7 @@
 
                   {% if activity.state.label in [states['open'], states['closed']] %}
                     {% if app.user == activity.organizer %}
-                      <a>Annuler</a>
+                      <a class="is-info" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
                     {% elseif app.user in activity.participants %}
                       <a>Se désister</a>
                     {% else %}

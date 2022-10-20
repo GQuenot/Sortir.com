@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Activity;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
+use App\Repository\StateRepository;
 use App\Services\ActivityService;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -17,8 +19,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class ActivityController extends AbstractController
 {
 
-    public function __construct(private readonly ActivityService    $activityService,
-                                private readonly ActivityRepository $activityRepository)
+    public function __construct(private readonly ActivityService        $activityService,
+                                private readonly ActivityRepository     $activityRepository,
+                                private readonly StateRepository        $stateRepository,
+                                private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -150,6 +154,26 @@ class ActivityController extends AbstractController
         return $this->render('activity/detail.html.twig', [
             'activity' => $activity
         ]);
+    }
+
+    #[Route('/activity/cancel/{id}', name: 'activity_cancel', requirements: ['id' =>'\d+'])]
+    public function cancelActivity(ActivityRepository $activityRepository, int $id): Response
+    {
+        $activity = $activityRepository->find($id);
+        $state = $this->stateRepository->findOneBy(['label' => 'Annulée']);
+
+        $today = new \DateTime();
+
+        if($activity->getActivityDate() <= $today){
+            $this->addFlash('warning', 'Une sortie commencée ne peut être annulée');
+            return $this->redirectToRoute('activity_list');
+        }
+        $activity->setState($state);
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Sortie annulée avec succès');
+        return $this->redirectToRoute('activity_list');
     }
 
 

@@ -21,7 +21,7 @@ class ActivityService
     {}
 
     public function saveActivity(activity $activity, Bool $publish) : array {
-        $response = ['code' => 'success', 'message' => 'La activity a bien été enregistrée'];
+        $response = ['code' => 'success', 'message' => 'La sortie a bien été enregistrée'];
 
         $organizer = $this->participantRepository->findOneBy(['email' => $this->security->getUser()->getUserIdentifier()]);
         $site = $this->siteRepository->find($organizer);
@@ -41,7 +41,7 @@ class ActivityService
             $this->entityManager->persist($activity);
             $this->entityManager->flush();
         } catch (Exception $e) {
-            $response = ['code' => 'danger', 'message' => "La activity n'a pas pu être enregistrée : $e"];
+            $response = ['code' => 'danger', 'message' => "La sortie n'a pas pu être enregistrée : $e"];
         }
 
         return $response;
@@ -56,10 +56,10 @@ class ActivityService
             $this->entityManager->persist($activity);
             $this->entityManager->flush();
         } catch (Exception $e) {
-            return ['code' => 'danger', 'message' => "La activity n'a pas pu être enregistrée : $e"];
+            return ['code' => 'danger', 'message' => "La sortie n'a pas pu être enregistrée : $e"];
         }
 
-        return ['code' => 'success', 'message' => 'La activity à bien été publiée'];
+        return ['code' => 'success', 'message' => 'La sortie a bien été publiée'];
     }
 
     public function closeSubscription(activity $activity): void {

@@ -39,7 +39,7 @@ class StateRepository extends ServiceEntityRepository
         }
     }
 
-    public function cancel(Etat $entity, bool $flush = false): void
+    public function cancel(State $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 

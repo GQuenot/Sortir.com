@@ -112,7 +112,7 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('activity_list');
     }
 
-    #[Route('activity//delete/{activityId}', name: 'activity_delete')]
+    #[Route('activity/delete/{activityId}', name: 'activity_delete')]
     public function delete(int $activityId): RedirectResponse
     {
         $activity = $this->activityRepository->find($activityId);
@@ -127,7 +127,23 @@ class ActivityController extends AbstractController
     #[Route('/', name: 'activity_list')]
     public function list(): Response
     {
-        $activities = $this->activityRepository->findPartiesNotArchived();
+        $activities = $this->activityRepository->findActivityNotArchived();
+
+        $activitiesPassed = $this->activityRepository->findActivitiesPassed();
+
+        $activitiesStarted = $this->activityRepository->findActivitiesStarted();
+        $state = $this->stateRepository->findOneBy(['label' => 'Activité en cours']);
+
+        if ($activities == $activitiesStarted){
+            return $this->redirectToRoute('activity_list');
+        }
+
+        foreach ($activitiesStarted as $activityStarted) {
+            $activityStarted->setState($state);
+            $this->entityManager->persist($activityStarted);
+        }
+
+        $this->entityManager->flush();
 
         return $this->render('activity/list.html.twig', [
             'activities' => $activities,

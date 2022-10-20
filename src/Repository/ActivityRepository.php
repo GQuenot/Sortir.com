@@ -45,10 +45,9 @@ class ActivityRepository extends ServiceEntityRepository
         }
     }
 
-    public function findPartiesNotArchived()
+    public function findActivityNotArchived()
     {
         $myDate = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
-        dump($myDate);
 
         $queryBuilder = $this->createQueryBuilder('a')
             ->andWhere('a.activityDate > :val')
@@ -59,6 +58,50 @@ class ActivityRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+
+    public function findActivitiesStarted()
+    {
+        $today = new \DateTime();
+        dump($today);
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->andWhere('s.activityDate <= :val')
+            ->setParameter('val', $today);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findActivitiesPassed(Activity $activity)
+    {
+        $passed = $activity->getActivityDate() + $activity->getDuration();
+        dump($activity->getActivityDate());
+        dump($activity->getDuration());
+        dd($passed);
+
+        $qb = $this->createQueryBuilder('p')
+            ->andWhere('p.activityDate' )
+            ;
+
+//        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+//    public function findActivitiesStarted()
+//    {
+//        $yesterday = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 day" ) );
+//        $tommorow = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "+1 day" ) );
+//        $queryBuilder = $this->createQueryBuilder('a')
+//            ->andWhere('a.activityDate > :val')
+//            ->andWhere('a.activityDate < :val2')
+//            ->setParameter('val', $yesterday)
+//            ->setParameter('val2', $tommorow);
+//        $query = $queryBuilder->getQuery();
+//        foreach ( $query->getResult() as $row){
+//        }
+//        return $query->getResult();
+//    }
 
 //    /**
 //     * @return Activity[] Returns an array of Activity objects

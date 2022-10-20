@@ -39,6 +39,15 @@ class StateRepository extends ServiceEntityRepository
         }
     }
 
+    public function cancel(State $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
 //    /**
 //     * @return State[] Returns an array of State objects
 //     */

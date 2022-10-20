@@ -41,7 +41,7 @@ class ActivityService
             $this->entityManager->persist($activity);
             $this->entityManager->flush();
         } catch (Exception $e) {
-            $response = ['code' => 'danger', 'message' => "La activity n'a pas pu être enregistrée : $e"];
+            $response = ['code' => 'danger', 'message' => "La sortie n'a pas pu être enregistrée : $e"];
         }
 
         return $response;
@@ -56,10 +56,10 @@ class ActivityService
             $this->entityManager->persist($activity);
             $this->entityManager->flush();
         } catch (Exception $e) {
-            return ['code' => 'danger', 'message' => "La activity n'a pas pu être enregistrée : $e"];
+            return ['code' => 'danger', 'message' => "La sortie n'a pas pu être enregistrée : $e"];
         }
 
-        return ['code' => 'success', 'message' => 'La activity à bien été publiée'];
+        return ['code' => 'success', 'message' => 'La sprtie à bien été publiée'];
     }
 
     public function closeSubscription(activity $activity): void {
@@ -88,6 +88,6 @@ class ActivityService
             return ['code' => 'danger', 'message' => "Une erreur est survenue lors de l'inscription : $e"];
         }
 
-        return ['code' => 'success', 'message' => 'Inscription reussie'];
+        return ['code' => 'success', 'message' => 'Inscription réussie'];
     }
 }

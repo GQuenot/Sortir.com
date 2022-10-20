@@ -8,14 +8,14 @@
                 <div class="column">
 
                     <div class="field">
-                        <label class="label">Nom de la activity</label>
+                        <label class="label">Nom de la sortie</label>
                         <div class="control">
                             {{ form_widget(activityForm.name, {'attr': {'class': 'input'}}) }}
                         </div>
                     </div>
 
                     <div class="field">
-                        <label class="label">Date de la activity</label>
+                        <label class="label">Date de la sortie</label>
                         <div class="control">
                             {{ form_widget(activityForm.activityDate, {'attr': {'class': 'input'}}) }}
                         </div>
@@ -105,7 +105,7 @@
                 {{ form_widget(activityForm.save, {'attr': {'class': 'button is-info'}}) }}
                 {{ form_widget(activityForm.publish, {'attr': {'class': 'button is-info'}}) }}
                 {% if activity is defined %}
-                    <a class="button is-info" href="{{ path('activity_delete', {'activityId' : activity.id })}}">Delete</a>
+                    <a class="button is-info" href="{{ path('activity_delete', {'activityId' : activity.id })}}">Supprimer</a>
                 {% endif %}
             </div>
 

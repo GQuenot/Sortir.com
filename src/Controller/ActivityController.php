@@ -6,6 +6,7 @@ use App\Entity\Activity;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\StateRepository;
+use App\Repository\ParticipantRepository;
 use App\Services\ActivityService;
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,10 +21,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class ActivityController extends AbstractController
 {
 
-    public function __construct(private readonly ActivityService        $activityService,
-                                private readonly ActivityRepository     $activityRepository,
-                                private readonly StateRepository        $stateRepository,
-                                private readonly EntityManagerInterface $entityManager)
+    public function __construct(private readonly ActivityService    $activityService,
+                                private readonly ActivityRepository $activityRepository,
+                                private readonly ParticipantRepository $participantRepository,
+                                private readonly EntityManagerInterface $entityManager,
+                                private readonly StateRepository        $stateRepository)
     {
     }
 
@@ -117,7 +119,7 @@ class ActivityController extends AbstractController
 
         $this->activityRepository->remove($activity, true);
 
-        $this->addFlash('success', 'la activity a bien été supprimée');
+        $this->addFlash('success', 'La sortie a bien été supprimée');
 
         return $this->redirectToRoute('activity_list');
     }
@@ -125,7 +127,7 @@ class ActivityController extends AbstractController
     #[Route('/', name: 'activity_list')]
     public function list(): Response
     {
-        $activities = $this->activityRepository->findAll();
+        $activities = $this->activityRepository->findPartiesNotArchived();
 
         return $this->render('activity/list.html.twig', [
             'activities' => $activities,
@@ -173,13 +175,6 @@ class ActivityController extends AbstractController
     #[ParamConverter('activity', class: 'App\Entity\Activity')]
     public function show(Activity $activity): Response
     {
-
-//        //sans paramConverter
-//        $activity = $this->activityRepository->find($id);//
-//        if(!$serie){
-//            throw $this->createNotFoundException("Oops ! Serie not found !");
-//        }
-
         return $this->render('activity/detail.html.twig', [
             'activity' => $activity
         ]);

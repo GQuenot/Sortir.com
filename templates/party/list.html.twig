@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{{ parent() }} | Show parties
+{% endblock %}
+
+{% block body %}
+
+  <h1 class="is-size-1 has-text-centered my-5">Liste des sorties</h1>
+
+  <div class="content">
+
+    <div class="columns mb-5">
+      <div class="column is-size-4 has-text-centered">
+        <p>Date du jour : {{ 'now' | date('j F Y') | format_date(locale='fr') }}</p>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="column is-three-fifths is-offset-one-fifth">
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th><abbr title="Nom de la sortie">Nom</abbr></th>
+                <th><abbr title="Date de la sortie">Date</abbr></th>
+                <th>Clotûre</th>
+                <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
+                <th>Etat</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for sortie in sorties %}
+              <tr>
+                <td>{{ sortie.name }}</td>
+                <td>{{ sortie.startDate | date('j F Y') | format_date(locale='fr') }}</td>
+                <td>{{  sortie.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
+                <td>{{ sortie.participants.count }} / {{ sortie.maxSubscription }}</td>
+                <td>{{ sortie.state.label }}</td>
+                <td>{{ app.user in sortie.participants ? 'Oui' : 'Non' }}</td>
+                <td> <a class="is-info" href="{{ path('participant_detail', {'id': sortie.organizer.id}) }}">{{ sortie.organizer.firstname }} {{ sortie.organizer.lastname }}</a></td>
+                <td>
+                  <a class="is-info" href="{{ path('party_detail', {'id': sortie.id}) }}">Afficher</a>
+                  {% if sortie.state.label == states['open'] %}
+                    {% if app.user in sortie.participants %}
+                      <a href="{{ path('party_unsubscription', {'partyId': sortie.id}) }}">Se désister</a>
+                    {% else %}
+                      <a href="{{ path('party_subscription', {'partyId': sortie.id}) }}">S'inscrire</a>
+                    {% endif %}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+
+          <div class="has-text-centered">
+            <a href="{{ path('party_add') }}" class="button is-info">Créer une sortie</a>
+          </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -43,8 +43,8 @@
                 <td>{{ app.user in activity.participants ? 'Oui' : 'Non' }}</td>
                 <td><a class="is-info" href="{{ path('participant_detail', {'id': activity.organizer.id}) }}">{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</a></td>
                 <td>
-                  {% if app.user == activity.organizer %}
-                    <a href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
+                  {% if app.user == activity.organizer and activity.state.label == states['created'] %}
+                      <a href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
                   {% else %}
                     <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
                   {% endif%}
@@ -53,8 +53,8 @@
                     {% if app.user == activity.organizer %}
                       <a>Annuler</a>
                     {% elseif app.user in activity.participants %}
-                      <a>Se désister</a>
-                    {% else %}
+                      <a href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>
+                    {% elseif activity.state.label == states['open'] %}
                       <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
                     {% endif %}
                   {% endif %}

@@ -6,6 +6,7 @@ use App\Entity\Activity;
 use App\Repository\StateRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SiteRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Security\Core\Security;
@@ -20,9 +21,16 @@ class ActivityService
                                 private readonly Array                  $states)
     {}
 
-    public function saveActivity(activity $activity, Bool $publish) : array {
-        $response = ['code' => 'success', 'message' => 'La activity a bien été enregistrée'];
-
+    /**
+     * Save the activity, can be published at the same time with $public = true,
+     * this will add the organizer as a participant too
+     *
+     * @param Activity $activity
+     * @param bool $publish
+     * @return void
+     * @throws Exception
+     */
+    public function saveActivity(activity $activity, Bool $publish) : void {
         $organizer = $this->participantRepository->findOneBy(['email' => $this->security->getUser()->getUserIdentifier()]);
         $site = $this->siteRepository->find($organizer);
 
@@ -31,63 +39,88 @@ class ActivityService
 
         // Publish or create the activity
         if($publish) {
-            $response = $this->publish($activity);
+            $this->publish($activity);
+            $this->addParticipant($activity);
         } else {
             $activity->setState($this->stateRepository->findOneBy(['label' => $this->states['created']]));
-            $this->addParticipant($activity);
         }
 
-        try {
-            $this->entityManager->persist($activity);
-            $this->entityManager->flush();
-        } catch (Exception $e) {
-            $response = ['code' => 'danger', 'message' => "La sortie n'a pas pu être enregistrée : $e"];
-        }
-
-        return $response;
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
     }
 
-    public function publish(activity $activity) : array {
+    public function publish(activity $activity) : void {
         $state = $this->stateRepository->findOneBy(['label' => $this->states['open']]);
-        $activity->setState($state);
-
-
-        try {
-            $this->entityManager->persist($activity);
-            $this->entityManager->flush();
-        } catch (Exception $e) {
-            return ['code' => 'danger', 'message' => "La sortie n'a pas pu être enregistrée : $e"];
-        }
-
-        return ['code' => 'success', 'message' => 'La sprtie à bien été publiée'];
-    }
-
-    public function closeSubscription(activity $activity): void {
-        $state = $this->stateRepository->findOneBy(['label' => $this->states['closed']]);
         $activity->setState($state);
 
         $this->entityManager->persist($activity);
         $this->entityManager->flush();
     }
 
-    public function addParticipant(activity $activity) {
+    /**
+     * // If the subscription limit date is hit, participant can't sub to activity and the activity is set to closed
+     *
+     * @param Activity $activity
+     * @return void
+     * @throws Exception
+     */
+    public function closeSubscription(activity $activity): void {
+        if(new DateTime(date('y-m-d h:i:s') > $activity->getSubLimitDate())) {
+            $state = $this->stateRepository->findOneBy(['label' => $this->states['closed']]);
+            $activity->setState($state);
+
+            $this->entityManager->persist($activity);
+            $this->entityManager->flush();
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function addParticipant(activity $activity): void
+    {
         $participant = $this->participantRepository->findOneBy(['email' => $this->security->getUser()->getUserIdentifier()]);
 
         $activity->addParticipant($participant);
 
-        try {
-            $this->entityManager->persist($activity);
+        $this->entityManager->persist($activity);
 
-            // If the max subscription is hit, the activity is closed
-            if($activity->getParticipants()->count() >= $activity->getPlaceLimit()) {
-                $this->closeSubscription($activity);
-            }
-
-            $this->entityManager->flush();
-        } catch (Exception $e) {
-            return ['code' => 'danger', 'message' => "Une erreur est survenue lors de l'inscription : $e"];
+        // If the max subscription is hit, the activity is closed
+        if($activity->getParticipants()->count() >= $activity->getPlaceLimit()) {
+            $this->closeSubscription($activity);
         }
 
-        return ['code' => 'success', 'message' => 'Inscription réussie'];
+        $this->entityManager->flush();
+    }
+
+    /**
+     * remove a participant from the list of an activity and change the state if necessary
+     *
+     * If the state of the activity does not allow it or the subLimitDate is hit, remove is rejected
+     *
+     * @param Activity $activity
+     * @return void
+     * @throws Exception
+     */
+    public function removeParticipant(activity $activity): void
+    {
+        $currentTime = new DateTime(date('y-m-d h:i:s'));
+
+        if (!($activity->getState()->getLabel() === $this->states['open'] ||
+            ($activity->getState()->getLabel() === $this->states['closed']
+                && $activity->getSubLimitDate() > $currentTime)))
+        {
+            throw new Exception('Il est trop tard pour se désister');
+        }
+
+        $participant = $this->participantRepository->findOneBy(['email' => $this->security->getUser()->getUserIdentifier()]);
+
+        $activity->removeParticipant($participant);
+        if ($activity->getSubLimitDate() < $currentTime) {
+            $activity->setState($this->stateRepository->findOneBy(['label' => $this->states['open']]));
+        }
+
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
     }
 }

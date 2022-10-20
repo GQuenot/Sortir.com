@@ -54,7 +54,7 @@
                       <a>Annuler</a>
                     {% elseif app.user in activity.participants %}
                       <a href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>
-                    {% else %}
+                    {% elseif activity.state.label == states['open'] %}
                       <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
                     {% endif %}
                   {% endif %}

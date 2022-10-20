@@ -142,7 +142,7 @@ class ActivityController extends AbstractController
             }
 
             $this->activityService->addParticipant($activity);
-            $this->addFlash('warning', 'Inscription effectée avec succès');
+            $this->addFlash('success', 'Inscription effectée avec succès');
         } catch (Exception $e) {
             $this->addFlash('warning', 'Echec de l\'inscription : ' . $e->getMessage());
         }

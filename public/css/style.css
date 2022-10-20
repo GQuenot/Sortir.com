@@ -1,0 +1,6 @@
+.is-256x256 {
+    width: 100%;
+    max-width: 20rem;
+    max-height: 20rem;
+    height: 100%;
+}

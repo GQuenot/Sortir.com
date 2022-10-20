@@ -39,6 +39,7 @@ security:
         - { path: ^/api, roles: ROLE_USER }
         - { path: ^/activity/detail, roles: ROLE_USER }
         - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/profile/add, roles: ROLE_ADMIN }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
 

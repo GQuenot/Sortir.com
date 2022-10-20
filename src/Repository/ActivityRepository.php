@@ -6,6 +6,7 @@ use App\Entity\Activity;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Void_;
 
 
 /**
@@ -59,6 +60,28 @@ class ActivityRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findActivitiesStarted()
+    {
+        $yesterday = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 day" ) );
+        $tommorow = date("Y-m-d", strtotime( date( "Y-m-d h:i:s", strtotime( date("Y-m-d") ) ) . "+1 minutes" ) );
+        dump($tommorow);
+
+
+        $queryBuilder = $this->createQueryBuilder('a')
+            ->andWhere('a.activityDate > :val')
+            ->andWhere('a.activityDate < :val2')
+            ->setParameter('val', $yesterday)
+            ->setParameter('val2', $tommorow);
+
+        $query = $queryBuilder->getQuery();
+
+         foreach ( $query->getResult() as $row){
+             dump($row);
+         }
+
+         return $query->getResult();
+
+    }
 
 //    /**
 //     * @return Activity[] Returns an array of Activity objects

@@ -55,32 +55,4 @@ class ParticipantController extends AbstractController
         ]);
     }
 
-    #[Route('/add', name: 'add')]
-    public function add(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, ParticipantRepository $participantRepository, SiteRepository $siteRepository): Response
-    {
-
-        $participant = new Participant();
-        $participantForm = $this->createForm(ParticipantType::class, $participant);
-
-        $participantForm->handleRequest($request);
-
-        if($participantForm->isSubmitted() && $participantForm->isValid() ){
-
-            $participant->setRoles(["ROLE_USER"]);
-            $participant->setActive(1);
-
-            $participantRepository->upgradePassword($participant, $passwordHasher->hashPassword($participant, $request->request->get('participant')['plainPassword']['first']));
-
-            $entityManager->persist($participant);
-            $entityManager->flush();
-
-            $this->addFlash('sucess', 'Le participant a bien été ajouté !');
-            return $this->redirectToRoute('activity_list');
-        }
-
-        return $this->render('user/add.html.twig', [
-            'participantForm' => $participantForm->createView()
-        ]);
-    }
-
 }

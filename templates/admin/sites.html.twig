@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Gestion des sites
+{% endblock %}
+
+{% block body %}
+    <h1 class="is-size-1 has-text-centered my-5">Gestion des sites</h1>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+
+                <table class="table is-striped is-fullwidth">
+                    <thead>
+                    <tr>
+                        <th>Ville</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for site in sites %}
+                        <tr>
+                            <td>{{ site.name }}</td>
+                            <td>
+                                <a href="{{ path('admin_site_edit', {'id': site.id}) }}">Modifier</a>
+                                | <a class="is-info" href="{{ path('admin_site_delete', {'id': site.id}) }}">Supprimer</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="has-text-centered">
+                    <a href="{{ path('admin_sites_add') }}" class="button is-info">Ajouter un site</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

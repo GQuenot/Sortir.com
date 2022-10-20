@@ -65,7 +65,7 @@ class ActivityService
      * @throws Exception
      */
     public function closeSubscription(activity $activity): void {
-        if(new DateTime(date('y-m-d h:i:s') > $activity->getSubLimitDate())) {
+        if($activity->getSubLimitDate() > new DateTime(date('y-m-d h:i:s'))) {
             $state = $this->stateRepository->findOneBy(['label' => $this->states['closed']]);
             $activity->setState($state);
 

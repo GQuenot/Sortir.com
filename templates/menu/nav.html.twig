@@ -31,6 +31,7 @@
                     </div>
                 </div>
 
+                {% if is_granted('ROLE_ADMIN') %}
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
                         Administrateur
@@ -42,6 +43,7 @@
                         </a>
                     </div>
                 </div>
+                {%  endif %}
 
                 <a class="navbar-item" href="{{ path('participant_profile') }}">
                     Profil

@@ -65,7 +65,7 @@ class ActivityService
      * @throws Exception
      */
     public function closeSubscription(activity $activity): void {
-        if($activity->getSubLimitDate() < new DateTime(date('y-m-d h:i:s'))) {
+        if($activity->getSubLimitDate() < new DateTime()) {
             $state = $this->stateRepository->findOneBy(['label' => $this->states['closed']]);
             $activity->setState($state);
 
@@ -104,7 +104,7 @@ class ActivityService
      */
     public function removeParticipant(activity $activity): void
     {
-        $currentTime = new DateTime(date('y-m-d h:i:s'));
+        $currentTime = new DateTime();
 
         if (!($activity->getState()->getLabel() === $this->states['open'] ||
             ($activity->getState()->getLabel() === $this->states['closed']

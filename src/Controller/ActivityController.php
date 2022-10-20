@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Activity;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
+use App\Repository\ParticipantRepository;
 use App\Services\ActivityService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,12 +14,15 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ActivityController extends AbstractController
 {
 
     public function __construct(private readonly ActivityService    $activityService,
-                                private readonly ActivityRepository $activityRepository)
+                                private readonly ActivityRepository $activityRepository,
+                                private readonly ParticipantRepository $participantRepository,
+                                private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -84,7 +88,7 @@ class ActivityController extends AbstractController
         $activity = $this->activityRepository->find($activityId);
 
         if($activity->getState()->getLabel() != $this->getParameter('app.states')['created']) {
-            $this->addFlash('warning', 'La activity à déja été publiée');
+            $this->addFlash('warning', 'La sortie à déja été publiée');
         }
 
         $response = $this->activityService->publish($activity);
@@ -100,7 +104,7 @@ class ActivityController extends AbstractController
 
         $this->activityRepository->remove($activity, true);
 
-        $this->addFlash('success', 'la activity a bien été supprimée');
+        $this->addFlash('success', 'La sortie a bien été supprimée');
 
         return $this->redirectToRoute('activity_list');
     }
@@ -115,7 +119,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('activity/subscription/{activityId}', name: 'activity_subscription')]
+    #[Route('/subscription/{activityId}', name: 'activity_subscription')]
     public function subscription(int $activityId): Response
     {
         $activity = $this->activityRepository->find($activityId);
@@ -126,7 +130,7 @@ class ActivityController extends AbstractController
         }
 
         if($activity->getState()->getLabel() !== $this->getParameter('app.states')['open']) {
-            $this->addFlash('warning', 'Les inscriptions à cette activity ne sont plus ouverte');
+            $this->addFlash('warning', 'Les inscriptions à cette sortie ne sont plus ouverte');
             return $this->redirectToRoute('activity_list');
         }
 
@@ -136,17 +140,28 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('activity_list');
     }
 
+    #[Route('/unsubscription/{activityId}', name: 'unsubscription')]
+    public function unsubscription(int $activityId): Response
+    {
+        $activity = $this->activityRepository->find($activityId);
+
+        // Delete the participant to the party
+        $participant = $this->participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+        $activity->removeParticipant($participant);
+
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Désistement reussi');
+
+        return $this->redirectToRoute('activity_list');
+    }
+
     #[Route('/activity/detail/{id}', name: 'activity_detail', requirements: ['id' => '\d+'])]
     #[ParamConverter('activity', class: 'App\Entity\Activity')]
     public function show(Activity $activity): Response
     {
-
-//        //sans paramConverter
-//        $activity = $this->activityRepository->find($id);//
-//        if(!$serie){
-//            throw $this->createNotFoundException("Oops ! Serie not found !");
-//        }
-
         return $this->render('activity/detail.html.twig', [
             'activity' => $activity
         ]);

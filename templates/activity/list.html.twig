@@ -22,8 +22,8 @@
           <table class="table is-striped is-fullwidth">
             <thead>
               <tr>
-                <th><abbr title="Nom de la activity">Nom</abbr></th>
-                <th><abbr title="Date de la activity">Date</abbr></th>
+                <th><abbr title="Nom de la sortie">Nom</abbr></th>
+                <th><abbr title="Date de la sortie">Date</abbr></th>
                 <th>Clotûre</th>
                 <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
                 <th>Etat</th>
@@ -53,7 +53,7 @@
                     {% if app.user == activity.organizer %}
                       <a>Annuler</a>
                     {% elseif app.user in activity.participants %}
-                      <a>Se désister</a>
+                      <a href="{{ path('unsubscription', {'activityId': activity.id}) }}">Se désister</a>
                     {% else %}
                       <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
                     {% endif %}

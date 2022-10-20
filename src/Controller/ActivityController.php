@@ -6,6 +6,7 @@ use App\Entity\Activity;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Services\ActivityService;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -26,7 +27,13 @@ class ActivityController extends AbstractController
     public function add(Request $request): Response
     {
         $activity = new activity();
-        $activityForm = $this->saveActivity($activity, $request);
+
+        try {
+            $activityForm = $this->saveActivity($activity, $request);
+        } catch (Exception $e) {
+            $this->addFlash('warning', 'impossible d\'enregistrer l\'activité :' . $e->getMessage());
+            return $this->redirectToRoute('activity_list');
+        }
 
         if ($activityForm->isSubmitted() && $activityForm->isValid()) {
             return $this->redirectToRoute('activity_list');
@@ -47,7 +54,12 @@ class ActivityController extends AbstractController
             return $this->redirectToRoute('activity_list');
         }
 
-        $activityForm = $this->saveActivity($activity, $request);
+        try {
+            $activityForm = $this->saveActivity($activity, $request);
+        } catch (Exception $e) {
+            $this->addFlash('warning', 'impossible d\'enregistrer l\'activité :' . $e->getMessage());
+            return $this->redirectToRoute('activity_list');
+        }
 
         if ($activityForm->isSubmitted() && $activityForm->isValid()) {
             return $this->redirectToRoute('activity_list');
@@ -63,6 +75,7 @@ class ActivityController extends AbstractController
      * @param activity $activity
      * @param Request $request
      * @return FormInterface
+     * @throws Exception
      */
     public function saveActivity(activity $activity, Request $request) : FormInterface
     {
@@ -71,8 +84,8 @@ class ActivityController extends AbstractController
         $activityForm->handleRequest($request);
 
         if ($activityForm->isSubmitted() && $activityForm->isValid()) {
-            $response = $this->activityService->saveActivity($activity, $activityForm->get('publish')->isClicked());
-            $this->addFlash($response['code'], $response['message']);
+            $this->activityService->saveActivity($activity, $activityForm->get('publish')->isClicked());
+            $this->addFlash('success', 'L\'activité à été enregistrée avec succès');
         }
 
         return $activityForm;
@@ -84,11 +97,11 @@ class ActivityController extends AbstractController
         $activity = $this->activityRepository->find($activityId);
 
         if($activity->getState()->getLabel() != $this->getParameter('app.states')['created']) {
-            $this->addFlash('warning', 'La activity à déja été publiée');
+            $this->addFlash('warning', 'L\'activité à déja été publiée');
         }
 
-        $response = $this->activityService->publish($activity);
-        $this->addFlash($response['code'], $response['message']);
+        $this->activityService->publish($activity);
+        $this->addFlash('success', 'L\'activité à été publiée avec succès');
 
         return $this->redirectToRoute('activity_list');
     }
@@ -120,18 +133,38 @@ class ActivityController extends AbstractController
     {
         $activity = $this->activityRepository->find($activityId);
 
-        // If the subscription limit date is hit, participant can't sub to activity and the activity is set to closed
-        if(date('d-m-y h:i:s') > $activity->getSubLimitDate()) {
+        try {
             $this->activityService->CloseSubscription($activity);
+
+            if($activity->getState()->getLabel() !== $this->getParameter('app.states')['open']) {
+                $this->addFlash('warning', 'Echec de l\'inscription : Les inscriptions à cette activité ne sont plus ouverte');
+                return $this->redirectToRoute('activity_list');
+            }
+
+            $this->activityService->addParticipant($activity);
+            $this->addFlash('warning', 'Inscription effectée avec succès');
+        } catch (Exception $e) {
+            $this->addFlash('warning', 'Echec de l\'inscription : ' . $e->getMessage());
         }
 
-        if($activity->getState()->getLabel() !== $this->getParameter('app.states')['open']) {
-            $this->addFlash('warning', 'Les inscriptions à cette activity ne sont plus ouverte');
-            return $this->redirectToRoute('activity_list');
-        }
 
-        $response = $this->activityService->addParticipant($activity);
-        $this->addFlash($response['code'], $response['message']);
+
+
+
+        return $this->redirectToRoute('activity_list');
+    }
+
+    #[Route('activity/unsubscribe/{activityId}', name: 'activity_unsubscribe')]
+    public function unsubscribe(int $activityId): Response
+    {
+        $activity = $this->activityRepository->find($activityId);
+
+        try {
+            $this->activityService->removeParticipant($activity);
+            $this->addFlash('success', 'desistement effectué avec succès');
+        } catch (Exception $e) {
+            $this->addFlash('warning', 'Echec du desistement : ' . $e->getMessage());
+        }
 
         return $this->redirectToRoute('activity_list');
     }

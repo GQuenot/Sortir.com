@@ -151,10 +151,6 @@ class ActivityController extends AbstractController
             $this->addFlash('warning', 'Echec de l\'inscription : ' . $e->getMessage());
         }
 
-
-
-
-
         return $this->redirectToRoute('activity_list');
     }
 

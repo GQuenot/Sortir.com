@@ -127,7 +127,7 @@ class ActivityController extends AbstractController
     #[Route('/', name: 'activity_list')]
     public function list(): Response
     {
-        $activities = $this->activityRepository->findAll();
+        $activities = $this->activityRepository->findPartiesNotArchived();
 
         return $this->render('activity/list.html.twig', [
             'activities' => $activities,

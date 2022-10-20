@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Activity;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -46,15 +47,15 @@ class ActivityRepository extends ServiceEntityRepository
 
     public function findPartiesNotArchived()
     {
-        $today = new \DateTime('now');
+        $myDate = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
+        dump($myDate);
 
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-        $queryBuilder->select('a')
-            ->from('Entity\Activity', 'a')
-            ->andWhere(date_diff('a.activityDate', $today) < 32);
-
+        $queryBuilder = $this->createQueryBuilder('a')
+            ->andWhere('a.activityDate > :val')
+            ->setParameter('val', $myDate);
 
         $query = $queryBuilder->getQuery();
+
         return $query->getResult();
     }
 

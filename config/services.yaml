@@ -33,6 +33,6 @@ services:
       arguments:
         $states : '%app.states%'
 
-    App\Service\FileUploader:
+    App\Services\FileUploader:
       arguments:
         $targetDirectory: '%profile_pictures_directory%'

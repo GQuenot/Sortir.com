@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Import Participants
+{% endblock %}
+
+{% block body %}
+
+    <h1 class="is-size-1 has-text-centered py-5">Import des participants</h1>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-half is-offset-one-quarter">
+                {{ form_start(importForm) }}
+
+                <label class="label">Ma photo</label>
+                <div class="file has-name is-fullwidth">
+                    <label class="file-label">
+                        {{ form_widget(importForm.importParticipant, {'attr': {'class': 'file-input'}}) }}
+                        <span class="file-cta">
+                          <span class="file-icon">
+                            <i data-feather="upload"></i>
+                          </span>
+                          <span class="file-label">
+                            Choisissez un fichier
+                          </span>
+                        </span>
+                        <span class="file-name">
+                          participant_{{ 'now'|date('d-m-Y', 'Europe/Paris') }}.csv
+                        </span>
+                    </label>
+                </div>
+
+
+                <div class="has-text-centered">
+                    <button class="button is-info">Importer</button>
+                </div>
+
+                {{ form_end(importForm) }}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

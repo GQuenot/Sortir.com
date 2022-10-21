@@ -6,8 +6,7 @@ use App\Entity\Activity;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\StateRepository;
-use App\Repository\ParticipantRepository;
-use App\Services\ActivityService;
+use App\Service\ActivityService;
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -16,6 +15,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ActivityController extends AbstractController
@@ -23,7 +23,6 @@ class ActivityController extends AbstractController
 
     public function __construct(private readonly ActivityService    $activityService,
                                 private readonly ActivityRepository $activityRepository,
-                                private readonly ParticipantRepository $participantRepository,
                                 private readonly EntityManagerInterface $entityManager,
                                 private readonly StateRepository        $stateRepository)
     {
@@ -125,8 +124,10 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/', name: 'activity_list')]
-    public function list(): Response
+    public function list(MailerInterface $mailer): Response
     {
+
+
         $activities = $this->activityRepository->findPartiesNotArchived();
 
         return $this->render('activity/list.html.twig', [

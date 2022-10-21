@@ -16,6 +16,20 @@
 
         {% if app.user %}
             <div class="navbar-end">
+                {% if is_granted('ROLE_ADMIN')  %}
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            Administration
+                        </a>
+
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item" href="{{ path('admin_import') }}">
+                                Import Utilisateur
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
                         Activités

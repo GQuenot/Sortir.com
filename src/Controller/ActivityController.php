@@ -91,7 +91,7 @@ class ActivityController extends AbstractController
 
         if ($activityForm->isSubmitted() && $activityForm->isValid()) {
             $this->activityService->saveActivity($activity, $activityForm->get('publish')->isClicked());
-            $this->addFlash('success', 'L\'activité à été enregistrée avec succès');
+            $this->addFlash('success', 'L\'activité a été enregistrée avec succès');
         }
 
         return $activityForm;
@@ -103,11 +103,11 @@ class ActivityController extends AbstractController
         $activity = $this->activityRepository->find($activityId);
 
         if($activity->getState()->getLabel() != $this->getParameter('app.states')['created']) {
-            $this->addFlash('warning', 'L\'activité à déja été publiée');
+            $this->addFlash('warning', 'L\'activité a déja été publiée');
         }
 
         $this->activityService->publish($activity);
-        $this->addFlash('success', 'L\'activité à été publiée avec succès');
+        $this->addFlash('success', 'L\'activité a été publiée avec succès');
 
         return $this->redirectToRoute('activity_list');
     }
@@ -129,18 +129,31 @@ class ActivityController extends AbstractController
     {
         $activities = $this->activityRepository->findActivityNotArchived();
 
-        $activitiesPassed = $this->activityRepository->findActivitiesPassed();
-
         $activitiesStarted = $this->activityRepository->findActivitiesStarted();
-        $state = $this->stateRepository->findOneBy(['label' => 'Activité en cours']);
+        $stateA = $this->stateRepository->findOneBy(['label' => 'Activité en cours']);
 
         if ($activities == $activitiesStarted){
             return $this->redirectToRoute('activity_list');
         }
 
         foreach ($activitiesStarted as $activityStarted) {
-            $activityStarted->setState($state);
+            $activityStarted->setState($stateA);
             $this->entityManager->persist($activityStarted);
+        }
+
+        $this->entityManager->flush();
+
+        $activitiesPassed = $this->activityRepository->findActivitiesPassed();
+
+        $stateP = $this->stateRepository->findOneBy(['label' => 'Passée']);
+
+        if ($activities == $activitiesPassed){
+            return $this->redirectToRoute('activity_list');
+        }
+
+        foreach ($activitiesPassed as $activityPassed) {
+            $activityPassed->setState($stateP);
+            $this->entityManager->persist($activityPassed);
         }
 
         $this->entityManager->flush();

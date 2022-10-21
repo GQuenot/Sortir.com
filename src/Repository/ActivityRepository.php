@@ -61,8 +61,7 @@ class ActivityRepository extends ServiceEntityRepository
 
     public function findActivitiesStarted()
     {
-        $today = new \DateTime();
-        dump($today);
+        $today = new DateTime();
         $queryBuilder = $this->createQueryBuilder('s')
             ->andWhere('s.activityDate <= :val')
             ->setParameter('val', $today);
@@ -72,36 +71,17 @@ class ActivityRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findActivitiesPassed(Activity $activity)
+    public function findActivitiesPassed()
     {
-        $passed = $activity->getActivityDate() + $activity->getDuration();
-        dump($activity->getActivityDate());
-        dump($activity->getDuration());
-        dd($passed);
-
+        $today = new DateTime();
         $qb = $this->createQueryBuilder('p')
-            ->andWhere('p.activityDate' )
-            ;
+            ->where(":val >= DATE_ADD(p.activityDate, p.duration, 'minute')")
+            ->setParameter('val', $today)
+            ->andWhere('p.state != 6');
 
-//        $query = $queryBuilder->getQuery();
-
+        $query = $qb->getQuery();
         return $query->getResult();
     }
-
-//    public function findActivitiesStarted()
-//    {
-//        $yesterday = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 day" ) );
-//        $tommorow = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "+1 day" ) );
-//        $queryBuilder = $this->createQueryBuilder('a')
-//            ->andWhere('a.activityDate > :val')
-//            ->andWhere('a.activityDate < :val2')
-//            ->setParameter('val', $yesterday)
-//            ->setParameter('val2', $tommorow);
-//        $query = $queryBuilder->getQuery();
-//        foreach ( $query->getResult() as $row){
-//        }
-//        return $query->getResult();
-//    }
 
 //    /**
 //     * @return Activity[] Returns an array of Activity objects

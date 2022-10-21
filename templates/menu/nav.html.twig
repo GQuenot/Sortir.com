@@ -31,6 +31,26 @@
                     </div>
                 </div>
 
+                {% if is_granted('ROLE_ADMIN') %}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        Administrateur
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="{{ path('admin_add') }}">
+                            Ajouter un participant
+                        </a>
+                        <a class="navbar-item" href="{{ path('admin_places') }}">
+                            Gérer les lieux
+                        </a>
+                        <a class="navbar-item" href="{{ path('admin_sites') }}">
+                            Gérer les sites
+                        </a>
+                    </div>
+                </div>
+                {%  endif %}
+
                 <a class="navbar-item" href="{{ path('participant_profile') }}">
                     Profil
                 </a>
@@ -40,7 +60,7 @@
                         <div class="field is-grouped">
                             <p class="control">
                                 <a class="button is-light" href="{{ path('app_logout') }}">
-                                    <span>Logout ({{ app.user.pseudo }})</span>
+                                    <span>Se déconnecter ({{ app.user.pseudo }})</span>
                                 </a>
                             </p>
                         </div>

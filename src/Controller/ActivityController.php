@@ -127,10 +127,8 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/', name: 'activity_list')]
-    public function list(Request $request, Filter $filter, ParticipantRepository $participantRepository): Response
+    public function list(Request $request, ParticipantRepository $participantRepository): Response
     {
-//        $activities = $this->activityRepository->findPartiesNotArchived();
-
         $filterForm = $this->createForm(ActivityFilterType::class);
 
         $filterForm->handleRequest($request);

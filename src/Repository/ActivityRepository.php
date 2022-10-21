@@ -7,6 +7,7 @@ use DateTime;
 use App\Entity\Participant;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Void_;
 
 
 /**
@@ -48,8 +49,7 @@ class ActivityRepository extends ServiceEntityRepository
 
     public function findPartiesNotArchived()
     {
-        $myDate = date("Y-m-d", strtotime(date("Y-m-d", strtotime(date("Y-m-d"))) . "-1 month"));
-        dump($myDate);
+        $myDate = date('Y-m-d', strtotime("-1 months"));
 
         $queryBuilder = $this->createQueryBuilder('a')
             ->andWhere('a.activityDate > :val')
@@ -150,13 +150,33 @@ class ActivityRepository extends ServiceEntityRepository
                     ->andWhere("s.label LIKE 'Passée'");
             }
         }
-
-
+        
         $query = $qb->getQuery();
 
-//        dd($query);
-
         return $query->getResult();
+    }
+
+    public function findActivitiesStarted()
+    {
+        $yesterday = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 day" ) );
+        $tommorow = date("Y-m-d", strtotime( date( "Y-m-d h:i:s", strtotime( date("Y-m-d") ) ) . "+1 minutes" ) );
+        dump($tommorow);
+
+
+        $queryBuilder = $this->createQueryBuilder('a')
+            ->andWhere('a.activityDate > :val')
+            ->andWhere('a.activityDate < :val2')
+            ->setParameter('val', $yesterday)
+            ->setParameter('val2', $tommorow);
+
+        $query = $queryBuilder->getQuery();
+
+         foreach ( $query->getResult() as $row){
+             dump($row);
+         }
+
+         return $query->getResult();
+
     }
 
 //    /**

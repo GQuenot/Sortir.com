@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Ajouter un lieu
+{% endblock %}
+
+{% block body %}
+
+    <h1 class="is-size-1 has-text-centered py-5">Ajouter un lieu</h1>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+
+                {{ form_start(placeForm) }}
+
+                <div class="field">
+                    <label class="label">Ville</label>
+                    <div class="control">
+                        {{ form_widget(placeForm.name, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Code postal</label>
+                    <div class="control">
+                        {{ form_widget(placeForm.postalCode, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="has-text-centered">
+                    <button class="button is-info">Ajouter</button>
+                </div>
+
+                {{ form_end(placeForm) }}
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

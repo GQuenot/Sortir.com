@@ -1,23 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | Profile
+    {{ parent() }} | Ajouter un utilisateur
 {% endblock %}
 
 {% block body %}
 
-    <h1 class="is-size-1 has-text-centered py-5">Modifier mon profil</h1>
+    <h1 class="is-size-1 has-text-centered py-5">Ajouter un utilisateur</h1>
 
     <div class="content">
         <div class="columns">
-            <div class="column is-one-quarter">
-                <div class="card-image is-flex is-justify-content-center">
-                    <figure class="image is-256x256">
-                        <img src="{{ asset('images/profilePictures/' ~ app.user.id ~ '.jpg') }}" alt="Image de profil">
-                    </figure>
-                </div>
-            </div>
-            <div class="column is-half">
+            <div class="column is-three-fifths is-offset-one-fifth">
 
                 {{ form_start(participantForm) }}
 
@@ -56,36 +49,9 @@
                     </div>
                 </div>
 
-                <div class="field">
-                    <label class="label" for="site">Site</label>
-                    <div class="select is-fullwidth" id="site">
-                        {{ form_widget(participantForm.site, {'attr': {'class': 'select'}}) }}
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Ma photo</label>
-                    <div class="file">
-                        <label class="file-label">
-                            {{ form_widget(participantForm.profilePicture, {'attr': {'class': 'file-input'}}) }}
-                            <span class="file-cta">
-                              <span class="file-icon">
-                                <i data-feather="upload"></i>
-                              </span>
-                              <span class="file-label">
-                                Choisissez une image
-                              </span>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="py-5">
-                    <article class="message is-info">
-                        <div class="message-body">
-                            Si vous souhaitez modifier votre mot de passe, saisissez votre nouveau mot de passe. Sinon, laissez les champs vides.
-                        </div>
-                    </article>
+                <label class="label" for="site">Site</label>
+                <div class="select is-fullwidth" id="site">
+                    {{ form_widget(participantForm.site, {'attr': {'class': 'select'}}) }}
                 </div>
 
                 <div class="field">
@@ -103,7 +69,7 @@
                 </div>
 
                 <div class="has-text-centered">
-                    <button class="button is-info">Mettre à jour</button>
+                    <button class="button is-info">Enregistrer</button>
                 </div>
 
                 {{ form_end(participantForm) }}

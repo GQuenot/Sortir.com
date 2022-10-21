@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | Gestion des sites
+    {{ parent() }} | Gestion des lieux
 {% endblock %}
 
 {% block body %}
-    <h1 class="is-size-1 has-text-centered my-5">Gestion des sites</h1>
+    <h1 class="is-size-1 has-text-centered my-5">Gestion des lieux</h1>
 
     <div class="content">
         <div class="columns">
@@ -15,24 +15,26 @@
                     <thead>
                     <tr>
                         <th>Ville</th>
+                        <th>Code postal</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for site in sites %}
+                    {% for place in places %}
                         <tr>
-                            <td>{{ site.name }}</td>
+                            <td>{{ place.name }}</td>
+                            <td>{{ place.postalCode }}</td>
                             <td>
-                                <a href="{{ path('admin_site_edit', {'id': site.id}) }}">Modifier</a>
+                                <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>
                                 |
-                                <a class="is-info" href="{{ path('admin_site_delete', {'id': site.id}) }}">Supprimer</a></td>
+                                <a class="is-info" href="{{ path('admin_place_delete', {'id': place.id}) }}">Supprimer</a></td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
 
                 <div class="has-text-centered">
-                    <a href="{{ path('admin_sites_add') }}" class="button is-info">Ajouter un site</a>
+                    <a href="{{ path('admin_places_add') }}" class="button is-info">Ajouter un lieu</a>
                 </div>
 
             </div>

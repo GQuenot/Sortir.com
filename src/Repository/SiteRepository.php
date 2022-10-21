@@ -47,13 +47,9 @@ class SiteRepository extends ServiceEntityRepository
             ->leftJoin('p.site', 'p')
             ->andWhere('s.id = p');
 
-
-//        dd($qb->getQuery());
-
         return $qb->getQuery()->getResult();
 
     }
-
 
 
 //    /**

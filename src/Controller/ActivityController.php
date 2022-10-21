@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
+use App\Form\ActivityFilterType;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\StateRepository;
@@ -10,6 +11,7 @@ use App\Repository\ParticipantRepository;
 use App\Services\ActivityService;
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Utils\Filter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -125,12 +127,26 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/', name: 'activity_list')]
-    public function list(): Response
+    public function list(Request $request, Filter $filter, ParticipantRepository $participantRepository): Response
     {
-        $activities = $this->activityRepository->findPartiesNotArchived();
+//        $activities = $this->activityRepository->findPartiesNotArchived();
+
+        $filterForm = $this->createForm(ActivityFilterType::class);
+
+        $filterForm->handleRequest($request);
+
+        $activities = $this->activityRepository->findAll();
+
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+
+            $user = $participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+            $activities = $this->activityRepository->findByFilter($user, [$request->request->get('activity_filter')]);
+        }
 
         return $this->render('activity/list.html.twig', [
             'activities' => $activities,
+            'filterForm' => $filterForm->createView()
         ]);
     }
 

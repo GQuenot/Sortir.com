@@ -8,7 +8,14 @@
     <h1 class="is-size-1 has-text-centered py-5">{{ participant.pseudo }}</h1>
 
 <div class="content">
-    <div class="columns is-centered">
+    <div class="columns">
+        <div class="column is-one-quarter">
+            <div class="card-image is-flex is-justify-content-center">
+                <figure class="image is-256x256">
+                    <img src="{{ asset('images/profilePictures/' ~ app.user.id ~ '.jpg') }}" alt="Image de profil">
+                </figure>
+            </div>
+        </div>
         <div class="column is-half">
             <p><strong>Prénom :</strong> {{ participant.firstname }}</p>
             <p><strong>Nom :  </strong> {{ participant.lastname }} </p>

@@ -48,8 +48,7 @@ class ActivityRepository extends ServiceEntityRepository
 
     public function findPartiesNotArchived()
     {
-        $myDate = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
-        dump($myDate);
+        $myDate = date('Y-m-d', strtotime("-1 months"));
 
         $queryBuilder = $this->createQueryBuilder('a')
             ->andWhere('a.activityDate > :val')

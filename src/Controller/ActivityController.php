@@ -56,14 +56,14 @@ class ActivityController extends AbstractController
         $activity = $this->activityRepository->find($id);
 
         if($activity->getState()->getLabel() != $this->getParameter('app.states')['created']) {
-            $this->addFlash('warning', 'Une demande déja publiée ne peut être modifiée');
+            $this->addFlash('warning', 'Une demande déjà publiée ne peut être modifiée');
             return $this->redirectToRoute('activity_list');
         }
 
         try {
             $activityForm = $this->saveActivity($activity, $request);
         } catch (Exception $e) {
-            $this->addFlash('warning', 'impossible d\'enregistrer l\'activité :' . $e->getMessage());
+            $this->addFlash('warning', 'Impossible d\'enregistrer l\'activité :' . $e->getMessage());
             return $this->redirectToRoute('activity_list');
         }
 
@@ -103,7 +103,7 @@ class ActivityController extends AbstractController
         $activity = $this->activityRepository->find($activityId);
 
         if($activity->getState()->getLabel() != $this->getParameter('app.states')['created']) {
-            $this->addFlash('warning', 'L\'activité a déja été publiée');
+            $this->addFlash('warning', 'L\'activité a déjà été publiée');
         }
 
         $this->activityService->publish($activity);
@@ -119,7 +119,7 @@ class ActivityController extends AbstractController
 
         $this->activityRepository->remove($activity, true);
 
-        $this->addFlash('success', 'La sortie a bien été supprimée');
+        $this->addFlash('success', 'L\'activité a bien été supprimée');
 
         return $this->redirectToRoute('activity_list');
     }

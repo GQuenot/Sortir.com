@@ -150,7 +150,7 @@ class ActivityRepository extends ServiceEntityRepository
                     ->andWhere("s.label LIKE 'Passée'");
             }
         }
-        
+
         $query = $qb->getQuery();
 
         return $query->getResult();
@@ -175,8 +175,46 @@ class ActivityRepository extends ServiceEntityRepository
              dump($row);
          }
 
-         return $query->getResult();
+        return $query->getResult();
+    }
 
+
+    public function findActivitiesStarted()
+    {
+        $today = new DateTime();
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->andWhere('s.activityDate <= :val')
+            ->setParameter('val', $today)
+            ->andWhere('s.state != 6');
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findActivitiesPassed()
+    {
+        $today = new DateTime();
+        $qb = $this->createQueryBuilder('p')
+            ->where(":val >= DATE_ADD(p.activityDate, p.duration, 'MINUTE')")
+            ->setParameter('val', $today)
+            ->andWhere('p.state != 6');
+
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
+    public function findInscriptionClosed()
+    {
+        $today = new DateTime();
+        $queryBuilder = $this->createQueryBuilder('i')
+            ->andWhere('i.subLimitDate <= :val')
+            ->andWhere('i.activityDate >= :val')
+            ->setParameter('val', $today);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
     }
 
 //    /**

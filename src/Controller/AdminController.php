@@ -353,7 +353,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/setActivityState/{id}', name: 'users_setActivityState', requirements: ['id' =>'\d+'])]
-    public function cancelActivity(ParticipantRepository $participantRepository, int $id): Response
+    public function setActivityState(ParticipantRepository $participantRepository, int $id): Response
     {
         $user = $participantRepository->find($id);
 

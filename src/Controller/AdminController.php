@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\City;
 use App\Entity\Participant;
 use App\Entity\Site;
+use App\Form\CityFilterType;
 use App\Form\CityType;
 use App\Form\ParticipantType;
+use App\Form\SiteFilterType;
 use App\Form\SiteType;
 use App\Repository\CityRepository;
 use App\Repository\ParticipantRepository;
@@ -85,14 +87,21 @@ class AdminController extends AbstractController
     }
 
     #[Route('/sites', name: 'sites')]
-    public function get_sites(){
+    public function get_sites(Request $request){
+
+        $filterForm = $this->createForm(SiteFilterType::class);
+
+        $filterForm->handleRequest($request);
 
         $sites = $this->siteRepository->findAll();
-//        $sitesCantBeDeleted = $this->siteRepository->findSitesToNotDeleted($sites);
+
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            $sites = $this->siteRepository->findByFilter( [$request->request->get('site_filter')]);
+        }
 
         return $this->render('admin/sites.html.twig', [
             'sites' => $sites,
-//            'sitesCantBeDeleted' => $sitesCantBeDeleted
+            'filterForm' => $filterForm->createView()
         ]);
     }
 
@@ -156,12 +165,21 @@ class AdminController extends AbstractController
     }
 
     #[Route('/places', name: 'places')]
-    public function get_places(){
+    public function get_places(Request $request){
+
+        $filterForm = $this->createForm(CityFilterType::class);
+
+        $filterForm->handleRequest($request);
 
         $places = $this->cityRepository->findAll();
 
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            $places = $this->cityRepository->findByFilter( [$request->request->get('city_filter')]);
+        }
+
         return $this->render('admin/places.html.twig', [
             'places' => $places,
+            'filterForm' => $filterForm->createView()
         ]);
     }
 

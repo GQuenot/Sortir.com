@@ -8,7 +8,7 @@ use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\StateRepository;
 use App\Repository\ParticipantRepository;
-use App\Services\ActivityService;
+use App\Service\ActivityService;
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;

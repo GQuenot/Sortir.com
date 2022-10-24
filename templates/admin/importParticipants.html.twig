@@ -13,7 +13,6 @@
             <div class="column is-half is-offset-one-quarter">
                 {{ form_start(importForm) }}
 
-                <label class="label">Ma photo</label>
                 <div class="file has-name is-fullwidth">
                     <label class="file-label">
                         {{ form_widget(importForm.importParticipant, {'attr': {'class': 'file-input'}}) }}
@@ -37,6 +36,7 @@
 
                 <div class="has-text-centered">
                     <button class="button is-info">Importer</button>
+                    <a href="javascript:history.go(-1)" class="button is-info">Retour</a>
                 </div>
 
                 {{ form_end(importForm) }}

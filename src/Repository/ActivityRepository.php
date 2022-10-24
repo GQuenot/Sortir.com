@@ -46,7 +46,7 @@ class ActivityRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
+    
     public function findPartiesNotArchived()
     {
         $myDate = date('Y-m-d', strtotime("-1 months"));
@@ -179,33 +179,62 @@ class ActivityRepository extends ServiceEntityRepository
                     ->andWhere("s.label LIKE 'Passée'");
             }
         }
-        
+
         $query = $qb->getQuery();
 
         return $query->getResult();
     }
 
-    public function findActivitiesStarted()
+    public function findActivityNotArchived()
     {
-        $yesterday = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 day" ) );
-        $tommorow = date("Y-m-d", strtotime( date( "Y-m-d h:i:s", strtotime( date("Y-m-d") ) ) . "+1 minutes" ) );
-        dump($tommorow);
-
+        $myDate = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
 
         $queryBuilder = $this->createQueryBuilder('a')
             ->andWhere('a.activityDate > :val')
-            ->andWhere('a.activityDate < :val2')
-            ->setParameter('val', $yesterday)
-            ->setParameter('val2', $tommorow);
+            ->setParameter('val', $myDate);
 
         $query = $queryBuilder->getQuery();
 
-         foreach ( $query->getResult() as $row){
-             dump($row);
-         }
+        return $query->getResult();
+    }
 
-         return $query->getResult();
 
+    public function findActivitiesStarted()
+    {
+        $today = new DateTime();
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->andWhere('s.activityDate <= :val')
+            ->setParameter('val', $today)
+            ->andWhere('s.state != 6');
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findActivitiesPassed()
+    {
+        $today = new DateTime();
+        $qb = $this->createQueryBuilder('p')
+            ->where(":val >= DATE_ADD(p.activityDate, p.duration, 'MINUTE')")
+            ->setParameter('val', $today)
+            ->andWhere('p.state != 6');
+
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
+    public function findInscriptionClosed()
+    {
+        $today = new DateTime();
+        $queryBuilder = $this->createQueryBuilder('i')
+            ->andWhere('i.subLimitDate <= :val')
+            ->andWhere('i.activityDate >= :val')
+            ->setParameter('val', $today);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
     }
 
 //    /**

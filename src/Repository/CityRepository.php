@@ -39,6 +39,21 @@ class CityRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByFilter( array $filters)
+    {
+        $filter = $filters[0];
+        $qb = $this->createQueryBuilder('c');
+
+        if ($filter['search'] !== "") {
+            $qb->andHaving("c.name LIKE :search")
+                ->setParameter('search', "%" . $filter['search'] . "%");
+        }
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
+
 //    /**
 //     * @return City[] Returns an array of City objects
 //     */

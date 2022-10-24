@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\City;
 use App\Entity\Participant;
 use App\Entity\Site;
+use App\Form\CityFilterType;
 use App\Form\CityType;
 use App\Form\ParticipantType;
+use App\Form\SiteFilterType;
 use App\Form\SiteType;
 use App\Repository\CityRepository;
 use App\Repository\ParticipantRepository;
@@ -29,7 +31,9 @@ class AdminController extends AbstractController
 
     public function __construct(private readonly SiteRepository $siteRepository,
                                 private readonly CityRepository $cityRepository,
-                                private readonly AdminService $adminService)
+                                private readonly AdminService $adminService,
+                                private readonly EntityManagerInterface $entityManager,
+                                private readonly ParticipantRepository $participantRepository)
     {
     }
 
@@ -85,14 +89,21 @@ class AdminController extends AbstractController
     }
 
     #[Route('/sites', name: 'sites')]
-    public function get_sites(){
+    public function get_sites(Request $request){
+
+        $filterForm = $this->createForm(SiteFilterType::class);
+
+        $filterForm->handleRequest($request);
 
         $sites = $this->siteRepository->findAll();
-//        $sitesCantBeDeleted = $this->siteRepository->findSitesToNotDeleted($sites);
+
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            $sites = $this->siteRepository->findByFilter( [$request->request->get('site_filter')]);
+        }
 
         return $this->render('admin/sites.html.twig', [
             'sites' => $sites,
-//            'sitesCantBeDeleted' => $sitesCantBeDeleted
+            'filterForm' => $filterForm->createView()
         ]);
     }
 
@@ -118,6 +129,18 @@ class AdminController extends AbstractController
         ]);
 
     }
+
+    #[Route('/users', name: 'users')]
+    public function get_users(Request $request, ){
+
+        $users = $this->participantRepository->findAll();
+
+        return $this->render('admin/users.html.twig', [
+            'users' => $users,
+        ]);
+    }
+
+
 
     #[Route('/sites/edit/{id}', name: 'site_edit', requirements: ['id' => '\d+'])]
     public function edit_site(int $id, Request $request, EntityManagerInterface $entityManager){
@@ -156,12 +179,21 @@ class AdminController extends AbstractController
     }
 
     #[Route('/places', name: 'places')]
-    public function get_places(){
+    public function get_places(Request $request){
+
+        $filterForm = $this->createForm(CityFilterType::class);
+
+        $filterForm->handleRequest($request);
 
         $places = $this->cityRepository->findAll();
 
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            $places = $this->cityRepository->findByFilter( [$request->request->get('city_filter')]);
+        }
+
         return $this->render('admin/places.html.twig', [
             'places' => $places,
+            'filterForm' => $filterForm->createView()
         ]);
     }
 
@@ -222,6 +254,24 @@ class AdminController extends AbstractController
             'placeForm' => $placeForm->createView()
         ]);
 
+    }
+
+    #[Route('/users/setActivityState/{id}', name: 'users_setActivityState', requirements: ['id' =>'\d+'])]
+    public function cancelActivity(ParticipantRepository $participantRepository, int $id): Response
+    {
+        $user = $participantRepository->find($id);
+
+        if($user->isActive() == '1'){
+            $user->setActive('0');
+        } else {
+            $user->setActive('1');
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'L\'utilisateur a bien été modifié');
+        return $this->redirectToRoute('admin_users');
     }
 
 }

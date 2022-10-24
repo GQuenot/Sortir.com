@@ -11,6 +11,19 @@
         <div class="columns">
             <div class="column is-three-fifths is-offset-one-fifth">
 
+                {{ form_start(filterForm) }}
+
+                    <div class="p-2">
+                        {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom du lieu'}}) }}
+                    </div>
+
+                    <div class="has-text-centered p-3">
+                        <button class="button is-info">Rechercher</button>
+                    </div>
+
+
+                {{ form_end(filterForm) }}
+
                 <table class="table is-striped is-fullwidth">
                     <thead>
                     <tr>
@@ -26,8 +39,8 @@
                             <td>{{ place.postalCode }}</td>
                             <td>
                                 <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>
-                                |
-                                <a class="is-info" href="{{ path('admin_place_delete', {'id': place.id}) }}">Supprimer</a></td>
+{#                                |#}
+{#                                <a class="is-info" href="{{ path('admin_place_delete', {'id': place.id}) }}">Supprimer</a></td>#}
                         </tr>
                     {% endfor %}
                     </tbody>

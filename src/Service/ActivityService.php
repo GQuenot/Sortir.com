@@ -40,7 +40,6 @@ class ActivityService
         // Publish or create the activity
         if($publish) {
             $this->publish($activity);
-            $this->addParticipant($activity);
         } else {
             $activity->setState($this->stateRepository->findOneBy(['label' => $this->states['created']]));
         }
@@ -68,6 +67,7 @@ class ActivityService
         if($activity->getSubLimitDate() < new DateTime()) {
             $state = $this->stateRepository->findOneBy(['label' => $this->states['closed']]);
             $activity->setState($state);
+            $this->addParticipant($activity);
 
             $this->entityManager->persist($activity);
             $this->entityManager->flush();

@@ -50,7 +50,7 @@ class ParticipantController extends AbstractController
                 $this->addFlash('success', 'L\'image a été enregistrée avec succès');
             }
 
-            $this->addFlash('success', 'Your profile has been updated.');
+            $this->addFlash('success', 'Votre profile a été mis à jour.');
 
             return $this->redirectToRoute('participant_profile');
         }

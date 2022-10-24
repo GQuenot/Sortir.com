@@ -7,14 +7,11 @@ use App\Entity\Participant;
 use App\Entity\Site;
 use App\Form\CityType;
 use App\Form\ParticipantType;
-use App\Form\PlaceType;
 use App\Form\SiteType;
-use App\Repository\ActivityRepository;
 use App\Repository\CityRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\PlaceRepository;
 use App\Repository\SiteRepository;
-use App\Repository\StateRepository;
 use App\Services\ActivityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,6 +20,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\ImportParticipantType;
+use App\Service\AdminService;
+use Exception;
 
 #[Route('/admin', name: 'admin_')]
 class AdminController extends AbstractController
@@ -30,7 +30,8 @@ class AdminController extends AbstractController
 
     public function __construct(private readonly SiteRepository $siteRepository,
                                 private readonly PlaceRepository $placeRepository,
-                                private readonly CityRepository $cityRepository)
+                                private readonly CityRepository $cityRepository,
+                                private readonly AdminService $adminService)
     {
     }
 
@@ -59,6 +60,29 @@ class AdminController extends AbstractController
 
         return $this->render('user/add.html.twig', [
             'participantForm' => $participantForm->createView()
+        ]);
+    }
+
+    #[Route('/import', name: 'import')]
+    public function import(Request $request): Response
+    {
+        $importForm = $this->createForm(ImportParticipantType::class);
+
+        $importForm->handleRequest($request);
+
+        if ($importForm->isSubmitted() && $importForm->isValid()) {
+            $participantsCsv = $importForm->get('importParticipant')->getData();
+
+            try {
+                $this->adminService->importParticipants($participantsCsv);
+                $this->addFlash('success', 'Les nouveaux participants on été importées avec succès');
+            } catch (Exception $e) {
+                $this->addFlash('warning', 'Echec de l\'import des participants : '. $e->getMessage());
+            }
+        }
+
+        return $this->render('admin/importParticipants.html.twig', [
+            'importForm' => $importForm->createView()
         ]);
     }
 

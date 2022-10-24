@@ -10,9 +10,8 @@ use App\Form\ParticipantType;
 use App\Form\SiteType;
 use App\Repository\CityRepository;
 use App\Repository\ParticipantRepository;
-use App\Repository\PlaceRepository;
 use App\Repository\SiteRepository;
-use App\Services\ActivityService;
+use App\Service\ActivityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,7 +28,6 @@ class AdminController extends AbstractController
 {
 
     public function __construct(private readonly SiteRepository $siteRepository,
-                                private readonly PlaceRepository $placeRepository,
                                 private readonly CityRepository $cityRepository,
                                 private readonly AdminService $adminService)
     {

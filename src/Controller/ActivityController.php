@@ -8,10 +8,9 @@ use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\StateRepository;
 use App\Repository\ParticipantRepository;
-use App\Services\ActivityService;
+use App\Service\ActivityService;
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Utils\Filter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -25,7 +24,6 @@ class ActivityController extends AbstractController
 
     public function __construct(private readonly ActivityService    $activityService,
                                 private readonly ActivityRepository $activityRepository,
-                                private readonly ParticipantRepository $participantRepository,
                                 private readonly EntityManagerInterface $entityManager,
                                 private readonly StateRepository        $stateRepository)
     {

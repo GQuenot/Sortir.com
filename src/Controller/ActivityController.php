@@ -30,7 +30,7 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/activity/add', name: 'activity_add')]
-    public function add(Request $request): Response
+    public function add(Request $request, ActivityRepository $repository, ParticipantRepository $participantRepository): Response
     {
         $activity = new activity();
 
@@ -42,7 +42,12 @@ class ActivityController extends AbstractController
         }
 
         if ($activityForm->isSubmitted() && $activityForm->isValid()) {
-            return $this->redirectToRoute('activity_list');
+
+            if ($activityForm->get('publish')->isClicked()) {
+                return $this->redirectToRoute('activity_list');
+            } else {
+                return $this->redirectToRoute('activity_management');
+            }
         }
 
         return $this->render('activity/add.html.twig', [
@@ -112,7 +117,7 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('activity_list');
     }
 
-    #[Route('activity//delete/{activityId}', name: 'activity_delete')]
+    #[Route('activity/delete/{activityId}', name: 'activity_delete')]
     public function delete(int $activityId): RedirectResponse
     {
         $activity = $this->activityRepository->find($activityId);
@@ -131,18 +136,32 @@ class ActivityController extends AbstractController
 
         $filterForm->handleRequest($request);
 
-        $activities = $this->activityRepository->findAll();
+        $user = $participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+        $activities = $this->activityRepository->findAllPublish();
+        $countNotPublish = $this->activityRepository->findAllNotPublish($user);
 
         if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-
-            $user = $participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
 
             $activities = $this->activityRepository->findByFilter($user, [$request->request->get('activity_filter')]);
         }
 
         return $this->render('activity/list.html.twig', [
             'activities' => $activities,
-            'filterForm' => $filterForm->createView()
+            'filterForm' => $filterForm->createView(),
+            'activitiesNotPublish' => $countNotPublish
+        ]);
+    }
+
+    #[Route('/management', name: 'activity_management')]
+    public function management(ParticipantRepository $participantRepository): Response
+    {
+        $user = $participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+        $activities = $this->activityRepository->findAllNotPublish($user);
+
+        return $this->render('activity/management.html.twig', [
+            'activities' => $activities
         ]);
     }
 

@@ -58,10 +58,39 @@ class ActivityRepository extends ServiceEntityRepository
         $query = $queryBuilder->getQuery();
     }
 
+    public function findAllPublish()
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->join('a.state', 's')
+            ->where("s.label NOT LIKE :create")
+            ->setParameter('create','Créée');
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findAllNotPublish(Participant $participant)
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->join('a.state', 's')
+            ->where("s.label LIKE :create")
+            ->andWhere('a.organizer = :organizer')
+            ->setParameter('create','Créée')
+            ->setParameter('organizer', $participant);
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
+
     public function findByFilter(Participant $participant, array $filters)
     {
         $filter = $filters[0];
-        $qb = $this->createQueryBuilder('a');
+        $qb = $this->createQueryBuilder('a')
+            ->join('a.state', 's')
+            ->where("s.label NOT LIKE :create")
+            ->setParameter('create','Créée');
 
         switch ($filter) {
 

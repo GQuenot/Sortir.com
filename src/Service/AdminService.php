@@ -13,7 +13,6 @@ class AdminService
 {
     public function __construct(private readonly CsvReader $csvreader,
                                 private readonly MailService $mailService,
-//                                private readonly EntityManager $entityManager,
                                 private readonly SiteRepository $siteRepository,
                                 private readonly ParticipantRepository $participantRepository,
                                 private readonly UserPasswordHasherInterface $passwordHasher)

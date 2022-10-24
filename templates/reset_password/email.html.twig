@@ -1,0 +1,13 @@
+<h1 class="is-size-1 has-text-centered py-5">Connexion</h1>
+
+<div class="content">
+    <p>Pour reinitialiser votre mot de passe, cliquez sur le lien suivant :</p>
+
+    <a class="btn btn-lg btn-primary button is-info" href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
+
+    <p>Le lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+
+    <p>Cordialement</p>
+</div>
+
+

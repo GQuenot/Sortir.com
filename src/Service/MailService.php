@@ -3,8 +3,10 @@
 namespace App\Service;
 
 
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
 class MailService
@@ -16,14 +18,15 @@ class MailService
     /**
      * @throws TransportExceptionInterface
      */
-    public function sendMail(string $destination, string $subject, string $text, string $html = null): void
+    public function sendMail(string $destination, string $subject, string $text, string $htmlTemplate = null, array $context = []): void
     {
-        $email = (new Email())
-            ->from('gurvan.quenot2021@campus-eni.fr')
+        $email = (new TemplatedEmail())
+            ->from(new Address('gurvan.quenot2021@campus-eni.fr', 'Sortir.com Mail bot'))
             ->to($destination)
             ->subject($subject)
             ->text($text)
-            ->html($html);
+            ->htmlTemplate($htmlTemplate)
+            ->context($context);
 
         $this->mailer->send($email);
     }

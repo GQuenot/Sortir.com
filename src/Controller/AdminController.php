@@ -32,6 +32,7 @@ class AdminController extends AbstractController
     public function __construct(private readonly SiteRepository $siteRepository,
                                 private readonly CityRepository $cityRepository,
                                 private readonly AdminService $adminService,
+                                private readonly EntityManagerInterface $entityManager,
                                 private readonly ParticipantRepository $participantRepository)
     {
     }
@@ -253,6 +254,24 @@ class AdminController extends AbstractController
             'placeForm' => $placeForm->createView()
         ]);
 
+    }
+
+    #[Route('/users/setActivityState/{id}', name: 'users_setActivityState', requirements: ['id' =>'\d+'])]
+    public function cancelActivity(ParticipantRepository $participantRepository, int $id): Response
+    {
+        $user = $participantRepository->find($id);
+
+        if($user->isActive() == '1'){
+            $user->setActive('0');
+        } else {
+            $user->setActive('1');
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'L\'utilisateur a bien été modifié');
+        return $this->redirectToRoute('admin_users');
     }
 
 }

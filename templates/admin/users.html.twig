@@ -54,10 +54,11 @@
                             </td>
                             <td>{{ user.active == '1' ? 'Oui' : 'Non' }}</td>
                             <td>
-                                Rendre inactif
-{#                                <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>#}
-                                {#                                |#}
-                                {#                                <a class="is-info" href="{{ path('admin_place_delete', {'id': place.id}) }}">Supprimer</a></td>#}
+                               {% if user.active == '1'%}
+                                <a href="{{ path('admin_users_setActivityState', {'id': user.id}) }}">Rendre inactif</a>
+                                {% elseif user.active == '0' %}
+                                    <a href="{{ path('admin_users_setActivityState', {'id': user.id}) }}">Rendre actif</a>
+                               {% endif %}
                             </td>
                         </tr>
                     {% endfor %}

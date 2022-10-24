@@ -52,7 +52,7 @@
                                     {{ role }}
                                 {% endfor %}
                             </td>
-                            <td>{{ user.active }}</td>
+                            <td>{{ user.active == '1' ? 'Oui' : 'Non' }}</td>
                             <td>
                                 Rendre inactif
 {#                                <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>#}

@@ -118,7 +118,7 @@
                   {% endif%}
 
                   {% if activity.state.label in [states['open'], states['closed']] %}
-                    {% if app.user == activity.organizer %}
+                    {% if app.user == activity.organizer or is_granted('ROLE_ADMIN') %}
                       <a class="is-info" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
                     {% elseif app.user in activity.participants %}
                       <a href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>

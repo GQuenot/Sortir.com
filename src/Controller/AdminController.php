@@ -4,14 +4,17 @@ namespace App\Controller;
 
 use App\Entity\City;
 use App\Entity\Participant;
+use App\Entity\Place;
 use App\Entity\Site;
 use App\Form\CityFilterType;
 use App\Form\CityType;
 use App\Form\ParticipantType;
+use App\Form\PlaceType;
 use App\Form\SiteFilterType;
 use App\Form\SiteType;
 use App\Repository\CityRepository;
 use App\Repository\ParticipantRepository;
+use App\Repository\PlaceRepository;
 use App\Repository\SiteRepository;
 use App\Service\ActivityService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +36,7 @@ class AdminController extends AbstractController
                                 private readonly CityRepository $cityRepository,
                                 private readonly AdminService $adminService,
                                 private readonly EntityManagerInterface $entityManager,
+                                private readonly PlaceRepository $placeRepository,
                                 private readonly ParticipantRepository $participantRepository)
     {
     }
@@ -190,6 +194,84 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_sites');
     }
 
+    #[Route('/cities', name: 'cities')]
+    public function get_cities(Request $request){
+
+        $filterForm = $this->createForm(CityFilterType::class);
+
+        $filterForm->handleRequest($request);
+
+        $cities = $this->cityRepository->findAll();
+
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            $cities = $this->cityRepository->findByFilter( [$request->request->get('city_filter')]);
+        }
+
+        return $this->render('admin/cities.html.twig', [
+            'cities' => $cities,
+            'filterForm' => $filterForm->createView()
+        ]);
+    }
+
+    #[Route('/cities/edit/{id}', name: 'edit_city', requirements: ['id' => '\d+'])]
+    public function edit_city(int $id, Request $request, EntityManagerInterface $entityManager){
+
+        $city = $this->cityRepository->find($id);
+        $cityForm = $this->createForm(CityType::class, $city);
+
+        $cityForm->handleRequest($request);
+
+        if ($cityForm->isSubmitted() && $cityForm->isValid()) {
+
+            $entityManager->persist($city);
+            $entityManager->flush();
+
+            $this->addFlash('sucess', 'Le lieu a bien été modifié !');
+            return $this->redirectToRoute('admin_places');
+        }
+
+        return $this->render('admin/edit_city.html.twig', [
+            'cityForm' => $cityForm->createView(),
+            'city' => $city
+        ]);
+
+    }
+
+    #[Route('/cities/delete/{id}', name: 'delete_city')]
+    public function delete_city(int $id): RedirectResponse
+    {
+        $city = $this->cityRepository->find($id);
+
+        $this->cityRepository->remove($city, true);
+
+        $this->addFlash('success', 'La ville a bien été supprimée');
+
+        return $this->redirectToRoute('admin_cities');
+    }
+
+    #[Route('/cities/add', name: 'add_city')]
+    public function add_city(Request $request, EntityManagerInterface $entityManager){
+
+        $city = new City();
+        $cityForm = $this->createForm(CityType::class, $city);
+
+        $cityForm->handleRequest($request);
+
+        if($cityForm->isSubmitted() && $cityForm->isValid() ) {
+
+            $entityManager->persist($city);
+            $entityManager->flush();
+
+            $this->addFlash('sucess', 'La ville a bien été ajoutée !');
+            return $this->redirectToRoute('admin_cities');
+        }
+
+        return $this->render('admin/add_city.html.twig', [
+            'placeForm' => $cityForm->createView()
+        ]);
+
+    }
+
     #[Route('/places', name: 'places')]
     public function get_places(Request $request){
 
@@ -197,10 +279,12 @@ class AdminController extends AbstractController
 
         $filterForm->handleRequest($request);
 
-        $places = $this->cityRepository->findAll();
+        $places = $this->placeRepository->findAll();
 
+        dump($request);
         if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-            $places = $this->cityRepository->findByFilter( [$request->request->get('city_filter')]);
+            $places = $this->placeRepository->findByFilter([$request->request->get('city_filter')]);
+            dump($request);
         }
 
         return $this->render('admin/places.html.twig', [
@@ -212,8 +296,8 @@ class AdminController extends AbstractController
     #[Route('/places/edit/{id}', name: 'edit_place', requirements: ['id' => '\d+'])]
     public function edit_place(int $id, Request $request, EntityManagerInterface $entityManager){
 
-        $place = $this->cityRepository->find($id);
-        $placeForm = $this->createForm(CityType::class, $place);
+        $place = $this->placeRepository->find($id);
+        $placeForm = $this->createForm(PlaceType::class, $place);
 
         $placeForm->handleRequest($request);
 
@@ -233,23 +317,23 @@ class AdminController extends AbstractController
 
     }
 
-    #[Route('/places/delete/{id}', name: 'place_delete')]
-    public function place_delete(int $id): RedirectResponse
+    #[Route('/places/delete/{id}', name: 'delete_place')]
+    public function delete_place(int $id): RedirectResponse
     {
-        $place = $this->cityRepository->find($id);
+        $place = $this->placeRepository->find($id);
 
-        $this->cityRepository->remove($place, true);
+        $this->placeRepository->remove($place, true);
 
         $this->addFlash('success', 'Le lieu a bien été supprimé');
 
         return $this->redirectToRoute('admin_places');
     }
 
-    #[Route('/places/add', name: 'places_add')]
+    #[Route('/places/add', name: 'add_place')]
     public function add_place(Request $request, EntityManagerInterface $entityManager){
 
-        $place = new City();
-        $placeForm = $this->createForm(CityType::class, $place);
+        $place = new Place();
+        $placeForm = $this->createForm(PlaceType::class, $place);
 
         $placeForm->handleRequest($request);
 

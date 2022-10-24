@@ -68,8 +68,29 @@
                     </div>
                 </div>
 
+                <div class="field">
+                    <label class="label">Ajouter une photo</label>
+                    <div class="file">
+                        <label class="file-label">
+                            {{ form_widget(participantForm.profilePicture, {'attr': {'class': 'file-input'}}) }}
+                            <span class="file-cta">
+                              <span class="file-icon">
+                                <i data-feather="upload"></i>
+                              </span>
+                              <span class="file-label">
+                                Choisissez une image
+                              </span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="has-text-centered">
                     <button class="button is-info">Enregistrer</button>
+                </div>
+
+                <div class="has-text-centered">
+                    <a href="javascript:history.go(-1)" class="button is-info">Retour</a>
                 </div>
 
                 {{ form_end(participantForm) }}

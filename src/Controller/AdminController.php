@@ -31,7 +31,8 @@ class AdminController extends AbstractController
 
     public function __construct(private readonly SiteRepository $siteRepository,
                                 private readonly CityRepository $cityRepository,
-                                private readonly AdminService $adminService)
+                                private readonly AdminService $adminService,
+                                private readonly ParticipantRepository $participantRepository)
     {
     }
 
@@ -127,6 +128,18 @@ class AdminController extends AbstractController
         ]);
 
     }
+
+    #[Route('/users', name: 'users')]
+    public function get_users(Request $request, ){
+
+        $users = $this->participantRepository->findAll();
+
+        return $this->render('admin/users.html.twig', [
+            'users' => $users,
+        ]);
+    }
+
+
 
     #[Route('/sites/edit/{id}', name: 'site_edit', requirements: ['id' => '\d+'])]
     public function edit_site(int $id, Request $request, EntityManagerInterface $entityManager){

@@ -47,17 +47,6 @@ class ActivityRepository extends ServiceEntityRepository
         }
     }
 
-    public function findPartiesNotArchived()
-    {
-        $myDate = date('Y-m-d', strtotime("-1 months"));
-
-        $queryBuilder = $this->createQueryBuilder('a')
-            ->andWhere('a.activityDate > :val')
-            ->setParameter('val', $myDate);
-
-        $query = $queryBuilder->getQuery();
-    }
-
     public function findByFilter(Participant $participant, array $filters)
     {
         $filter = $filters[0];
@@ -156,24 +145,15 @@ class ActivityRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findActivitiesStarted()
+    public function findActivityNotArchived()
     {
-        $yesterday = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 day" ) );
-        $tommorow = date("Y-m-d", strtotime( date( "Y-m-d h:i:s", strtotime( date("Y-m-d") ) ) . "+1 minutes" ) );
-        dump($tommorow);
-
+        $myDate = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
 
         $queryBuilder = $this->createQueryBuilder('a')
             ->andWhere('a.activityDate > :val')
-            ->andWhere('a.activityDate < :val2')
-            ->setParameter('val', $yesterday)
-            ->setParameter('val2', $tommorow);
+            ->setParameter('val', $myDate);
 
         $query = $queryBuilder->getQuery();
-
-         foreach ( $query->getResult() as $row){
-             dump($row);
-         }
 
         return $query->getResult();
     }

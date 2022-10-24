@@ -7,7 +7,6 @@ use DateTime;
 use App\Entity\Participant;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use phpDocumentor\Reflection\Types\Void_;
 
 
 /**
@@ -46,24 +45,15 @@ class ActivityRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-    
-    public function findPartiesNotArchived()
-    {
-        $myDate = date('Y-m-d', strtotime("-1 months"));
-
-        $queryBuilder = $this->createQueryBuilder('a')
-            ->andWhere('a.activityDate > :val')
-            ->setParameter('val', $myDate);
-
-        $query = $queryBuilder->getQuery();
-    }
 
     public function findAllPublish()
     {
         $qb = $this->createQueryBuilder('a')
             ->join('a.state', 's')
             ->where("s.label NOT LIKE :create")
-            ->setParameter('create','Créée');
+            ->andWhere(":currentDate < DATE_ADD(a.activityDate, 1, 'MONTH')")
+            ->setParameter('create','Créée')
+            ->setParameter('currentDate',new \DateTime());
 
         $query = $qb->getQuery();
 
@@ -90,7 +80,9 @@ class ActivityRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('a')
             ->join('a.state', 's')
             ->where("s.label NOT LIKE :create")
-            ->setParameter('create','Créée');
+            ->andWhere(":currentDate < DATE_ADD(a.activityDate, 1, 'MONTH')")
+            ->setParameter('create','Créée')
+            ->setParameter('currentDate',new \DateTime());
 
         switch ($filter) {
 

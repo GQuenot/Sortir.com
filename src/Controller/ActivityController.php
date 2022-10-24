@@ -158,6 +158,22 @@ class ActivityController extends AbstractController
 
         $this->entityManager->flush();
 
+        $inscriptionsClosed = $this->activityRepository->findInscriptionClosed();
+
+        $stateC = $this->stateRepository->findOneBy(['label' => 'Clôturée']);
+
+        if ($activities == $inscriptionsClosed) {
+            return $this->redirectToRoute('activity_list');
+        }
+
+        foreach ($inscriptionsClosed as $inscriptionClosed) {
+            $inscriptionClosed->setState($stateC);
+            $this->entityManager->persist($inscriptionClosed);
+        }
+
+        $this->entityManager->flush();
+
+
         return $this->render('activity/list.html.twig', [
             'activities' => $activities,
         ]);

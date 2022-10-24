@@ -59,6 +59,7 @@
                                 {% elseif user.active == '0' %}
                                     <a href="{{ path('admin_users_setActivityState', {'id': user.id}) }}">Rendre actif</a>
                                {% endif %}
+                                <a href="{{ path('admin_participant_delete', {'id': user.id}) }}">Supprimer</a>
                             </td>
                         </tr>
                     {% endfor %}

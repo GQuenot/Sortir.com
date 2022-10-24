@@ -140,6 +140,18 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/users/delete/{id}', name: 'participant_delete')]
+    public function delete(int $id): RedirectResponse
+    {
+        $participant = $this->participantRepository->find($id);
+
+        $this->participantRepository->remove($participant, true);
+
+        $this->addFlash('success', 'Le participant a été supprimé avec succès');
+
+        return $this->redirectToRoute('admin_users');
+    }
+
 
 
     #[Route('/sites/edit/{id}', name: 'site_edit', requirements: ['id' => '\d+'])]

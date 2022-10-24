@@ -39,6 +39,21 @@ class PlaceRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByFilter(array $filters)
+    {
+        $filter = $filters[0];
+        $qb = $this->createQueryBuilder('p');
+
+        if ($filter['search'] !== "") {
+            $qb->andHaving("p.name LIKE :search")
+                ->setParameter('search', "%" . $filter['search'] . "%");
+        }
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
+
 //    /**
 //     * @return Place[] Returns an array of Place objects
 //     */

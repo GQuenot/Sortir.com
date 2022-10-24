@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Modifier une ville
+{% endblock %}
+
+{% block body %}
+
+    <h1 class="is-size-1 has-text-centered py-5">Modifier un lieu</h1>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-three-fifths is-offset-one-fifth">
+
+                {{ form_start(cityForm) }}
+
+                <div class="field">
+                    <label class="label">Ville</label>
+                    <div class="control">
+                        {{ form_widget(cityForm.name, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Code postal</label>
+                    <div class="control">
+                        {{ form_widget(cityForm.postalCode, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="has-text-centered">
+                    <button class="button is-info">Modifier</button>
+                    <a href="javascript:history.go(-1)" class="button is-info">Retour</a>
+                </div>
+
+                {{ form_end(cityForm) }}
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

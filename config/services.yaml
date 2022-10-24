@@ -29,7 +29,7 @@ services:
             - '../src/Kernel.php'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    App\Services\ActivityService:
+    App\Service\ActivityService:
       arguments:
         $states : '%app.states%'
 

@@ -16,6 +16,7 @@
 
         {% if app.user %}
             <div class="navbar-end">
+
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
                         Activités
@@ -40,6 +41,9 @@
                     <div class="navbar-dropdown">
                         <a class="navbar-item" href="{{ path('admin_add') }}">
                             Ajouter un participant
+                        </a>
+                        <a class="navbar-item" href="{{ path('admin_import') }}">
+                            Import de participants
                         </a>
                         <a class="navbar-item" href="{{ path('admin_places') }}">
                             Gérer les lieux

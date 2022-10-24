@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
+use App\Form\ActivityFilterType;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\StateRepository;
@@ -23,7 +24,6 @@ class ActivityController extends AbstractController
 
     public function __construct(private readonly ActivityService    $activityService,
                                 private readonly ActivityRepository $activityRepository,
-                                private readonly ParticipantRepository $participantRepository,
                                 private readonly EntityManagerInterface $entityManager,
                                 private readonly StateRepository        $stateRepository)
     {
@@ -91,7 +91,7 @@ class ActivityController extends AbstractController
 
         if ($activityForm->isSubmitted() && $activityForm->isValid()) {
             $this->activityService->saveActivity($activity, $activityForm->get('publish')->isClicked());
-            $this->addFlash('success', 'L\'activité à été enregistrée avec succès');
+            $this->addFlash('success', 'L\'activité a été enregistrée avec succès');
         }
 
         return $activityForm;
@@ -103,16 +103,16 @@ class ActivityController extends AbstractController
         $activity = $this->activityRepository->find($activityId);
 
         if($activity->getState()->getLabel() != $this->getParameter('app.states')['created']) {
-            $this->addFlash('warning', 'L\'activité à déja été publiée');
+            $this->addFlash('warning', 'L\'activité a déja été publiée');
         }
 
         $this->activityService->publish($activity);
-        $this->addFlash('success', 'L\'activité à été publiée avec succès');
+        $this->addFlash('success', 'L\'activité a été publiée avec succès');
 
         return $this->redirectToRoute('activity_list');
     }
 
-    #[Route('activity//delete/{activityId}', name: 'activity_delete')]
+    #[Route('activity/delete/{activityId}', name: 'activity_delete')]
     public function delete(int $activityId): RedirectResponse
     {
         $activity = $this->activityRepository->find($activityId);
@@ -125,12 +125,70 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/', name: 'activity_list')]
-    public function list(): Response
+    public function list(Request $request, ParticipantRepository $participantRepository): Response
     {
+        $activities = $this->activityRepository->findActivityNotArchived();
+
+        $activitiesStarted = $this->activityRepository->findActivitiesStarted();
+        $stateA = $this->stateRepository->findOneBy(['label' => 'Activité en cours']);
+
+        if ($activities == $activitiesStarted){
+            return $this->redirectToRoute('activity_list');
+        }
+
+        foreach ($activitiesStarted as $activityStarted) {
+            $activityStarted->setState($stateA);
+            $this->entityManager->persist($activityStarted);
+        }
+
+        $this->entityManager->flush();
+
+        $activitiesPassed = $this->activityRepository->findActivitiesPassed();
+
+        $stateP = $this->stateRepository->findOneBy(['label' => 'Passée']);
+
+        if ($activities == $activitiesPassed){
+            return $this->redirectToRoute('activity_list');
+        }
+
+        foreach ($activitiesPassed as $activityPassed) {
+            $activityPassed->setState($stateP);
+            $this->entityManager->persist($activityPassed);
+        }
+
+        $this->entityManager->flush();
+
+        $inscriptionsClosed = $this->activityRepository->findInscriptionClosed();
+
+        $stateC = $this->stateRepository->findOneBy(['label' => 'Clôturée']);
+
+        if ($activities == $inscriptionsClosed) {
+            return $this->redirectToRoute('activity_list');
+        }
+
+        foreach ($inscriptionsClosed as $inscriptionClosed) {
+            $inscriptionClosed->setState($stateC);
+            $this->entityManager->persist($inscriptionClosed);
+        }
+
+        $this->entityManager->flush();
+
+        $filterForm = $this->createForm(ActivityFilterType::class);
+
+        $filterForm->handleRequest($request);
+
         $activities = $this->activityRepository->findAll();
+
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+
+            $user = $participantRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+
+            $activities = $this->activityRepository->findByFilter($user, [$request->request->get('activity_filter')]);
+        }
 
         return $this->render('activity/list.html.twig', [
             'activities' => $activities,
+            'filterForm' => $filterForm->createView()
         ]);
     }
 

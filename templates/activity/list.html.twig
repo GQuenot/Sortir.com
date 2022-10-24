@@ -16,6 +16,74 @@
       </div>
     </div>
 
+    {{ form_start(filterForm) }}
+
+    <div class="columns">
+      <div class="column is-5">
+
+        <div class="is-flex is-justify-content-center">
+
+          <div class="p-2">
+            <div class="select">
+              {{ form_widget(filterForm.site) }}
+            </div>
+          </div>
+          <div class="p-2">
+            {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom de la sortie'}}) }}
+          </div>
+
+        </div>
+
+        <div class="is-flex is-justify-content-center">
+          <div class="field p-2">
+            <label class="label">Date de l'activité entre le</label>
+            <div class="control">
+              {{ form_widget(filterForm.startDate, {'attr': {'class': 'input'}}) }}
+            </div>
+          </div>
+          <div class="field p-2">
+            <label class="label">et le</label>
+            <div class="control">
+              {{ form_widget(filterForm.endDate, {'attr': {'class': 'input'}}) }}
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="column is-5">
+
+        <div class="is-flex is-flex-direction-column">
+          <label class="checkbox">
+            {{ form_widget(filterForm.isOrganizer) }}
+            Sorties dont je suis l'organisateur/trice
+          </label>
+
+          <label class="checkbox">
+            {{ form_widget(filterForm.isParticipant) }}
+            Sorties auxquelles je suis inscrit/e
+          </label>
+
+          <label class="checkbox">
+            {{ form_widget(filterForm.isNotParticipant) }}
+            Sorties auxquelles je ne suis pas inscrit/e
+          </label>
+
+          <label class="checkbox">
+            {{ form_widget(filterForm.pastActivities) }}
+            Sorties passées
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="has-text-centered p-3">
+      <button class="button is-info">Rechercher</button>
+    </div>
+
+
+    {{ form_end(filterForm) }}
+
     <div class="columns">
       <div class="column is-three-fifths is-offset-one-fifth">
 

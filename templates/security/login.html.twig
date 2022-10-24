@@ -25,10 +25,20 @@
 
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                    <div class="checkbox mb-3">
-                        <label>
-                            <input type="checkbox" name="_remember_me"> Remember me
-                        </label>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="checkbox mb-3">
+                                <label>
+                                    <input type="checkbox" name="_remember_me"> Remember me
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="column is-offset-8">
+                            <div>
+                                <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="has-text-centered">

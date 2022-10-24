@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Reinitialisez votre mot de passe{% endblock %}
+
+{% block body %}
+    <h1 class="is-size-1 has-text-centered py-5">Reinitialisez votre mot de passe</h1>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-half is-offset-one-quarter">
+                {{ form_start(resetForm) }}
+                    <div class="field">
+                        <label class="label">Mot de passe</label>
+                        <div class="control">
+                            {{ form_widget(resetForm.plainPassword.first, {'attr': {'class': 'input'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Confirmation du mot de passe</label>
+                        <div class="control">
+                            {{ form_widget(resetForm.plainPassword.second, {'attr': {'class': 'input'}}) }}
+                        </div>
+                    </div>
+                    <div class="has-text-centered">
+                        <button class="btn btn-lg btn-primary button is-info" type="submit">
+                            Réinitialisation
+                        </button>
+                    </div>
+                {{ form_end(resetForm) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

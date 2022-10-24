@@ -17,14 +17,35 @@
                 <div class="field">
                     <label class="label">Ville</label>
                     <div class="control">
+                        {{ form_widget(placeForm.city, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Nom</label>
+                    <div class="control">
                         {{ form_widget(placeForm.name, {'attr': {'class': 'input'}}) }}
                     </div>
                 </div>
 
                 <div class="field">
-                    <label class="label">Code postal</label>
+                    <label class="label">Rue</label>
                     <div class="control">
-                        {{ form_widget(placeForm.postalCode, {'attr': {'class': 'input'}}) }}
+                        {{ form_widget(placeForm.street, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Latitude</label>
+                    <div class="control">
+                        {{ form_widget(placeForm.latitude, {'attr': {'class': 'input'}}) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Ville</label>
+                    <div class="control">
+                        {{ form_widget(placeForm.longitude, {'attr': {'class': 'input'}}) }}
                     </div>
                 </div>
 

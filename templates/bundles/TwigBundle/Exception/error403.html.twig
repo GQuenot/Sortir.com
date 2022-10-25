@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="is-size-1 has-text-centered py-5">Accès Refusé</h1>
+
+    <h3 class="is-size-3 has-text-centered">Erreur 403</h3>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-half is-offset-one-quarter has-text-centered">
+                <img src="{{ asset('images/errors/403.gif') }}" alt="404 gif" width="480" height="204" />
+                <p>
+                    Vous n'avez pas accès à la page que vous avez cherché à atteindre.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

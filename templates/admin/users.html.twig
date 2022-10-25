@@ -42,9 +42,9 @@
                             <td>{{ user.active == '1' ? 'Oui' : 'Non' }}</td>
                             <td>
                                {% if user.active == '1'%}
-                                <a href="{{ path('admin_users_setActivityState', {'id': user.id}) }}">Rendre inactif</a>
+                                <a href="{{ path('admin_users_setActive', {'id': user.id}) }}">Rendre inactif</a>
                                 {% elseif user.active == '0' %}
-                                    <a href="{{ path('admin_users_setActivityState', {'id': user.id}) }}">Rendre actif</a>
+                                    <a href="{{ path('admin_users_setActive', {'id': user.id}) }}">Rendre actif</a>
                                {% endif %}
                                 <a href="{{ path('admin_participant_delete', {'id': user.id}) }}">Supprimer</a>
                             </td>

@@ -39,13 +39,20 @@
                     {% for place in places %}
                         <tr>
                             <td>{{ place.name }}</td>
-                            <td>{{ place.city.name }}</td>
+                            {% if place.city != null %}
+                                <td>{{ place.city.name }}</td>
+                            {% else %}
+                                <td> _________</td>
+                            {% endif %}
                             <td>{{ place.street }}</td>
                             <td>{{ place.latitude }}</td>
                             <td>{{ place.longitude }}</td>
                             <td>
-                                <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a> |
-                                <a href="{{ path('admin_delete_place', {'id': place.id}) }}">Supprimer</a>
+                                <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>
+                                {% if place.city == null %}
+                                    <a href="{{ path('admin_delete_place', {'id': place.id}) }}"> | Supprimer</a>
+                                {% endif %}
+
                         </tr>
                     {% endfor %}
                     </tbody>

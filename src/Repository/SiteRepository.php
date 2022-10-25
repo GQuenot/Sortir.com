@@ -39,18 +39,6 @@ class SiteRepository extends ServiceEntityRepository
         }
     }
 
-    public function findSitesToNotDeleted()
-    {
-//        SELECT DISTINCT site.* FROM `site`
-//        LEFT JOIN `participant` ON site.id = participant.id;
-        $qb = $this->createQueryBuilder('s')
-            ->leftJoin('p.site', 'p')
-            ->andWhere('s.id = p');
-
-        return $qb->getQuery()->getResult();
-
-    }
-
     public function findByFilter( array $filters)
     {
         $filter = $filters[0];

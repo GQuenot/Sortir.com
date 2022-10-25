@@ -12,6 +12,7 @@ use App\Form\ParticipantType;
 use App\Form\PlaceType;
 use App\Form\SiteFilterType;
 use App\Form\SiteType;
+use App\Repository\ActivityRepository;
 use App\Repository\CityRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\PlaceRepository;
@@ -35,7 +36,8 @@ class AdminController extends AbstractController
                                 private readonly AdminService $adminService,
                                 private readonly EntityManagerInterface $entityManager,
                                 private readonly PlaceRepository $placeRepository,
-                                private readonly ParticipantRepository $participantRepository)
+                                private readonly ParticipantRepository $participantRepository,
+                                private readonly ActivityRepository $activityRepository)
     {
     }
 
@@ -95,12 +97,15 @@ class AdminController extends AbstractController
 
         $sites = $this->siteRepository->findAll();
 
+        $siteParticipant = $this->participantRepository->findAll();
+
         if ($filterForm->isSubmitted() && $filterForm->isValid()) {
             $sites = $this->siteRepository->findByFilter( [$request->request->get('site_filter')]);
         }
 
         return $this->render('admin/sites.html.twig', [
             'sites' => $sites,
+            'participant' => $siteParticipant,
             'filterForm' => $filterForm->createView()
         ]);
     }
@@ -229,9 +234,25 @@ class AdminController extends AbstractController
     {
         $city = $this->cityRepository->find($id);
 
-        $this->cityRepository->remove($city, true);
+        $places = $this->placeRepository->findBy(['city' => $city]);
 
-        $this->addFlash('success', 'La ville a bien été supprimée');
+        if($places == null){
+            $this->cityRepository->remove($city, true);
+            $this->addFlash('success', 'La ville a bien été supprimée');
+        }
+
+        foreach ($places as $place ){
+            $activities = $this->activityRepository->findBy(['place' => $place]);
+
+            if($activities == null){
+                $place->setCity(null);
+                $this->cityRepository->remove($city, true);
+                $this->addFlash('success', 'La ville a bien été supprimée');
+            } else {
+                $this->addFlash('danger', 'La ville ne peut pas être supprimée. Elle est liée à une ou plusieurs activié(s).');
+            }
+
+        }
 
         return $this->redirectToRoute('admin_cities');
     }
@@ -264,6 +285,8 @@ class AdminController extends AbstractController
         $filterForm->handleRequest($request);
 
         $places = $this->placeRepository->findAll();
+        $activity = $this->activityRepository->findAll();
+        $city = $this->cityRepository->findAll();
 
         if ($filterForm->isSubmitted() && $filterForm->isValid()) {
             $places = $this->placeRepository->findByFilter([$request->request->get('city_filter')]);
@@ -271,6 +294,8 @@ class AdminController extends AbstractController
 
         return $this->render('admin/places.html.twig', [
             'places' => $places,
+            'activity' => $activity,
+            'city' => $city,
             'filterForm' => $filterForm->createView()
         ]);
     }

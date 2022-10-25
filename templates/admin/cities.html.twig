@@ -39,8 +39,8 @@
                             <td>{{ city.postalCode }}</td>
                             <td>
                                 <a href="{{ path('admin_edit_city', {'id': city.id}) }}">Modifier</a>
-{#                                |#}
-{#                                <a class="is-info" href="{{ path('admin_place_delete', {'id': place.id}) }}">Supprimer</a></td>#}
+                                |
+                                <a class="is-info" href="{{ path('admin_delete_city', {'id': city.id}) }}">Supprimer</a></td>
                         </tr>
                     {% endfor %}
                     </tbody>

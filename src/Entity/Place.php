@@ -37,7 +37,7 @@ class Place
     private Collection $activities;
 
     #[ORM\ManyToOne(inversedBy: 'places')]
-    #[ORM\JoinColumn(nullable: false)]
+//    #[ORM\JoinColumn(nullable: false)]
     #[Groups(['place_group'])]
     private ?City $city = null;
 

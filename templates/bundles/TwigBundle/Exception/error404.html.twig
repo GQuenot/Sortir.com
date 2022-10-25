@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="is-size-1 has-text-centered py-5">Page introuvable</h1>
+
+    <h3 class="is-size-3 has-text-centered">Erreur 404</h3>
+
+    <div class="content">
+        <div class="columns">
+            <div class="column is-half is-offset-one-quarter has-text-centered">
+                <img src="{{ asset('images/errors/404.gif') }}" alt="404 gif" width="480" height="204" />
+                <p>
+                    Aucune page ne correspond à cette URL, vérifiez l'URL ou
+                    <a href="{{ path('activity_list') }}">retournez sur la page d'accueil</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

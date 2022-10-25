@@ -277,5 +277,10 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('activity_list');
     }
 
+    #[Route('/inactive_home', name: 'inactive_home')]
+    public function inactive_home() {
+        return $this->render('user/inactive_home.html.twig');
+    }
+
 
 }

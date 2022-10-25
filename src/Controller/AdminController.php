@@ -33,7 +33,6 @@ class AdminController extends AbstractController
     public function __construct(private readonly SiteRepository $siteRepository,
                                 private readonly CityRepository $cityRepository,
                                 private readonly AdminService $adminService,
-                                private readonly EntityManagerInterface $entityManager,
                                 private readonly PlaceRepository $placeRepository,
                                 private readonly ParticipantRepository $participantRepository)
     {
@@ -214,7 +213,7 @@ class AdminController extends AbstractController
             $this->cityRepository->save($city, true);
 
             $this->addFlash('sucess', 'Le lieu a bien été modifié !');
-            return $this->redirectToRoute('admin_places');
+            return $this->redirectToRoute('admin_cities');
         }
 
         return $this->render('admin/edit_city.html.twig', [
@@ -332,16 +331,17 @@ class AdminController extends AbstractController
     #[Route('/users/setActive/{id}', name: 'users_setActive', requirements: ['id' =>'\d+'])]
     public function SetParticipantActive(int $id): Response
     {
-        $user = $this->participantRepository->find($id);
+        $participant = $this->participantRepository->find($id);
 
-        if($user->isActive() == '1'){
-            $user->setActive('0');
+        if($participant->isActive()){
+            $participant->setActive(false);
+            $participant->setRoles(["ROLE_INACTIVE"]);
         } else {
-            $user->setActive('1');
+            $participant->setActive(true);
+            $participant->setRoles(["ROLE_USER"]);
         }
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->participantRepository->save($participant, true);
 
         $this->addFlash('success', 'L\'utilisateur a bien été modifié');
         return $this->redirectToRoute('admin_users');

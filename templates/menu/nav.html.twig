@@ -11,56 +11,56 @@
         </a>
     </div>
 
-    <div id="navbarBasicExample" class="navbar-menu">
-
+    <div class="navbar-menu">
 
         {% if app.user %}
             <div class="navbar-end">
-
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        Activités
-                    </a>
-
-                    <div class="navbar-dropdown">
-                        <a class="navbar-item" href="{{ path('activity_add') }}">
-                            Nouvelle
+                {% if app.user.active %}
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            Activités
                         </a>
-                        <a class="navbar-item" href="{{ path('activity_list') }}">
-                            Liste des activités
-                        </a>
+
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item" href="{{ path('activity_add') }}">
+                                Nouvelle
+                            </a>
+                            <a class="navbar-item" href="{{ path('activity_list') }}">
+                                Liste des activités
+                            </a>
+                        </div>
                     </div>
-                </div>
 
-                {% if is_granted('ROLE_ADMIN') %}
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        Administrateur
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">
+                                Administrateur
+                            </a>
+
+                            <div class="navbar-dropdown">
+                                <a class="navbar-item" href="{{ path('admin_users') }}">
+                                    Gestion des participants
+                                </a>
+                                <a class="navbar-item" href="{{ path('admin_import') }}">
+                                    Import de participants
+                                </a>
+                                <a class="navbar-item" href="{{ path('admin_cities') }}">
+                                    Gérer les villes
+                                </a>
+                                <a class="navbar-item" href="{{ path('admin_sites') }}">
+                                    Gérer les sites
+                                </a>
+                                <a class="navbar-item" href="{{ path('admin_places') }}">
+                                    Gérer les lieux
+                                </a>
+                            </div>
+                        </div>
+                    {%  endif %}
+
+                    <a class="navbar-item" href="{{ path('participant_profile') }}">
+                        Profil
                     </a>
-
-                    <div class="navbar-dropdown">
-                        <a class="navbar-item" href="{{ path('admin_users') }}">
-                            Gestion des participants
-                        </a>
-                        <a class="navbar-item" href="{{ path('admin_import') }}">
-                            Import de participants
-                        </a>
-                        <a class="navbar-item" href="{{ path('admin_cities') }}">
-                            Gérer les villes
-                        </a>
-                        <a class="navbar-item" href="{{ path('admin_sites') }}">
-                            Gérer les sites
-                        </a>
-                        <a class="navbar-item" href="{{ path('admin_places') }}">
-                            Gérer les lieux
-                        </a>
-                    </div>
-                </div>
-                {%  endif %}
-
-                <a class="navbar-item" href="{{ path('participant_profile') }}">
-                    Profil
-                </a>
+                {% endif %}
 
                 <div class="navbar-end">
                     <div class="navbar-item">

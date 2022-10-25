@@ -131,9 +131,9 @@
                     {% if app.user == activity.organizer or is_granted('ROLE_ADMIN') %}
                       <a class="is-info" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
                     {% elseif app.user in activity.participants %}
-                      <a href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>
+                      <a href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}"> | Se désister</a>
                     {% elseif activity.state.label == states['open'] %}
-                      <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
+                      <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}"> | S'inscrire</a>
                     {% endif %}
                   {% endif %}
                 </td>

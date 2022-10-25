@@ -238,19 +238,8 @@ class AdminController extends AbstractController
         if($places == null){
             $this->cityRepository->remove($city, true);
             $this->addFlash('success', 'La ville a bien été supprimée');
-        }
-
-        foreach ($places as $place ){
-            $activities = $this->activityRepository->findBy(['place' => $place]);
-
-            if($activities == null){
-                $place->setCity(null);
-                $this->cityRepository->remove($city, true);
-                $this->addFlash('success', 'La ville a bien été supprimée');
-            } else {
-                $this->addFlash('danger', 'La ville ne peut pas être supprimée. Elle est liée à une ou plusieurs activié(s).');
-            }
-
+        } else {
+            $this->addFlash('danger', 'La ville ne peut pas être supprimée. Elle est liée à un ou plusieurs lieux.');
         }
 
         return $this->redirectToRoute('admin_cities');

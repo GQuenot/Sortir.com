@@ -46,16 +46,15 @@
                                 {% elseif user.active == '0' %}
                                     <a href="{{ path('admin_users_setActive', {'id': user.id}) }}"> | Rendre actif</a>
                                {% endif %}
-                                {% set cantDelete = false %}
+                                {% set canDelete = true %}
                                 {% for activity in activities %}
                                     {% if user.id == activity.organizer.id %}
-                                        {% set cantDelete = true %}
+                                        {% set canDelete = false %}
                                     {% endif %}
                                 {% endfor %}
-                                {%  if cantDelete == false  %}
+                                {%  if canDelete == true  %}
                                     <a href="{{ path('admin_participant_delete', {'id': user.id}) }}"> | Supprimer</a>
                                 {% endif %}
-
                             </td>
                         </tr>
                     {% endfor %}

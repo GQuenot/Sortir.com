@@ -37,13 +37,13 @@
                             <td>{{ site.name }}</td>
                             <td>
                                 <a href="{{ path('admin_site_edit', {'id': site.id}) }}">Modifier</a>
-                                {% set cantDelete = false %}
+                                {% set canDelete = true %}
                                 {% for participant in participant %}
                                     {% if site.id == participant.id %}
-                                        {% set cantDelete = true %}
+                                        {% set canDelete = false %}
                                     {% endif %}
                                 {% endfor %}
-                                {%  if cantDelete == false  %}
+                                {%  if canDelete == true  %}
                                     <a href="{{ path('admin_site_delete', {'id': site.id}) }}"> | Supprimer</a>
                                 {% endif %}
                         </tr>

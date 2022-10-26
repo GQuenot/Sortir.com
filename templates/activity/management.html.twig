@@ -15,37 +15,41 @@
             </div>
         </div>
 
-        <div class="table-container">
-            <table class="table is-striped is-fullwidth">
-                <thead>
-                <tr>
-                    <th><abbr title="Nom de la sortie">Nom</abbr></th>
-                    <th><abbr title="Date de la sortie">Date</abbr></th>
-                    <th>Clotûre</th>
-                    <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
-                    <th>Etat</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for activity in activities %}
-                    <tr>
-                        <td>{{ activity.name }}</td>
-                        <td>{{ activity.activityDate | date('j F Y') | format_date(locale='fr') }}</td>
-                        <td>{{  activity.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
-                        <td>{{ activity.participants.count }} / {{ activity.placeLimit }}</td>
-                        <td>{{ activity.state.label }}</td>
-                        <td>
-                            <div class="buttons">
-                                <a class="button" href="{{ path('activity_publish', {'activityId': activity.id}) }}">Publier</a>
-                                <a class="button" href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
-                                <a class="button" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="columns">
+            <div class="column is-8-desktop is-offset-2-desktop">
+                <div class="table-container">
+                    <table class="table is-striped is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th><abbr title="Nom de la sortie">Nom</abbr></th>
+                            <th><abbr title="Date de la sortie">Date</abbr></th>
+                            <th>Clotûre</th>
+                            <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
+                            <th>Etat</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for activity in activities %}
+                            <tr>
+                                <td>{{ activity.name }}</td>
+                                <td>{{ activity.activityDate | date('j F Y') | format_date(locale='fr') }}</td>
+                                <td>{{  activity.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
+                                <td>{{ activity.participants.count }} / {{ activity.placeLimit }}</td>
+                                <td>{{ activity.state.label }}</td>
+                                <td>
+                                    <div class="buttons">
+                                        <a class="button" href="{{ path('activity_publish', {'activityId': activity.id}) }}">Publier</a>
+                                        <a class="button" href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
+                                        <a class="button" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="has-text-centered is-hidden-mobile">

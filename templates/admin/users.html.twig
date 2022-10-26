@@ -9,56 +9,54 @@
 
     <div class="content">
 
-        <div class="table-container">
-            <table class="table is-striped is-fullwidth">
-                <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Pseudo</th>
-                    <th>Site</th>
-                    <th>Numéro de téléphone</th>
-                    <th>Adresse mail</th>
-                    <th>Rôle</th>
-                    <th>Actif</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.lastname }}</td>
-                        <td>{{ user.firstname }}</td>
-                        <td>{{ user.pseudo }}</td>
-                        <td>{{ user.site.name }}</td>
-                        <td>{{ user.phone }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>
-                            {% for role in user.roles %}
-                                {{ role }}
-                            {% endfor %}
-                        </td>
-                        <td>{{ user.active == '1' ? 'Oui' : 'Non' }}</td>
-                        <td>
-                           {% if user.active == '1'%}
-                            <a href="{{ path('admin_users_setActive', {'id': user.id}) }}">Rendre inactif</a>
-                            {% elseif user.active == '0' %}
-                                <a href="{{ path('admin_users_setActive', {'id': user.id}) }}"> | Rendre actif</a>
-                           {% endif %}
-                            {% set canDelete = true %}
-                                {% for activity in activities %}
-                                    {% if user.id == activity.organizer.id %}
-                                        {% set canDelete = false %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% if canDelete == true %}
-                            <a href="{{ path('admin_participant_delete', {'id': user.id}) }}"> | Supprimer</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="column">
+            <div class="column is-10-desktop is-offset-1-desktop">
+                <div class="table-container">
+                    <table class="table is-striped is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Pseudo</th>
+                            <th>Site</th>
+                            <th>Numéro de téléphone</th>
+                            <th>Adresse mail</th>
+                            <th>Rôle</th>
+                            <th>Actif</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.lastname }}</td>
+                                <td>{{ user.firstname }}</td>
+                                <td><a class="is-info" href="{{ path('participant_detail', {'id': user.id}) }}">{{ user.pseudo }}</a></td>
+                                <td>{{ user.site.name }}</td>
+                                <td>{{ user.phone }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    {% for role in user.roles %}
+                                        {{ role }}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ user.active == '1' ? 'Oui' : 'Non' }}</td>
+                                <td>
+                                    <div class="buttons">
+                                       {% if user.active == '1'%}
+                                        <a class="button" href="{{ path('admin_users_setActive', {'id': user.id}) }}">Rendre inactif</a>
+                                        {% elseif user.active == '0' %}
+                                            <a class="button" href="{{ path('admin_users_setActive', {'id': user.id}) }}">Rendre actif</a>
+                                       {% endif %}
+                                        <a class="button" href="{{ path('admin_participant_delete', {'id': user.id}) }}">Supprimer</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="has-text-centered">

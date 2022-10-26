@@ -113,14 +113,16 @@ class AdminController extends AbstractController
     public function get_users(): Response
     {
         $users = $this->participantRepository->findAll();
+        $activities = $this->activityRepository->findAll();
 
         return $this->render('admin/users.html.twig', [
             'users' => $users,
+            'activities' => $activities
         ]);
     }
 
     #[Route('/users/delete/{id}', name: 'participant_delete')]
-    public function delete(int $id): RedirectResponse
+    public function delete_user(int $id): RedirectResponse
     {
         $participant = $this->participantRepository->find($id);
 

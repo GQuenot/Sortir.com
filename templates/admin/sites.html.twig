@@ -30,16 +30,16 @@
                     <table class="table is-striped is-fullwidth">
                         <thead>
                         <tr>
-                            <th>Ville</th>
-                            <th>Actions</th>
+                            <th class="has-text-centered">Ville</th>
+                            <th class="has-text-centered">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for site in sites %}
                             <tr>
-                                <td>{{ site.name }}</td>
+                                <td class="has-text-centered">{{ site.name }}</td>
                                 <td>
-                                    <div class="buttons">
+                                    <div class="buttons is-centered">
                                         <a class="button" href="{{ path('admin_site_edit', {'id': site.id}) }}">Modifier</a>
                                         {% set cantDelete = false %}
                                         {% for participant in participant %}

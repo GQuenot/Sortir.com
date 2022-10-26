@@ -109,39 +109,20 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/sites/add', name: 'sites_add')]
-    public function add_site(Request $request): RedirectResponse|Response
-    {
-        $site = new Site();
-
-        $siteForm = $this->createForm(SiteType::class, $site);
-        $siteForm->handleRequest($request);
-
-        if($siteForm->isSubmitted() && $siteForm->isValid() ) {
-            $this->siteRepository->save($site, true);
-
-            $this->addFlash('sucess', 'Le site a bien été ajouté !');
-            return $this->redirectToRoute('admin_sites');
-        }
-
-        return $this->render('admin/add_site.html.twig', [
-            'siteForm' => $siteForm->createView()
-        ]);
-
-    }
-
     #[Route('/users', name: 'users')]
     public function get_users(): Response
     {
         $users = $this->participantRepository->findAll();
+        $activities = $this->activityRepository->findAll();
 
         return $this->render('admin/users.html.twig', [
             'users' => $users,
+            'activities' => $activities
         ]);
     }
 
     #[Route('/users/delete/{id}', name: 'participant_delete')]
-    public function delete(int $id): RedirectResponse
+    public function delete_user(int $id): RedirectResponse
     {
         $participant = $this->participantRepository->find($id);
 
@@ -153,13 +134,17 @@ class AdminController extends AbstractController
     }
 
 
-
+    #[Route('/sites/add', name: 'sites_add')]
     #[Route('/sites/edit/{id}', name: 'site_edit', requirements: ['id' => '\d+'])]
-    public function edit_site(int $id, Request $request): RedirectResponse|Response
+    public function addOrEdit_site(Request $request, $id = null): RedirectResponse|Response
     {
-        $site = $this->siteRepository->find($id);
+        if ($id) {
+            $site = $this->siteRepository->find($id);
+        } else {
+            $site = new Site();
+        }
 
-        $siteForm = $this->createForm(SiteType::class, $site);
+        $siteForm = $this->createForm(SiteType::class, $site, ['data' => $site]);
         $siteForm->handleRequest($request);
 
         if ($siteForm->isSubmitted() && $siteForm->isValid()) {
@@ -169,10 +154,17 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_sites');
         }
 
-        return $this->render('admin/edit.html.twig', [
-            'siteForm' => $siteForm->createView(),
-            'site' => $site
-        ]);
+        if ($id) {
+            return $this->render('admin/edit.html.twig', [
+                'siteForm' => $siteForm->createView(),
+                'site' => $site
+            ]);
+
+        } else {
+            return $this->render('admin/add_site.html.twig', [
+                'siteForm' => $siteForm->createView()
+            ]);
+        }
 
     }
 
@@ -206,12 +198,18 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/cities/add', name: 'add_city')]
     #[Route('/cities/edit/{id}', name: 'edit_city', requirements: ['id' => '\d+'])]
-    public function edit_city(int $id, Request $request): RedirectResponse|Response
+    public function addOrEdit_city(Request $request, $id = null): RedirectResponse|Response
     {
-        $city = $this->cityRepository->find($id);
+        if($id){
+            $city = $this->cityRepository->find($id);
+        } else {
+            $city = new City();
+        }
 
-        $cityForm = $this->createForm(CityType::class, $city);
+        $cityForm = $this->createForm(CityType::class, $city, ['data' => $city]);
+
         $cityForm->handleRequest($request);
 
         if ($cityForm->isSubmitted() && $cityForm->isValid()) {
@@ -221,10 +219,17 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_cities');
         }
 
-        return $this->render('admin/edit_city.html.twig', [
-            'cityForm' => $cityForm->createView(),
-            'city' => $city
-        ]);
+        if ($id) {
+            return $this->render('admin/edit_city.html.twig', [
+                'cityForm' => $cityForm->createView(),
+                'city' => $city
+            ]);
+
+        } else {
+            return $this->render('admin/add_city.html.twig', [
+                'cityForm' => $cityForm->createView()
+            ]);
+        }
 
     }
 
@@ -238,44 +243,13 @@ class AdminController extends AbstractController
         if($places == null){
             $this->cityRepository->remove($city, true);
             $this->addFlash('success', 'La ville a bien été supprimée');
-        }
-
-        foreach ($places as $place ){
-            $activities = $this->activityRepository->findBy(['place' => $place]);
-
-            if($activities == null){
-                $place->setCity(null);
-                $this->cityRepository->remove($city, true);
-                $this->addFlash('success', 'La ville a bien été supprimée');
-            } else {
-                $this->addFlash('danger', 'La ville ne peut pas être supprimée. Elle est liée à une ou plusieurs activié(s).');
-            }
-
+        } else {
+            $this->addFlash('danger', 'La ville ne peut pas être supprimée. Elle est liée à un ou plusieurs lieux.');
         }
 
         return $this->redirectToRoute('admin_cities');
     }
 
-    #[Route('/cities/add', name: 'add_city')]
-    public function add_city(Request $request): RedirectResponse|Response
-    {
-        $city = new City();
-
-        $cityForm = $this->createForm(CityType::class, $city);
-        $cityForm->handleRequest($request);
-
-        if($cityForm->isSubmitted() && $cityForm->isValid() ) {
-            $this->cityRepository->save($city, true);
-
-            $this->addFlash('sucess', 'La ville a bien été ajoutée !');
-            return $this->redirectToRoute('admin_cities');
-        }
-
-        return $this->render('admin/add_city.html.twig', [
-            'placeForm' => $cityForm->createView()
-        ]);
-
-    }
 
     #[Route('/places', name: 'places')]
     public function get_places(Request $request): Response
@@ -299,12 +273,17 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/places/add', name: 'add_place')]
     #[Route('/places/edit/{id}', name: 'edit_place', requirements: ['id' => '\d+'])]
-    public function edit_place(int $id, Request $request): RedirectResponse|Response
+    public function addOrEdit_place(Request $request, $id = null): RedirectResponse|Response
     {
-        $place = $this->placeRepository->find($id);
+        if ($id) {
+            $place = $this->placeRepository->find($id);
+        } else {
+            $place = new Place();
+        }
 
-        $placeForm = $this->createForm(PlaceType::class, $place);
+        $placeForm = $this->createForm(PlaceType::class, $place, ['data' => $place]);
         $placeForm->handleRequest($request);
 
         if ($placeForm->isSubmitted() && $placeForm->isValid()) {
@@ -314,10 +293,18 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_places');
         }
 
-        return $this->render('admin/edit_place.html.twig', [
-            'placeForm' => $placeForm->createView(),
-            'place' => $place
-        ]);
+        if ($id) {
+            return $this->render('admin/edit_place.html.twig', [
+                'placeForm' => $placeForm->createView(),
+                'place' => $place
+            ]);
+
+        } else {
+            return $this->render('admin/add_place.html.twig', [
+                'placeForm' => $placeForm->createView()
+            ]);
+        }
+
     }
 
     #[Route('/places/delete/{id}', name: 'delete_place')]
@@ -332,26 +319,6 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_places');
     }
 
-    #[Route('/places/add', name: 'add_place')]
-    public function add_place(Request $request): RedirectResponse|Response
-    {
-        $place = new Place();
-
-        $placeForm = $this->createForm(PlaceType::class, $place);
-        $placeForm->handleRequest($request);
-
-        if($placeForm->isSubmitted() && $placeForm->isValid() ) {
-            $this->placeRepository->save($place, true);
-
-            $this->addFlash('sucess', 'Le lieu a bien été ajouté !');
-            return $this->redirectToRoute('admin_places');
-        }
-
-        return $this->render('admin/add_place.html.twig', [
-            'placeForm' => $placeForm->createView()
-        ]);
-
-    }
 
     #[Route('/users/setActive/{id}', name: 'users_setActive', requirements: ['id' =>'\d+'])]
     public function SetParticipantActive(int $id): Response

@@ -5,16 +5,18 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class="is-size-1 has-text-centered my-5">Gestion des villes</h1>
+    <h1 class="is-size-3 is-size-1-tablet has-text-centered my-5">Gestion des villes</h1>
 
     <div class="content">
         <div class="columns">
-            <div class="column is-three-fifths is-offset-one-fifth">
+            <div class="column">
 
                 {{ form_start(filterForm) }}
 
-                    <div class="p-2">
-                        {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom du lieu'}}) }}
+                    <div class="columns mx-2">
+                        <div class="column is-three-fifths is-offset-one-fifth">
+                            {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom du lieu'}}) }}
+                        </div>
                     </div>
 
                     <div class="has-text-centered p-3">
@@ -24,27 +26,29 @@
 
                 {{ form_end(filterForm) }}
 
-                <table class="table is-striped is-fullwidth">
-                    <thead>
-                    <tr>
-                        <th>Ville</th>
-                        <th>Code postal</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for city in cities %}
+                <div class="table-container">
+                    <table class="table is-striped is-fullwidth">
+                        <thead>
                         <tr>
-                            <td>{{ city.name }}</td>
-                            <td>{{ city.postalCode }}</td>
-                            <td>
-                                <a href="{{ path('admin_edit_city', {'id': city.id}) }}">Modifier</a>
-                                |
-                                <a class="is-info" href="{{ path('admin_delete_city', {'id': city.id}) }}">Supprimer</a></td>
+                            <th>Ville</th>
+                            <th>Code postal</th>
+                            <th>Actions</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for city in cities %}
+                            <tr>
+                                <td>{{ city.name }}</td>
+                                <td>{{ city.postalCode }}</td>
+                                <td>
+                                    <a href="{{ path('admin_edit_city', {'id': city.id}) }}">Modifier</a>
+                                    |
+                                    <a class="is-info" href="{{ path('admin_delete_city', {'id': city.id}) }}">Supprimer</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="has-text-centered">
                     <a href="{{ path('admin_add_city') }}" class="button is-info">Ajouter une ville</a>

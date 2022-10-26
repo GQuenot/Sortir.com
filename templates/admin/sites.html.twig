@@ -5,57 +5,57 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class="is-size-1 has-text-centered my-5">Gestion des sites</h1>
+    <h1 class="is-size-3 is-size-1-tablet has-text-centered my-5">Gestion des sites</h1>
 
     <div class="content">
-        <div class="columns">
+
+        {{ form_start(filterForm) }}
+
+        <div class="columns mx-2">
             <div class="column is-three-fifths is-offset-one-fifth">
-
-                {{ form_start(filterForm) }}
-
-                <div class="p-2">
-                    {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom du site'}}) }}
-                </div>
-
-                <div class="has-text-centered p-3">
-                    <button class="button is-info">Rechercher</button>
-                </div>
-
-
-                {{ form_end(filterForm) }}
-
-                <table class="table is-striped is-fullwidth">
-                    <thead>
-                    <tr>
-                        <th>Ville</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for site in sites %}
-                        <tr>
-                            <td>{{ site.name }}</td>
-                            <td>
-                                <a href="{{ path('admin_site_edit', {'id': site.id}) }}">Modifier</a>
-                                {% set cantDelete = false %}
-                                {% for participant in participant %}
-                                    {% if site.id == participant.id %}
-                                        {% set cantDelete = true %}
-                                    {% endif %}
-                                {% endfor %}
-                                {%  if cantDelete == false  %}
-                                    <a href="{{ path('admin_site_delete', {'id': site.id}) }}"> | Supprimer</a>
-                                {% endif %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="has-text-centered">
-                    <a href="{{ path('admin_sites_add') }}" class="button is-info">Ajouter un site</a>
-                </div>
-
+                {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom du site'}}) }}
             </div>
         </div>
+
+        <div class="has-text-centered p-3">
+            <button class="button is-info">Rechercher</button>
+        </div>
+
+
+        {{ form_end(filterForm) }}
+
+        <div class="table-container">
+            <table class="table is-striped is-fullwidth">
+                <thead>
+                <tr>
+                    <th>Ville</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for site in sites %}
+                    <tr>
+                        <td>{{ site.name }}</td>
+                        <td>
+                            <a href="{{ path('admin_site_edit', {'id': site.id}) }}">Modifier</a>
+                            {% set cantDelete = false %}
+                            {% for participant in participant %}
+                                {% if site.id == participant.id %}
+                                    {% set cantDelete = true %}
+                                {% endif %}
+                            {% endfor %}
+                            {%  if cantDelete == false  %}
+                                <a href="{{ path('admin_site_delete', {'id': site.id}) }}"> | Supprimer</a>
+                            {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="has-text-centered">
+            <a href="{{ path('admin_sites_add') }}" class="button is-info">Ajouter un site</a>
+        </div>
+
     </div>
 {% endblock %}

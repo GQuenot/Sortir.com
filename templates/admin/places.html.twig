@@ -5,64 +5,64 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class="is-size-1 has-text-centered my-5">Gestion des lieux</h1>
+    <h1 class="is-size-3 is-size-1-tablet has-text-centered my-5">Gestion des lieux</h1>
 
     <div class="content">
-        <div class="columns">
+
+        {{ form_start(filterForm) }}
+
+        <div class="columns mx-2">
             <div class="column is-three-fifths is-offset-one-fifth">
-
-                {{ form_start(filterForm) }}
-
-                <div class="p-2">
-                    {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom du lieu'}}) }}
-                </div>
-
-                <div class="has-text-centered p-3">
-                    <button class="button is-info">Rechercher</button>
-                </div>
-
-
-                {{ form_end(filterForm) }}
-
-                <table class="table is-striped is-fullwidth">
-                    <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Ville</th>
-                        <th>Rue</th>
-                        <th>Latitude</th>
-                        <th>Longitude</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for place in places %}
-                        <tr>
-                            <td>{{ place.name }}</td>
-                            {% if place.city != null %}
-                                <td>{{ place.city.name }}</td>
-                            {% else %}
-                                <td> _________</td>
-                            {% endif %}
-                            <td>{{ place.street }}</td>
-                            <td>{{ place.latitude }}</td>
-                            <td>{{ place.longitude }}</td>
-                            <td>
-                                <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>
-                                {% if place.city == null %}
-                                    <a href="{{ path('admin_delete_place', {'id': place.id}) }}"> | Supprimer</a>
-                                {% endif %}
-
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="has-text-centered">
-                    <a href="{{ path('admin_add_place') }}" class="button is-info">Ajouter un lieu</a>
-                </div>
-
+                {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom du lieu'}}) }}
             </div>
         </div>
+
+        <div class="has-text-centered p-3">
+            <button class="button is-info">Rechercher</button>
+        </div>
+
+
+        {{ form_end(filterForm) }}
+
+        <div class="table-container">
+            <table class="table is-striped is-fullwidth">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Ville</th>
+                    <th>Rue</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for place in places %}
+                    <tr>
+                        <td>{{ place.name }}</td>
+                        {% if place.city != null %}
+                            <td>{{ place.city.name }}</td>
+                        {% else %}
+                            <td> _________</td>
+                        {% endif %}
+                        <td>{{ place.street }}</td>
+                        <td>{{ place.latitude }}</td>
+                        <td>{{ place.longitude }}</td>
+                        <td>
+                            <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>
+                            {% if place.city == null %}
+                                <a href="{{ path('admin_delete_place', {'id': place.id}) }}"> | Supprimer</a>
+                            {% endif %}
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="has-text-centered">
+            <a href="{{ path('admin_add_place') }}" class="button is-info">Ajouter un lieu</a>
+        </div>
+
     </div>
 {% endblock %}

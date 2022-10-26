@@ -5,59 +5,57 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class="is-size-1 has-text-centered my-5">Gestion des utilisateurs</h1>
+    <h1 class="is-size-3 is-size-1-tablet has-text-centered my-5">Gestion des utilisateurs</h1>
 
     <div class="content">
-        <div class="columns">
-            <div class="column is-three-fifths is-offset-one-fifth">
 
-                <table class="table is-striped is-fullwidth">
-                    <thead>
+        <div class="table-container">
+            <table class="table is-striped is-fullwidth">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Pseudo</th>
+                    <th>Site</th>
+                    <th>Numéro de téléphone</th>
+                    <th>Adresse mail</th>
+                    <th>Rôle</th>
+                    <th>Actif</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
                     <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Pseudo</th>
-                        <th>Site</th>
-                        <th>Numéro de téléphone</th>
-                        <th>Adresse mail</th>
-                        <th>Rôle</th>
-                        <th>Actif</th>
-                        <th>Actions</th>
+                        <td>{{ user.lastname }}</td>
+                        <td>{{ user.firstname }}</td>
+                        <td>{{ user.pseudo }}</td>
+                        <td>{{ user.site.name }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% for role in user.roles %}
+                                {{ role }}
+                            {% endfor %}
+                        </td>
+                        <td>{{ user.active == '1' ? 'Oui' : 'Non' }}</td>
+                        <td>
+                           {% if user.active == '1'%}
+                            <a href="{{ path('admin_users_setActive', {'id': user.id}) }}">Rendre inactif</a>
+                            {% elseif user.active == '0' %}
+                                <a href="{{ path('admin_users_setActive', {'id': user.id}) }}"> | Rendre actif</a>
+                           {% endif %}
+                            <a href="{{ path('admin_participant_delete', {'id': user.id}) }}"> | Supprimer</a>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for user in users %}
-                        <tr>
-                            <td>{{ user.lastname }}</td>
-                            <td>{{ user.firstname }}</td>
-                            <td>{{ user.pseudo }}</td>
-                            <td>{{ user.site.name }}</td>
-                            <td>{{ user.phone }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>
-                                {% for role in user.roles %}
-                                    {{ role }}
-                                {% endfor %}
-                            </td>
-                            <td>{{ user.active == '1' ? 'Oui' : 'Non' }}</td>
-                            <td>
-                               {% if user.active == '1'%}
-                                <a href="{{ path('admin_users_setActive', {'id': user.id}) }}">Rendre inactif</a>
-                                {% elseif user.active == '0' %}
-                                    <a href="{{ path('admin_users_setActive', {'id': user.id}) }}"> | Rendre actif</a>
-                               {% endif %}
-                                <a href="{{ path('admin_participant_delete', {'id': user.id}) }}"> | Supprimer</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="has-text-centered">
-                    <a href="{{ path('admin_add') }}" class="button is-info">Ajouter un utilisateur</a>
-                </div>
-
-            </div>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
+
+        <div class="has-text-centered">
+            <a href="{{ path('admin_add') }}" class="button is-info">Ajouter un utilisateur</a>
+        </div>
+
     </div>
 {% endblock %}

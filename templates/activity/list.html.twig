@@ -149,21 +149,25 @@
                                 </td>
                                 <td>
                                     <div class="buttons">
-                                    {% if app.user == activity.organizer and activity.state.label == states['created'] %}
-                                        <a class="button" href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
-                                    {% else %}
-                                        <a class="button" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
-                                    {% endif %}
-
-                                    {% if activity.state.label in [states['open'], states['closed']] %}
-                                        {% if app.user == activity.organizer or is_granted('ROLE_ADMIN') %}
-                                            <a class="button" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
-                                        {% elseif app.user in activity.participants %}
-                                            <a class="button" href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>
-                                        {% elseif activity.state.label == states['open'] %}
-                                            <a class="button" href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
+                                        {% if app.user == activity.organizer and activity.state.label == states['created'] %}
+                                            <a class="button" href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
+                                        {% else %}
+                                            <a class="button" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
                                         {% endif %}
-                                    {% endif %}
+
+                                        {% if activity.state.label in [states['open'], states['closed']] %}
+                                            {% if app.user == activity.organizer %}
+                                                <a class="button" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
+                                            {% elseif app.user in activity.participants %}
+                                                <a class="button" href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>
+                                            {% elseif activity.state.label == states['open'] %}
+                                                <a class="button" href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if is_granted('ROLE_ADMIN') and app.user != activity.organizer %}
+                                            <a class="button" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>

@@ -53,44 +53,12 @@
                     {{ form_widget(participantForm.site, {'attr': {'class': 'select'}}) }}
                 </div>
 
-                <div class="field">
-                    <label class="label">Mot de passe</label>
-                    <div class="control">
-                        {{ form_widget(participantForm.plainPassword.first, {'attr': {'class': 'input'}}) }}
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Confirmation du mot de passe</label>
-                    <div class="control">
-                        {{ form_widget(participantForm.plainPassword.second, {'attr': {'class': 'input'}}) }}
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Ajouter une photo</label>
-                    <div class="file">
-                        <label class="file-label">
-                            {{ form_widget(participantForm.profilePicture, {'attr': {'class': 'file-input'}}) }}
-                            <span class="file-cta">
-                              <span class="file-icon">
-                                <i data-feather="upload"></i>
-                              </span>
-                              <span class="file-label">
-                                Choisissez une image
-                              </span>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="has-text-centered">
+                <div class="has-text-centered mt-5">
                     <button class="button is-info">Enregistrer</button>
                     <a href="javascript:history.go(-1)" class="button is-info">Retour</a>
                 </div>
 
                 {{ form_end(participantForm) }}
-
             </div>
         </div>
     </div>

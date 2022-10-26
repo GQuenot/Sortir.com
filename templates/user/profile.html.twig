@@ -13,7 +13,12 @@
             <div class="column is-one-quarter">
                 <div class="card-image is-flex is-justify-content-center">
                     <figure class="image is-256x256">
-                        <img src="{{ asset('images/profilePictures/' ~ app.user.id ~ '.jpg') }}" alt="Image de profil">
+                        {% if asset_exists('images/profilePictures/' ~ app.user.id ~ '.jpg') %}
+                            <img src="{{ asset('images/profilePictures/' ~ app.user.id ~ '.jpg') }}" alt="Image de profil">
+                        {% else %}
+                            <img src="{{ asset('images/profilePictures/default.jpg') }}" alt="Image de profil">
+                        {% endif %}
+
                     </figure>
                 </div>
             </div>

@@ -6,6 +6,7 @@ use App\Entity\City;
 use App\Entity\Participant;
 use App\Entity\Place;
 use App\Entity\Site;
+use App\Form\AddParticipantType;
 use App\Form\CityFilterType;
 use App\Form\CityType;
 use App\Form\ParticipantType;
@@ -17,6 +18,7 @@ use App\Repository\CityRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\PlaceRepository;
 use App\Repository\SiteRepository;
+use App\Service\MailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,6 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\ImportParticipantType;
 use App\Service\AdminService;
 use Exception;
+use Symfony\Component\String\ByteString;
 
 #[Route('/admin', name: 'admin_')]
 class AdminController extends AbstractController
@@ -36,7 +39,8 @@ class AdminController extends AbstractController
                                 private readonly AdminService $adminService,
                                 private readonly PlaceRepository $placeRepository,
                                 private readonly ParticipantRepository $participantRepository,
-                                private readonly ActivityRepository $activityRepository)
+                                private readonly ActivityRepository $activityRepository,
+                                private readonly MailService $mailService)
     {
     }
 
@@ -45,22 +49,29 @@ class AdminController extends AbstractController
     {
         $participant = new Participant();
 
-        $participantForm = $this->createForm(ParticipantType::class, $participant);
+        $participantForm = $this->createForm(AddParticipantType::class, $participant);
         $participantForm->handleRequest($request);
 
         if($participantForm->isSubmitted() && $participantForm->isValid() ){
+            $generatedPassword = ByteString::fromRandom(32)->toString();
+
             $participant->setRoles(["ROLE_USER"]);
             $participant->setActive(1);
-
-            $this->participantRepository->upgradePassword($participant, $passwordHasher->hashPassword($participant, $request->request->get('participant')['plainPassword']['first']));
+            $participant->setPassword($passwordHasher->hashPassword($participant, $generatedPassword));
 
             $this->participantRepository->save($participant, true);
 
-            $this->addFlash('sucess', 'Le participant a bien été ajouté !');
+            // Send the creation mail to the participant with his password
+            $this->mailService->sendMail($participant->getEmail(),
+                'Creation de votre compte Sortir.com',
+                'La création de votre compte Sortir.com a été effectué, voici votre mot de passe : '. $generatedPassword
+            );
+
+            $this->addFlash('success', 'Le participant a bien été ajouté !');
             return $this->redirectToRoute('activity_list');
         }
 
-        return $this->render('user/add.html.twig', [
+        return $this->render('admin/add_participant.html.twig', [
             'participantForm' => $participantForm->createView()
         ]);
     }
@@ -83,7 +94,7 @@ class AdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/importParticipants.html.twig', [
+        return $this->render('admin/import_participants.html.twig', [
             'importForm' => $importForm->createView()
         ]);
     }
@@ -113,14 +124,16 @@ class AdminController extends AbstractController
     public function get_users(): Response
     {
         $users = $this->participantRepository->findAll();
+        $activities = $this->activityRepository->findAll();
 
         return $this->render('admin/users.html.twig', [
             'users' => $users,
+            'activities' => $activities
         ]);
     }
 
     #[Route('/users/delete/{id}', name: 'participant_delete')]
-    public function delete(int $id): RedirectResponse
+    public function delete_user(int $id): RedirectResponse
     {
         $participant = $this->participantRepository->find($id);
 
@@ -148,7 +161,7 @@ class AdminController extends AbstractController
         if ($siteForm->isSubmitted() && $siteForm->isValid()) {
             $this->siteRepository->save($site, true);
 
-            $this->addFlash('sucess', 'Le site a bien été modifié !');
+            $this->addFlash('success', 'Le site a bien été modifié !');
             return $this->redirectToRoute('admin_sites');
         }
 
@@ -213,7 +226,7 @@ class AdminController extends AbstractController
         if ($cityForm->isSubmitted() && $cityForm->isValid()) {
             $this->cityRepository->save($city, true);
 
-            $this->addFlash('sucess', 'Le lieu a bien été modifié !');
+            $this->addFlash('success', 'Le lieu a bien été modifié !');
             return $this->redirectToRoute('admin_cities');
         }
 
@@ -287,7 +300,7 @@ class AdminController extends AbstractController
         if ($placeForm->isSubmitted() && $placeForm->isValid()) {
             $this->placeRepository->save($place, true);
 
-            $this->addFlash('sucess', 'Le lieu a bien été modifié !');
+            $this->addFlash('success', 'Le lieu a bien été modifié !');
             return $this->redirectToRoute('admin_places');
         }
 

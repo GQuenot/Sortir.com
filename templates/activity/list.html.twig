@@ -120,7 +120,7 @@
         </div>
 
         <div class="columns">
-            <div class="column">
+            <div class="column is-8-desktop is-offset-2-desktop">
 
                 <div class="table-container">
                     <table class="table is-striped is-fullwidth">
@@ -140,29 +140,31 @@
                         {% for activity in activities %}
                             <tr>
                                 <td>{{ activity.name }}</td>
-                                <td>{{ activity.activityDate | date('j F Y') | format_date(locale='fr') }}</td>
-                                <td>{{ activity.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
+                                <td>{{ activity.activityDate | format_datetime(pattern='dd MMMM yyyy HH:mm', locale='fr') }}</td>
+                                <td>{{ activity.subLimitDate | format_datetime(pattern='dd MMMM yyyy HH:mm', locale='fr') }}</td>
                                 <td>{{ activity.participants.count }} / {{ activity.placeLimit }}</td>
                                 <td>{{ activity.state.label }}</td>
                                 <td>{{ app.user in activity.participants ? 'Oui' : 'Non' }}</td>
                                 <td><a class="is-info" href="{{ path('participant_detail', {'id': activity.organizer.id}) }}">{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</a>
                                 </td>
                                 <td>
+                                    <div class="buttons">
                                     {% if app.user == activity.organizer and activity.state.label == states['created'] %}
-                                        <a href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
+                                        <a class="button" href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
                                     {% else %}
-                                        <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
+                                        <a class="button" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
                                     {% endif %}
 
                                     {% if activity.state.label in [states['open'], states['closed']] %}
                                         {% if app.user == activity.organizer or is_granted('ROLE_ADMIN') %}
-                                            <a class="is-info" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
+                                            <a class="button" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
                                         {% elseif app.user in activity.participants %}
-                                            <a href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>
+                                            <a class="button" href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>
                                         {% elseif activity.state.label == states['open'] %}
-                                            <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
+                                            <a class="button" href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
                                         {% endif %}
                                     {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}

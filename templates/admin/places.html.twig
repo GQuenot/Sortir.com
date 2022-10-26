@@ -24,40 +24,46 @@
 
         {{ form_end(filterForm) }}
 
-        <div class="table-container">
-            <table class="table is-striped is-fullwidth">
-                <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Ville</th>
-                    <th>Rue</th>
-                    <th>Latitude</th>
-                    <th>Longitude</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for place in places %}
-                    <tr>
-                        <td>{{ place.name }}</td>
-                        {% if place.city != null %}
-                            <td>{{ place.city.name }}</td>
-                        {% else %}
-                            <td> _________</td>
-                        {% endif %}
-                        <td>{{ place.street }}</td>
-                        <td>{{ place.latitude }}</td>
-                        <td>{{ place.longitude }}</td>
-                        <td>
-                            <a href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>
-                            {% if place.city == null %}
-                                <a href="{{ path('admin_delete_place', {'id': place.id}) }}"> | Supprimer</a>
-                            {% endif %}
-
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="columns">
+            <div class="column is-10-desktop is-offset-1-desktop">
+                <div class="table-container">
+                    <table class="table is-striped is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Ville</th>
+                            <th>Rue</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for place in places %}
+                            <tr>
+                                <td>{{ place.name }}</td>
+                                {% if place.city != null %}
+                                    <td>{{ place.city.name }}</td>
+                                {% else %}
+                                    <td> _________</td>
+                                {% endif %}
+                                <td>{{ place.street }}</td>
+                                <td>{{ place.latitude }}</td>
+                                <td>{{ place.longitude }}</td>
+                                <td>
+                                    <div class="buttons">
+                                        <a class="button" href="{{ path('admin_edit_place', {'id': place.id}) }}">Modifier</a>
+                                        {% if place.city == null %}
+                                            <a class="button" href="{{ path('admin_delete_place', {'id': place.id}) }}">Supprimer</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="has-text-centered">

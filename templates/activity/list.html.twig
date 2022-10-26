@@ -1,151 +1,198 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-{{ parent() }} | Show activities
+    {{ parent() }} | Show activities
 {% endblock %}
 
 {% block body %}
+    <h1 class="is-size-3 is-size-1-tablet has-text-centered my-5">Liste des activités</h1>
 
-  <h1 class="is-size-1 has-text-centered my-5">Liste des activités</h1>
+    <div class="content">
 
-  <div class="content">
-
-    <div class="columns mb-5">
-      <div class="column is-size-4 has-text-centered">
-        <p>Date du jour : {{ 'now' | date('j F Y') | format_date(locale='fr') }}</p>
-      </div>
-    </div>
-
-    {{ form_start(filterForm) }}
-
-    <div class="columns is-tablet is-flex is-justify-content-space-around has-background-link-light">
-      <div class="column is-5 is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
-
-        <div class="is-flex is-justify-content-center">
-
-          <div class="p-2">
-            <div class="select">
-              {{ form_widget(filterForm.site) }}
+        <div class="columns mb-4">
+            <div class="column is-size-5 is-size-4-tablet has-text-centered">
+                <p>Date du jour : {{ 'now' | date('j F Y') | format_date(locale='fr') }}</p>
             </div>
-          </div>
-          <div class="p-2">
-            {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom de la sortie'}}) }}
-          </div>
-
         </div>
 
-        <div class="is-flex is-justify-content-center">
-          <div class="field p-2">
-            <label class="label">Date de l'activité entre le</label>
-            <div class="control">
-              {{ form_widget(filterForm.startDate, {'attr': {'class': 'input'}}) }}
+        <div class="columns has-text-centered is-mobile is-hidden-desktop">
+            <div class="column">
+                <button class="button is-small" id="buttonFilters">Filtrer</button>
+
+                {% if activitiesNotPublish | length > 0 %}
+                    <a class="button is-small is-warning is-light" href="{{ path('activity_management') }}">
+                        <span class="badge is-warning">{{ activitiesNotPublish | length }}</span>
+                        Sortie(s) non-publiée(s)
+                    </a>
+                {% endif %}
             </div>
-          </div>
-          <div class="field p-2">
-            <label class="label">et le</label>
-            <div class="control">
-              {{ form_widget(filterForm.endDate, {'attr': {'class': 'input'}}) }}
+
+        </div>
+
+        <div class="columns has-background-link-light is-block-desktop" id="filters">
+
+            <div class="column">
+                {{ form_start(filterForm) }}
+
+                <div class="mx-2 p-2">
+                    <div class="columns is-desktop">
+
+                        <div class="column">
+                            <div class="columns">
+                                <div class="column">
+                                    <div class="field">
+                                        <div class="select is-fullwidth">
+                                            {{ form_widget(filterForm.site) }}
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        {{ form_widget(filterForm.search, {'attr': {'class': 'input', 'placeholder': 'Nom de la sortie'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="columns">
+                                <div class="column">
+                                    <div class="field">
+                                        <label class="label">Date de l'activité entre le</label>
+                                        <div class="control">
+                                            {{ form_widget(filterForm.startDate, {'attr': {'class': 'input'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <div class="field">
+                                        <label class="label">et le</label>
+                                        <div class="control">
+                                            {{ form_widget(filterForm.endDate, {'attr': {'class': 'input'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="column is-flex-desktop is-justify-content-center is-align-items-center">
+                            <div class="columns is-gapless is-block-desktop">
+                                <div class="column is-flex-desktop is-flex-direction-column">
+                                    <label class="checkbox">
+                                        {{ form_widget(filterForm.isOrganizer) }}
+                                        Sorties dont je suis l'organisateur/trice
+                                    </label>
+
+                                    <label class="checkbox">
+                                        {{ form_widget(filterForm.isParticipant) }}
+                                        Sorties auxquelles je suis inscrit/e
+                                    </label>
+                                </div>
+                                <div class="column is-flex-desktop is-flex-direction-column">
+                                    <label class="checkbox">
+                                        {{ form_widget(filterForm.isNotParticipant) }}
+                                        Sorties auxquelles je ne suis pas inscrit/e
+                                    </label>
+
+                                    <label class="checkbox">
+                                        {{ form_widget(filterForm.pastActivities) }}
+                                        Sorties passées
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="column is-flex-desktop is-justify-content-center is-align-items-center">
+                            <div class="has-text-centered">
+                                <button class="button is-small is-info is-hidden-desktop">Rechercher</button>
+                                <button class="button is-info is-block-desktop-only is-hidden-tablet-only is-hidden-mobile m-2">Rechercher</button>
+                                {% if activitiesNotPublish | length > 0 %}
+                                    <a class="button is-warning is-light is-block-desktop-only is-hidden-tablet-only is-hidden-mobile m-2" href="{{ path('activity_management') }}">
+                                        <span class="badge is-warning">{{ activitiesNotPublish | length }}</span>
+                                        Sortie(s) non-publiée(s)
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {{ form_end(filterForm) }}
             </div>
-          </div>
+
         </div>
 
-      </div>
-      <div class="column is-4 is-flex is-justify-content-center is-align-items-center">
+        <div class="columns">
+            <div class="column">
 
-        <div class="is-flex is-flex-direction-column">
-          <label class="checkbox">
-            {{ form_widget(filterForm.isOrganizer) }}
-            Sorties dont je suis l'organisateur/trice
-          </label>
+                <div class="table-container">
+                    <table class="table is-striped is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th><abbr title="Nom de la sortie">Nom</abbr></th>
+                            <th><abbr title="Date de la sortie">Date</abbr></th>
+                            <th>Clotûre</th>
+                            <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
+                            <th>Etat</th>
+                            <th>Inscrit</th>
+                            <th>Organisateur</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for activity in activities %}
+                            <tr>
+                                <td>{{ activity.name }}</td>
+                                <td>{{ activity.activityDate | date('j F Y') | format_date(locale='fr') }}</td>
+                                <td>{{ activity.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
+                                <td>{{ activity.participants.count }} / {{ activity.placeLimit }}</td>
+                                <td>{{ activity.state.label }}</td>
+                                <td>{{ app.user in activity.participants ? 'Oui' : 'Non' }}</td>
+                                <td><a class="is-info" href="{{ path('participant_detail', {'id': activity.organizer.id}) }}">{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</a>
+                                </td>
+                                <td>
+                                    {% if app.user == activity.organizer and activity.state.label == states['created'] %}
+                                        <a href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
+                                    {% else %}
+                                        <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
+                                    {% endif %}
 
-          <label class="checkbox">
-            {{ form_widget(filterForm.isParticipant) }}
-            Sorties auxquelles je suis inscrit/e
-          </label>
+                                    {% if activity.state.label in [states['open'], states['closed']] %}
+                                        {% if app.user == activity.organizer or is_granted('ROLE_ADMIN') %}
+                                            <a class="is-info" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
+                                        {% elseif app.user in activity.participants %}
+                                            <a href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}">Se désister</a>
+                                        {% elseif activity.state.label == states['open'] %}
+                                            <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}">S'inscrire</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-          <label class="checkbox">
-            {{ form_widget(filterForm.isNotParticipant) }}
-            Sorties auxquelles je ne suis pas inscrit/e
-          </label>
+                <div class="has-text-centered is-hidden-mobile">
+                    <a href="{{ path('activity_add') }}" class="button is-info">Créer une activité</a>
+                </div>
 
-          <label class="checkbox">
-            {{ form_widget(filterForm.pastActivities) }}
-            Sorties passées
-          </label>
+            </div>
         </div>
 
-      </div>
-      <div class="column is-3 is-flex is-justify-content-center is-align-items-center">
-
-        <div class="has-text-centered p-3">
-          <button class="button is-info m-1">Rechercher</button>
-
-          {% if activitiesNotPublish | length > 0 %}
-            <a class="button is-warning is-light m-1" href="{{ path('activity_management') }}">
-              <span class="badge is-warning">{{ activitiesNotPublish | length }}</span>
-              Sortie(s) non-publiée(s)
-            </a>
-          {% endif %}
-        </div>
     </div>
+{% endblock %}
 
-    </div>
+{% block extraJs %}
+    <script>
+        const filtersContainer = document.getElementById('filters');
+        const buttonFilters = document.getElementById('buttonFilters');
 
+        document.addEventListener('DOMContentLoaded', () => {
 
-    {{ form_end(filterForm) }}
+            filtersContainer.style.display = 'none';
 
-    <div class="columns">
-      <div class="column is-three-fifths is-offset-one-fifth">
+            buttonFilters.addEventListener('click', () => {
 
-          <table class="table is-striped is-fullwidth">
-            <thead>
-              <tr>
-                <th><abbr title="Nom de la sortie">Nom</abbr></th>
-                <th><abbr title="Date de la sortie">Date</abbr></th>
-                <th>Clotûre</th>
-                <th><abbr title="Nombre d'inscrits / places">Place</abbr></th>
-                <th>Etat</th>
-                <th>Inscrit</th>
-                <th>Organisateur</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-            {% for activity in activities %}
-              <tr>
-                <td>{{ activity.name }}</td>
-                <td>{{ activity.activityDate | date('j F Y') | format_date(locale='fr') }}</td>
-                <td>{{  activity.subLimitDate | date('j F Y') | format_date(locale='fr') }}</td>
-                <td>{{ activity.participants.count }} / {{ activity.placeLimit }}</td>
-                <td>{{ activity.state.label }}</td>
-                <td>{{ app.user in activity.participants ? 'Oui' : 'Non' }}</td>
-                <td><a class="is-info" href="{{ path('participant_detail', {'id': activity.organizer.id}) }}">{{ activity.organizer.firstname }} {{ activity.organizer.lastname }}</a></td>
-                <td>
-                  {% if app.user == activity.organizer and activity.state.label == states['created'] %}
-                      <a href="{{ path('activity_edit', {'id': activity.id}) }}">Modifier</a>
-                  {% else %}
-                    <a class="is-info" href="{{ path('activity_detail', {'id': activity.id}) }}">Afficher</a>
-                  {% endif%}
-
-                  {% if activity.state.label in [states['open'], states['closed']] %}
-                    {% if app.user == activity.organizer or is_granted('ROLE_ADMIN') %}
-                      <a class="is-info" href="{{ path('activity_cancel', {'id': activity.id}) }}">Annuler</a>
-                    {% elseif app.user in activity.participants %}
-                      <a href="{{ path('activity_unsubscribe', {'activityId': activity.id}) }}"> | Se désister</a>
-                    {% elseif activity.state.label == states['open'] %}
-                      <a href="{{ path('activity_subscription', {'activityId': activity.id}) }}"> | S'inscrire</a>
-                    {% endif %}
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
-
-          <div class="has-text-centered">
-            <a href="{{ path('activity_add') }}" class="button is-info">Créer une activité</a>
-          </div>
-      </div>
-    </div>
-  </div>
+                filtersContainer.style.display = filtersContainer.style.display === 'none' ? '' : 'none';
+            });
+        });
+    </script>
 {% endblock %}

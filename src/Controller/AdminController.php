@@ -6,6 +6,7 @@ use App\Entity\City;
 use App\Entity\Participant;
 use App\Entity\Place;
 use App\Entity\Site;
+use App\Form\AddParticipantType;
 use App\Form\CityFilterType;
 use App\Form\CityType;
 use App\Form\ParticipantType;
@@ -17,6 +18,7 @@ use App\Repository\CityRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\PlaceRepository;
 use App\Repository\SiteRepository;
+use App\Service\MailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,6 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Form\ImportParticipantType;
 use App\Service\AdminService;
 use Exception;
+use Symfony\Component\String\ByteString;
 
 #[Route('/admin', name: 'admin_')]
 class AdminController extends AbstractController
@@ -36,7 +39,8 @@ class AdminController extends AbstractController
                                 private readonly AdminService $adminService,
                                 private readonly PlaceRepository $placeRepository,
                                 private readonly ParticipantRepository $participantRepository,
-                                private readonly ActivityRepository $activityRepository)
+                                private readonly ActivityRepository $activityRepository,
+                                private readonly MailService $mailService)
     {
     }
 
@@ -45,22 +49,29 @@ class AdminController extends AbstractController
     {
         $participant = new Participant();
 
-        $participantForm = $this->createForm(ParticipantType::class, $participant);
+        $participantForm = $this->createForm(AddParticipantType::class, $participant);
         $participantForm->handleRequest($request);
 
         if($participantForm->isSubmitted() && $participantForm->isValid() ){
+            $generatedPassword = ByteString::fromRandom(32)->toString();
+
             $participant->setRoles(["ROLE_USER"]);
             $participant->setActive(1);
-
-            $this->participantRepository->upgradePassword($participant, $passwordHasher->hashPassword($participant, $request->request->get('participant')['plainPassword']['first']));
+            $participant->setPassword($passwordHasher->hashPassword($participant, $generatedPassword));
 
             $this->participantRepository->save($participant, true);
+
+            // Send the creation mail to the participant with his password
+            $this->mailService->sendMail($participant->getEmail(),
+                'Creation de votre compte Sortir.com',
+                'La création de votre compte Sortir.com a été effectué, voici votre mot de passe : '. $generatedPassword
+            );
 
             $this->addFlash('success', 'Le participant a bien été ajouté !');
             return $this->redirectToRoute('activity_list');
         }
 
-        return $this->render('user/add.html.twig', [
+        return $this->render('admin/add_participant.html.twig', [
             'participantForm' => $participantForm->createView()
         ]);
     }
@@ -83,7 +94,7 @@ class AdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/importParticipants.html.twig', [
+        return $this->render('admin/import_participants.html.twig', [
             'importForm' => $importForm->createView()
         ]);
     }

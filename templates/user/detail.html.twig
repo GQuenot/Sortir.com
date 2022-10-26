@@ -5,31 +5,31 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class="is-size-1 has-text-centered py-5">{{ participant.pseudo }}</h1>
+    <h1 class="is-size-3 is-size-1-tablet has-text-centered my-5">{{ participant.pseudo }}</h1>
 
-<div class="content">
-    <div class="columns">
-        <div class="column is-one-quarter">
-            <div class="card-image is-flex is-justify-content-center">
-                <figure class="image is-256x256">
-                    <img src="{{ asset('images/profilePictures/' ~ app.user.id ~ '.jpg') }}" alt="Image de profil">
-                </figure>
+    <div class="content">
+        <div class="columns mx-2">
+            <div class="column is-one-quarter">
+                <div class="card-image is-flex is-justify-content-center">
+                    <figure class="image is-256x256">
+                        <img src="{{ asset('images/profilePictures/' ~ app.user.id ~ '.jpg') }}" alt="Image de profil">
+                    </figure>
+                </div>
             </div>
-        </div>
-        <div class="column is-half">
-            <p><strong>Prénom :</strong> {{ participant.firstname }}</p>
-            <p><strong>Nom :  </strong> {{ participant.lastname }} </p>
-            <p><strong>Téléphone :  </strong> {{ participant.phone }}</p>
-            <p><strong>Email :  </strong> {{ participant.email }}</p>
-            <p><strong>Site de rattachement : </strong> {{ participant.site.name }}  </p>
+            <div class="column is-half">
+                <p><strong>Prénom :</strong> {{ participant.firstname }}</p>
+                <p><strong>Nom :  </strong> {{ participant.lastname }} </p>
+                <p><strong>Téléphone :  </strong> {{ participant.phone }}</p>
+                <p><strong>Email :  </strong> {{ participant.email }}</p>
+                <p><strong>Site de rattachement : </strong> {{ participant.site.name }}  </p>
 
-            <div class="has-text-centered">
-                <a href="javascript:history.go(-1)" class="button is-info">Retour</a>
+                <div class="has-text-centered">
+                    <a href="javascript:history.go(-1)" class="button is-info">Retour</a>
+                </div>
+
             </div>
-
         </div>
     </div>
-</div>
 {% endblock %}
 
 

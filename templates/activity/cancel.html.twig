@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | cancel activity {{ activity.name }}
+{% endblock %}
+
+{% block body %}
+<h1 class="is-size-1 has-text-centered my-5">Détail de l'activité</h1>
+
+<div class="container">
+    <div class="content">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <p><strong>Nom de la sortie :</strong> {{ activity.name }}</p>
+                <p><strong>Date et heure de la sortie :  </strong> {{ activity.activityDate | date('d-m-Y') }} à {{ activity.activityDate | date('H:i:s') }} </p>
+                <p><strong>Site organisateur :  </strong> {{ activity.site.name }}</p>
+                <p><strong>Lieu :  </strong> {{ activity.place.name }} {{ activity.place.street }} {{ activity.place.city.postalCode }} {{ activity.place.city.name }}</p>
+            </div>
+        </div>
+        <div class="columns is-centered">
+            <div class="column is-half">
+                {{ form_start(activityCancelForm) }}
+                <div class="field">
+                    <label class="label">Motif :</label>
+                    <div class="control">
+                        {{ form_widget(activityCancelForm.motive, {'attr': {'class': 'textarea'}}) }}
+                    </div>
+                    <div>
+                        <br>
+                        <button class="button is-info">Enregistrer</button>
+                    </div>
+                </div>
+                {{ form_end(activityCancelForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

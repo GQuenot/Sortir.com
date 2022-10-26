@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
+use App\Form\ActivityCancelMotiveType;
 use App\Form\ActivityFilterType;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
@@ -258,23 +259,35 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/activity/cancel/{id}', name: 'activity_cancel', requirements: ['id' =>'\d+'])]
-    public function cancelActivity(ActivityRepository $activityRepository, int $id): Response
+    public function cancelActivity(ActivityRepository $activityRepository, int $id, Request $request): Response
     {
         $activity = $activityRepository->find($id);
         $state = $this->stateRepository->findOneBy(['label' => 'Annulée']);
 
         $today = new \DateTime();
 
-        if($activity->getActivityDate() <= $today){
+        if ($activity->getActivityDate() <= $today) {
             $this->addFlash('warning', 'Une sortie commencée ne peut être annulée');
             return $this->redirectToRoute('activity_list');
-        }
-        $activity->setState($state);
-        $this->entityManager->persist($activity);
-        $this->entityManager->flush();
+        } else {
+            $activityCancelForm = $this->createForm(activityCancelMotiveType::class, $activity);
 
-        $this->addFlash('success', 'Sortie annulée avec succès');
-        return $this->redirectToRoute('activity_list');
+            $activityCancelForm->handleRequest($request);
+
+            if ($activityCancelForm->isSubmitted() && $activityCancelForm->isValid()) {
+
+                    return $this->redirectToRoute('activity_list');
+            }
+
+            $activity->setState($state);
+            $this->entityManager->persist($activity);
+            $this->entityManager->flush();
+
+            return $this->render('activity/cancel.html.twig', [
+                'activityCancelForm' => $activityCancelForm->createView(),
+                'activity' => $activity
+            ]);
+        }
     }
 
     #[Route('/inactive_home', name: 'inactive_home')]

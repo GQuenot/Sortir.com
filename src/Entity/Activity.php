@@ -52,6 +52,9 @@ class Activity
     #[ORM\ManyToOne(inversedBy: 'activities')]
     private ?Place $place = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $motive = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -205,4 +208,24 @@ class Activity
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getMotive(): ?string
+    {
+        return $this->motive;
+    }
+
+    /**
+     * @param string|null $motive
+     * @return Activity
+     */
+    public function setMotive(?string $motive): Activity
+    {
+        $this->motive = $motive;
+        return $this;
+    }
+
+
 }

@@ -56,7 +56,7 @@ class AdminController extends AbstractController
 
             $this->participantRepository->save($participant, true);
 
-            $this->addFlash('sucess', 'Le participant a bien été ajouté !');
+            $this->addFlash('success', 'Le participant a bien été ajouté !');
             return $this->redirectToRoute('activity_list');
         }
 
@@ -150,7 +150,7 @@ class AdminController extends AbstractController
         if ($siteForm->isSubmitted() && $siteForm->isValid()) {
             $this->siteRepository->save($site, true);
 
-            $this->addFlash('sucess', 'Le site a bien été modifié !');
+            $this->addFlash('success', 'Le site a bien été modifié !');
             return $this->redirectToRoute('admin_sites');
         }
 
@@ -215,7 +215,7 @@ class AdminController extends AbstractController
         if ($cityForm->isSubmitted() && $cityForm->isValid()) {
             $this->cityRepository->save($city, true);
 
-            $this->addFlash('sucess', 'Le lieu a bien été modifié !');
+            $this->addFlash('success', 'Le lieu a bien été modifié !');
             return $this->redirectToRoute('admin_cities');
         }
 
@@ -289,7 +289,7 @@ class AdminController extends AbstractController
         if ($placeForm->isSubmitted() && $placeForm->isValid()) {
             $this->placeRepository->save($place, true);
 
-            $this->addFlash('sucess', 'Le lieu a bien été modifié !');
+            $this->addFlash('success', 'Le lieu a bien été modifié !');
             return $this->redirectToRoute('admin_places');
         }
 

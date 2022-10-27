@@ -275,13 +275,11 @@ class ActivityController extends AbstractController
             $activityCancelForm->handleRequest($request);
 
             if ($activityCancelForm->isSubmitted() && $activityCancelForm->isValid()) {
-
+                    $activity->setState($state);
+                    $this->entityManager->persist($activity);
+                    $this->entityManager->flush();
                     return $this->redirectToRoute('activity_list');
             }
-
-            $activity->setState($state);
-            $this->entityManager->persist($activity);
-            $this->entityManager->flush();
 
             return $this->render('activity/cancel.html.twig', [
                 'activityCancelForm' => $activityCancelForm->createView(),

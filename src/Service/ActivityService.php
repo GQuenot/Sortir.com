@@ -52,6 +52,8 @@ class ActivityService
         $state = $this->stateRepository->findOneBy(['label' => $this->states['open']]);
         $activity->setState($state);
 
+        $this->addParticipant($activity);
+
         $this->entityManager->persist($activity);
         $this->entityManager->flush();
     }
@@ -67,7 +69,6 @@ class ActivityService
         if($activity->getSubLimitDate() < new DateTime()) {
             $state = $this->stateRepository->findOneBy(['label' => $this->states['closed']]);
             $activity->setState($state);
-            $this->addParticipant($activity);
 
             $this->entityManager->persist($activity);
             $this->entityManager->flush();

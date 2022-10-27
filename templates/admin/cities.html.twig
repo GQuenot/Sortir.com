@@ -32,18 +32,18 @@
                             <table class="table is-striped center">
                                 <thead>
                                 <tr>
-                                    <th>Ville</th>
-                                    <th>Code postal</th>
-                                    <th>Actions</th>
+                                    <th class="has-text-centered">Ville</th>
+                                    <th class="has-text-centered">Code postal</th>
+                                    <th class="has-text-centered">Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for city in cities %}
                                     <tr>
-                                        <td>{{ city.name }}</td>
-                                        <td>{{ city.postalCode }}</td>
+                                        <td class="has-text-centered">{{ city.name }}</td>
+                                        <td class="has-text-centered">{{ city.postalCode }}</td>
                                         <td>
-                                            <div class="buttons">
+                                            <div class="buttons is-centered">
                                                 <a class="button" href="{{ path('admin_edit_city', {'id': city.id}) }}">Modifier</a>
                                                 <a class="button" href="{{ path('admin_delete_city', {'id': city.id}) }}">Supprimer</a>
                                             </div>

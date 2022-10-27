@@ -92,7 +92,7 @@ class ActivityRepository extends ServiceEntityRepository
                 $qb->join('a.participants', 'p');
                 break;
 
-            case isset($filters[0]['isParticipant']) && isset($filters[0]['isOrganizer']):
+            case isset($filter['isParticipant']) && isset($filter['isOrganizer']):
                 $qb->join('a.participants', 'p')
                     ->andWhere(':participant IN(p.id)')
                     ->setParameter('participant', $participant);
@@ -152,7 +152,7 @@ class ActivityRepository extends ServiceEntityRepository
                     ->setParameter('site', $filter['site']);
             }
 
-            if ($filters[0]['search'] !== "") {
+            if ($filter['search'] !== "") {
 
                 $qb->andWhere("a.name LIKE :search")
                     ->setParameter('search', "%" . $filter['search'] . "%");
@@ -167,8 +167,8 @@ class ActivityRepository extends ServiceEntityRepository
 
             if (isset($filter['pastActivities'])) {
 
-                $qb->join('a.state', 's')
-                    ->andWhere("s.label LIKE 'Passée'");
+                $qb->join('a.state', 'st')
+                    ->andWhere("st.label LIKE 'Passée'");
             }
         }
 
@@ -176,20 +176,6 @@ class ActivityRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
-
-    public function findActivityNotArchived()
-    {
-        $myDate = date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) );
-
-        $queryBuilder = $this->createQueryBuilder('a')
-            ->andWhere('a.activityDate > :val')
-            ->setParameter('val', $myDate);
-
-        $query = $queryBuilder->getQuery();
-
-        return $query->getResult();
-    }
-
 
     public function findActivitiesStarted()
     {

@@ -10,6 +10,7 @@ use App\Repository\ActivityRepository;
 use App\Repository\StateRepository;
 use App\Repository\ParticipantRepository;
 use App\Service\ActivityService;
+use App\Utils\UpdateStates;
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -131,53 +132,11 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/', name: 'activity_list')]
-    public function list(Request $request, ParticipantRepository $participantRepository): Response
+    public function list(Request $request, ParticipantRepository $participantRepository, UpdateStates $updateStates): Response
     {
-        $activities = $this->activityRepository->findActivityNotArchived();
-
-        $activitiesStarted = $this->activityRepository->findActivitiesStarted();
-        $stateA = $this->stateRepository->findOneBy(['label' => 'Activité en cours']);
-
-        if ($activities == $activitiesStarted){
-            return $this->redirectToRoute('activity_list');
-        }
-
-        foreach ($activitiesStarted as $activityStarted) {
-            $activityStarted->setState($stateA);
-            $this->entityManager->persist($activityStarted);
-        }
-
-        $this->entityManager->flush();
-
-        $activitiesPassed = $this->activityRepository->findActivitiesPassed();
-
-        $stateP = $this->stateRepository->findOneBy(['label' => 'Passée']);
-
-        if ($activities == $activitiesPassed){
-            return $this->redirectToRoute('activity_list');
-        }
-
-        foreach ($activitiesPassed as $activityPassed) {
-            $activityPassed->setState($stateP);
-            $this->entityManager->persist($activityPassed);
-        }
-
-        $this->entityManager->flush();
-
-        $inscriptionsClosed = $this->activityRepository->findInscriptionClosed();
-
-        $stateC = $this->stateRepository->findOneBy(['label' => 'Clôturée']);
-
-        if ($activities == $inscriptionsClosed) {
-            return $this->redirectToRoute('activity_list');
-        }
-
-        foreach ($inscriptionsClosed as $inscriptionClosed) {
-            $inscriptionClosed->setState($stateC);
-            $this->entityManager->persist($inscriptionClosed);
-        }
-
-        $this->entityManager->flush();
+        $updateStates->hasActivitiesClosed();
+        $updateStates->hasActivitiesPassed();
+        $updateStates->hasActivitiesStarted();
 
         $filterForm = $this->createForm(ActivityFilterType::class);
 
